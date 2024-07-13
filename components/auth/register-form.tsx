@@ -37,6 +37,7 @@ const RegisterForm = () => {
       name: "",
       phone: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
@@ -130,6 +131,30 @@ const RegisterForm = () => {
                         placeholder="Password"
                         type="password"
                         name="password"
+                        disabled={isPending}
+                        className={"border-0 shadow-none focus-visible:ring-0"}
+                      />
+                    </FormControl>
+                  </FormItem>
+                  <FormMessage className={"text-xs ml-5"} />
+                </div>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={"confirmPassword"}
+              render={({ field }) => (
+                <div>
+                  <FormItem className="group space-y-1 flex items-center rounded-full border border-input bg-transparent pl-5 pr-3 py-1 text-sm shadow-sm transition-colors file:border-0 focus-within:outline-none focus-within:ring-1 focus-within:ring-primary disabled:cursor-not-allowed disabled:opacity-50">
+                    <FormLabel>
+                      <LockKeyhole className="text-muted-foreground text-lg group-focus-within:text-primary" />
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Confirm Password"
+                        type="password"
+                        name="confirmPassword"
                         disabled={isPending}
                         className={"border-0 shadow-none focus-visible:ring-0"}
                       />
