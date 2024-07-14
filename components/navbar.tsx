@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import { Search } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
@@ -8,11 +9,17 @@ import LoginBtn from "@/components/auth/login-btn";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserMenu } from "./user-menu";
+import {useRouter} from "next/navigation";
 
 interface NavbarProps {
   user: User | null;
 }
 const Navbar: React.FC<NavbarProps> = ({ user }) => {
+  const router = useRouter();
+
+  const handleCartClick = () => {
+    router.push("/userCart");
+  };
   return (
     <nav className="w-full h-28 bg-secondary drop-shadow-md">
       <div className="w-10/12 mx-auto h-full flex items-center justify-between ">
@@ -37,7 +44,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
             size={"icon"}
             className={
               "text-primary hover:bg-white hover:text-primary rounded-full text-xl"
-            }>
+            } onClick={handleCartClick}>
             <ShoppingCart />
           </Button>
 
