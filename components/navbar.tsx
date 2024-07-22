@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { UserMenu } from "./user-menu";
 
 interface NavbarProps {
-  user: User | null;
+  user: User | null | undefined;
 }
 const Navbar: React.FC<NavbarProps> = ({ user }) => {
   return (
