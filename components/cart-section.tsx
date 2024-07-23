@@ -1,22 +1,37 @@
-import React from 'react';
+"use client";
+
+import React, { useCallback, useEffect, useState } from 'react';
+import Image from 'next/image';
+import Data from '@/actions/data';
 import { Button } from "@/components/ui/button";
 import { HiShoppingCart } from "react-icons/hi";
+import { getAllProducts } from '@/data/product';
+import { DataItem , CartProps } from '@/data/types';
 
-interface Item {
-  id: number;
-  title: string;
-  category: string;
-  price: number;
-  image: string;
-  desc: string;
-  available: number | string;
-}
 
-interface CardProps {
-  item: Item[];
-}
+const CartSection: React.FC = () => {
+  const [items, setItems] = useState<DataItem[]>([]);
 
-const Card: React.FC<CardProps> = ({ item }) => {
+  const getProductsAll = useCallback(async () => {
+    const productData = await getAllProducts();
+    setItems(productData as any);
+  },[]);
+
+  useEffect(() => {
+    getProductsAll();
+  }, []);
+
+  return (
+    <div className="container-fluid max-w-screen m-10 px-10">
+      <div className="row">
+        <h1 className="text-center text-[#5E3719] font-black text-2xl pb-5 pt-5">PRODUCTS</h1>
+        <Cart item={items} />
+      </div>
+    </div>
+  );
+};
+
+const Cart: React.FC<CartProps> = ({ item }) => {
   return (
     <div className="container mx-auto p-4 place-items-center">
       <div className="mx-10 grid grid-cols-4 gap-4">
@@ -24,18 +39,18 @@ const Card: React.FC<CardProps> = ({ item }) => {
           <div key={val.id} className="flex justify-center">
             <div className="card border border-gray-200 shadow-lg rounded-3xl" style={{ width: '80%', height: '350px' }}>
               <div className="card-img-top text-center mb-4">
-                <img src={val.image} alt={val.title} className="w-full h-48 object-cover rounded-t-3xl" />
+                <img src={val.image} alt={val.name} className="w-full h-48 object-cover rounded-t-3xl" />
               </div>
               <div className="card-body">
                 <div className='flex flex-col justify-evenly'>
                   <div className="card-title font-black">
                     <div className='flex justify-evenly text-base'>
-                      <div className='text-black font-black pl-2'>{val.title}</div>
+                      <div className='text-black font-black pl-2'>{val.name}</div>
                       <div className='text-[#5E3719] font-black'>{val.price}/=</div>
                     </div>
                   </div>
                   <div className="card-text text-gray-500 flex justify-evenly">
-                    <div>{val.available} Available</div>
+                    <div>{val.qty} Available</div>
                     <div></div>
                   </div>
                   <div className='flex justify-evenly mt-4'>
@@ -59,6 +74,8 @@ const Card: React.FC<CardProps> = ({ item }) => {
       </div>
     </div>
   );
-}
+};
 
-export default Card;
+
+
+export default CartSection;
