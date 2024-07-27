@@ -24,6 +24,7 @@ import { LoginSchema } from "@/schemas";
 import { login } from "@/actions/login";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
+import { guestLogin } from "@/actions/guest-login";
 
 const LoginForm = () => {
   const [errors, setErrors] = useState("");
@@ -121,10 +122,13 @@ const LoginForm = () => {
               Login
             </Button>
             <Button
+              onClick={() => {
+                guestLogin();
+              }}
               className={"rounded-full"}
               variant={"secondary"}
               size={"lg"}>
-              <Link href={"/"}>Login as Guest</Link>
+              Login as Guest
             </Button>
           </div>
         </form>
