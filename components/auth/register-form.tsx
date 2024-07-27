@@ -25,6 +25,7 @@ import { register } from "@/actions/register";
 import { Phone } from "lucide-react";
 import { LockKeyhole } from "lucide-react";
 import { PencilLine } from "lucide-react";
+import { guestLogin } from "@/actions/guest-login";
 
 const RegisterForm = () => {
   const [errors, setErrors] = useState("");
@@ -174,10 +175,13 @@ const RegisterForm = () => {
               Register
             </Button>
             <Button
+              onClick={() => {
+                guestLogin();
+              }}
               className={"rounded-full"}
               variant={"secondary"}
               size={"lg"}>
-              <Link href={"/"}>Login as Guest</Link>
+              Login as Guest
             </Button>
           </div>
         </form>

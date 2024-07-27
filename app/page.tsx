@@ -2,11 +2,12 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+import { useEffect, useState } from "react";
+import { User } from "@supabase/supabase-js";
+
+import { getSessionUser } from "@/data/user";
 
 import Navbar from "@/components/navbar";
-import LogoutBtn from "@/components/auth/logout-btn";
-import { Button } from "@/components/ui/button";
-import { getVerificationTokenByToken } from "@/data/token";
 
 //Chamindu Lakshan
 import Carousel from "@/components/carousel";

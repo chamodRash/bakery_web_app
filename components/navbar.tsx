@@ -1,3 +1,7 @@
+"use client";
+
+import { getSessionUser } from "@/data/user";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Search } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
@@ -8,6 +12,21 @@ import LoginBtn from "@/components/auth/login-btn";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserMenu } from "./user-menu";
+import Link from "next/link";
+
+const Navbar = () => {
+  const [loggedUser, setLoggedUser] = useState<User | null>(null);
+
+  const getDbUser = async () => {
+    const dbUser = await getSessionUser();
+
+    setLoggedUser(dbUser as User | null);
+    console.log(dbUser);
+  };
+
+  useEffect(() => {
+    getDbUser();
+  }, []);
 
 interface NavbarProps {
   user: User | null | undefined;
@@ -38,17 +57,19 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
             className={
               "text-primary hover:bg-white hover:text-primary rounded-full text-xl"
             }>
-            <ShoppingCart />
+            <Link href={"/cart"}>
+              <ShoppingCart />
+            </Link>
           </Button>
 
-          {!user && (
+          {!loggedUser && (
             <LoginBtn asChild>
               <Button variant={"default"} size={"lg"}>
                 Sign in
               </Button>
             </LoginBtn>
           )}
-          {user && <UserMenu />}
+          {loggedUser && <UserMenu />}
         </div>
       </div>
     </nav>
