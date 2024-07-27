@@ -2,8 +2,6 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { useEffect, useState } from "react";
-import { User } from "@supabase/supabase-js";
 
 import { getSessionUser } from "@/data/user";
 
@@ -69,7 +67,7 @@ export default function Home() {
 
   return (
     <div className="w-full">
-      <Navbar user={user} />
+      <Navbar />
 
 
       <div className="flex justify-center items-center max-h-96 max-w-screen m-10 px-10 rounded-3xl">

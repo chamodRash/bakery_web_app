@@ -21,17 +21,12 @@ const Navbar = () => {
     const dbUser = await getSessionUser();
 
     setLoggedUser(dbUser as User | null);
-    console.log(dbUser);
   };
 
   useEffect(() => {
     getDbUser();
   }, []);
 
-interface NavbarProps {
-  user: User | null | undefined;
-}
-const Navbar: React.FC<NavbarProps> = ({ user }) => {
   return (
     <nav className="w-full h-28 bg-secondary drop-shadow-md">
       <div className="w-10/12 mx-auto h-full flex items-center justify-between ">
