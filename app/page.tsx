@@ -2,8 +2,6 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { useEffect, useState } from "react";
-import { User } from "@supabase/supabase-js";
 
 import { getSessionUser } from "@/data/user";
 
