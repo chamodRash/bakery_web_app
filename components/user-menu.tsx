@@ -14,6 +14,7 @@ import { UserRoundSearch } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
 import { Logs } from "lucide-react";
 import LogoutBtn from "./auth/logout-btn";
+import Link from "next/link";
 
 type Props = {};
 export const UserMenu = ({}: Props) => {
@@ -30,10 +31,12 @@ export const UserMenu = ({}: Props) => {
       <DropdownMenuContent>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="flex gap-x-3 items-center text-gray-600 cursor-pointer hover:text-primary hover:font-semibold transition hover:bg-secondary">
-          <UserRoundSearch size={16} />
-          Profile
-        </DropdownMenuItem>
+        <Link href="/profile">
+          <DropdownMenuItem className="flex gap-x-3 items-center text-gray-600 cursor-pointer hover:text-primary hover:font-semibold transition hover:bg-secondary">
+            <UserRoundSearch size={16} />
+            Profile
+          </DropdownMenuItem>
+        </Link>
         <DropdownMenuItem className="flex gap-x-3 items-center text-gray-600 cursor-pointer hover:text-primary hover:font-semibold transition hover:bg-secondary">
           <ShoppingCart size={16} />
           Cart

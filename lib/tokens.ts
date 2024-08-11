@@ -27,7 +27,6 @@ export const generateRegisterOTP = async (phone: string) => {
       expires: expires,
     },
   ]);
-  console.log(insertOTP);
 
   return otp;
 };

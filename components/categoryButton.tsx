@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import Image from 'next/image';
-import logo from '@/public/logo.png';
-import Data from '@/actions/data';
+import React, { useState } from "react";
+import Image from "next/image";
+import logo from "@/public/logo.png";
+import Data from "@/actions/data";
 import { ChevronLeft, ChevronRight } from "react-feather";
+import { Button } from "./ui/button";
 
 interface CategoryItem {
   category: string;
@@ -15,7 +16,11 @@ interface CategoryButtonProps {
   setItems: (items: typeof Data) => void;
 }
 
-const CategoryButton: React.FC<CategoryButtonProps> = ({ categoryItems, filterItems, setItems }) => {
+const CategoryButton: React.FC<CategoryButtonProps> = ({
+  categoryItems,
+  filterItems,
+  setItems,
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 8;
 
@@ -32,37 +37,60 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({ categoryItems, filterIt
   };
 
   return (
-    <div className='flex justify-center items-center space-x-4'>
-      <button onClick={handlePrevClick} className='p-1 rounded-full shadow bg-gray text-gray-800 hover:bg-white bg-opacity-50'>
+    <div className="flex justify-center items-center space-x-4">
+      <Button
+        variant={"ghost"}
+        size={"icon"}
+        onClick={handlePrevClick}
+        className="rounded-full">
         <ChevronLeft size={30} />
-      </button>
-      <div className='flex space-x-4'>
-        {categoryItems.slice(currentIndex, currentIndex + itemsPerPage).map(({ category, image }) => (
-          <button
-            key={category}
-            className='flex flex-col items-center'
-            onClick={() => filterItems(category)}
-          >
-            <div className='w-24 h-24 rounded-full overflow-hidden border-2 border-gray-300'>
-              <Image src={image} width={96} height={96} alt={category} className='object-cover' />
-            </div>
-            <p className='mt-2 text-center font-semibold'>{category}</p>
-          </button>
-        ))}
+      </Button>
+      <div className="flex space-x-4">
+        {categoryItems
+          .slice(currentIndex, currentIndex + itemsPerPage)
+          .map(({ category, image }) => (
+            <button
+              key={category}
+              className="flex flex-col items-center"
+              onClick={() => filterItems(category)}>
+              <div
+                className="w-36 h-36 bg-cover bg-center rounded-full cursor-pointer"
+                style={{ backgroundImage: `url(${image})` }}>
+                <div className="relative w-full h-full backdrop-blur-[2px] rounded-full">
+                  <div className="w-full h-full bg-black opacity-30 rounded-full"></div>
+                  <p className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white font-semibold text-lg drop-shadow-2xl">
+                    {category}
+                  </p>
+                </div>
+              </div>
+            </button>
+          ))}
         {currentIndex + itemsPerPage >= categoryItems.length && (
-          <button className='flex flex-col items-center' onClick={() => setItems(Data)}>
-            <div className='w-24 h-24 rounded-full overflow-hidden border-2 border-gray-300'>
-              <Image src={logo} width={96} height={96} alt="All" className='object-cover' />
+          <button
+            className="flex flex-col items-center"
+            onClick={() => setItems(Data)}>
+            <div
+              className="w-36 h-36 bg-cover bg-center rounded-full cursor-pointer"
+              style={{ backgroundImage: `${logo}` }}>
+              <div className="relative w-full h-full backdrop-blur-[2px] rounded-full">
+                <div className="w-full h-full bg-black opacity-30 rounded-full"></div>
+                <p className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white font-semibold text-lg drop-shadow-2xl">
+                  All
+                </p>
+              </div>
             </div>
-            <p className='mt-2 text-center font-semibold'>All</p>
           </button>
         )}
       </div>
-      <button onClick={handleNextClick} className='p-1 rounded-full shadow bg-white/40 text-gray-800 hover:bg-white bg-opacity-50'>
+      <Button
+        variant={"ghost"}
+        size={"icon"}
+        onClick={handleNextClick}
+        className="rounded-full">
         <ChevronRight size={30} />
-      </button>
+      </Button>
     </div>
   );
-}
+};
 
 export default CategoryButton;

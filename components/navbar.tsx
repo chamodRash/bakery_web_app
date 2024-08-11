@@ -13,14 +13,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserMenu } from "./user-menu";
 import Link from "next/link";
+import { createClient } from "@/utils/supabase/client";
 
 const Navbar = () => {
+  const supabase = createClient();
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
 
   const getDbUser = async () => {
-    const dbUser = await getSessionUser();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
 
-    setLoggedUser(dbUser as User | null);
+    if (user?.is_anonymous === true) {
+      setLoggedUser(null);
+      return;
+    }
+    setLoggedUser(user?.user_metadata.user_phone);
   };
 
   useEffect(() => {
@@ -30,7 +39,9 @@ const Navbar = () => {
   return (
     <nav className="w-full h-28 bg-secondary drop-shadow-md">
       <div className="w-10/12 mx-auto h-full flex items-center justify-between ">
-        <Image src={Logo} width={70} height={70} alt="Logo" />
+        <Link href={"/"}>
+          <Image src={Logo} width={70} height={70} alt="Logo" />
+        </Link>
         <div className="flex items-center w-2/3 gap-x-10 justify-end">
           <form action="" className="relative flex items-center">
             <Input
