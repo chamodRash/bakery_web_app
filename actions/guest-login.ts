@@ -1,17 +1,18 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export const logout = async () => {
+export const guestLogin = async () => {
   const supabase = createClient();
-  // defaults to the global scope
-  await supabase.auth.signOut();
+  const { data, error } = await supabase.auth.signInAnonymously();
 
-  // sign out from the current session only
-  await supabase.auth.signOut({ scope: "global" });
+  if (error) {
+    return { error: error.message };
+  }
 
   revalidatePath("/", "layout");
-  redirect("/login");
+  redirect("/");
 };

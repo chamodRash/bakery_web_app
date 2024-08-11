@@ -3,10 +3,9 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 
+import { getSessionUser } from "@/data/user";
+
 import Navbar from "@/components/navbar";
-import LogoutBtn from "@/components/auth/logout-btn";
-import { Button } from "@/components/ui/button";
-import { getVerificationTokenByToken } from "@/data/token";
 
 //Chamindu Lakshan
 
@@ -21,18 +20,31 @@ import FilteredProductsSection from "@/components/filterProductSection";
 export default function Home() {
   const supabase = createClient();
   const [user, setUser] = useState<User | null>();
-  const [filteredItems , setFilteredItems] = useState<DataItem[]>([]);
-  const [categoryName , setCategoryName] = useState<string>("");
+  const [filteredItems, setFilteredItems] = useState<DataItem[]>([]);
+  const [categoryName, setCategoryName] = useState<string>("");
 
-  const handleSetItems = (items:DataItem[] , categoryName:string)=>{
+  const handleSetItems = (items: DataItem[], categoryName: string) => {
     setFilteredItems(items);
     setCategoryName(categoryName);
-  }
+  };
   const getSessionUser = useCallback(async () => {
     const { data, error } = await supabase.auth.getUser();
     data && setUser(data.user);
-  }, [])
+  }, []);
 
+  const getSessionJWT = useCallback(async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (session) {
+      const accessToken = session.access_token;
+      console.log("JWT Token:", accessToken);
+      console.log("Session", session);
+    } else {
+      console.log("User is not signed in");
+    }
+  }, []);
 
   useEffect(() => {
     getSessionUser();
@@ -40,16 +52,20 @@ export default function Home() {
 
   return (
     <div className="w-full">
-      <Navbar user={user} />
-      
-       <CarouselSection/>
+      <Navbar />
+
+      <CarouselSection />
 
       <CategoryButtonSection setItems={handleSetItems} />
 
       {filteredItems.length > 0 ? (
-        <FilteredProductsSection items={filteredItems} categoryName = {categoryName} />
+        <FilteredProductsSection
+          items={filteredItems}
+          categoryName={categoryName}
+        />
       ) : (
         <CartSection />
       )}
     </div>
-  );}
+  );
+}
