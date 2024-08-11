@@ -1,38 +1,53 @@
-import React, { useState } from "react";
+"use client";
+
+import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import logo from "@/public/logo.png";
-import Data from "@/actions/data";
 import { ChevronLeft, ChevronRight } from "react-feather";
+import { getAllCategory, getProductByCategory } from "@/data/product";
+import { CategoryItem } from "@/data/types";
+import { getAllProducts } from "@/data/product";
 import { Button } from "./ui/button";
 
-interface CategoryItem {
-  category: string;
-  image: string;
+interface CategoryButtonSectionProps {
+  setItems: (items: any[], categoryName: string) => void;
 }
 
-interface CategoryButtonProps {
-  categoryItems: CategoryItem[];
-  filterItems: (category: string) => void;
-  setItems: (items: typeof Data) => void;
-}
-
-const CategoryButton: React.FC<CategoryButtonProps> = ({
-  categoryItems,
-  filterItems,
+const CategoryButtonSection: React.FC<CategoryButtonSectionProps> = ({
   setItems,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 8;
+  const [categoryItems, setCategoryItems] = useState<CategoryItem[]>([]);
 
+  const getCategory = useCallback(async () => {
+    const res = await getAllCategory();
+    setCategoryItems(res as CategoryItem[]);
+  }, []);
+
+  useEffect(() => {
+    getCategory();
+  }, [getCategory]);
+
+  const filterItems = async (id: number, name: string) => {
+    const newItems = await getProductByCategory(id);
+    const upperName = name.toLocaleUpperCase();
+    setItems(newItems as any, upperName);
+  };
+
+  const handleGetAllProducts = async () => {
+    const newItems = await getAllProducts();
+    setItems(newItems as any, "ALL PRODUCTS");
+  };
   const handlePrevClick = () => {
     if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - itemsPerPage);
+      setCurrentIndex(currentIndex - 1);
     }
   };
 
   const handleNextClick = () => {
     if (currentIndex + itemsPerPage < categoryItems.length) {
-      setCurrentIndex(currentIndex + itemsPerPage);
+      setCurrentIndex(currentIndex + 1);
     }
   };
 
@@ -48,18 +63,18 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
       <div className="flex space-x-4">
         {categoryItems
           .slice(currentIndex, currentIndex + itemsPerPage)
-          .map(({ category, image }) => (
+          .map(({ id, name, img_url }) => (
             <button
-              key={category}
+              key={id}
               className="flex flex-col items-center"
-              onClick={() => filterItems(category)}>
+              onClick={() => filterItems(id, name)}>
               <div
                 className="w-36 h-36 bg-cover bg-center rounded-full cursor-pointer"
-                style={{ backgroundImage: `url(${image})` }}>
+                style={{ backgroundImage: `url(${img_url})` }}>
                 <div className="relative w-full h-full backdrop-blur-[2px] rounded-full">
                   <div className="w-full h-full bg-black opacity-30 rounded-full"></div>
                   <p className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white font-semibold text-lg drop-shadow-2xl">
-                    {category}
+                    {name}
                   </p>
                 </div>
               </div>
@@ -68,7 +83,7 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
         {currentIndex + itemsPerPage >= categoryItems.length && (
           <button
             className="flex flex-col items-center"
-            onClick={() => setItems(Data)}>
+            onClick={handleGetAllProducts}>
             <div
               className="w-36 h-36 bg-cover bg-center rounded-full cursor-pointer"
               style={{ backgroundImage: `${logo}` }}>
@@ -93,4 +108,4 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
   );
 };
 
-export default CategoryButton;
+export default CategoryButtonSection;
