@@ -18,8 +18,6 @@ import { DataItem } from "@/data/types";
 import FilteredProductsSection from "@/components/filterProductSection";
 //
 export default function Home() {
-  const supabase = createClient();
-  const [user, setUser] = useState<User | null>();
   const [filteredItems, setFilteredItems] = useState<DataItem[]>([]);
   const [categoryName, setCategoryName] = useState<string>("");
 
@@ -27,28 +25,6 @@ export default function Home() {
     setFilteredItems(items);
     setCategoryName(categoryName);
   };
-  const getSessionUser = useCallback(async () => {
-    const { data, error } = await supabase.auth.getUser();
-    data && setUser(data.user);
-  }, []);
-
-  const getSessionJWT = useCallback(async () => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (session) {
-      const accessToken = session.access_token;
-      console.log("JWT Token:", accessToken);
-      console.log("Session", session);
-    } else {
-      console.log("User is not signed in");
-    }
-  }, []);
-
-  useEffect(() => {
-    getSessionUser();
-  }, [getSessionUser]);
 
   return (
     <div className="w-full">
