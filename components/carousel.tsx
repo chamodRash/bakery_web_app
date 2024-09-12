@@ -1,23 +1,21 @@
 "use client";
+import React, { useEffect, useState, ReactNode } from "react";
+import { ChevronLeft, ChevronRight } from "react-feather";
+import { Button } from "@/components/ui/button";
 
-import React, { useEffect, useState, useCallback, ReactNode } from "react";
-import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { createClient } from "@/utils/supabase/client";
-import { getSlides } from "@/data/carousel";
-import { CarouselProps } from "@/data/types";
-import { Button } from "./ui/button";
-
-interface Slide {
-  image: string;
+interface CarouselProps {
+  children: ReactNode[];
+  autoSlide?: boolean;
+  autoSlideInterval?: number;
+  slidesCount: number;
 }
 
-const Carousel: React.FC<CarouselProps> = ({
+export default function Carousel({
   children: slides,
   autoSlide = false,
   autoSlideInterval = 3000,
   slidesCount,
-}) => {
+}: CarouselProps) {
   const [curr, setCurr] = useState(0);
 
   const prev = () =>
@@ -40,15 +38,15 @@ const Carousel: React.FC<CarouselProps> = ({
       </div>
       <div className="absolute inset-0 flex items-center justify-between p-3">
         <Button
-          variant={"ghost"}
           size={"icon"}
+          variant={"ghost"}
           onClick={prev}
           className="p-1 rounded-full shadow bg-white/40 text-gray-800 hover:bg-white bg-opacity-50">
           <ChevronLeft size={30} />
         </Button>
         <Button
-          variant={"ghost"}
           size={"icon"}
+          variant={"ghost"}
           onClick={next}
           className="p-1 rounded-full shadow bg-white/40 text-gray-800 hover:bg-white bg-opacity-50">
           <ChevronRight size={30} />
@@ -68,37 +66,4 @@ const Carousel: React.FC<CarouselProps> = ({
       </div>
     </div>
   );
-};
-
-const CarouselSection: React.FC = () => {
-  const supabase = createClient();
-  const [slides, setSlides] = useState<Slide[]>([]);
-
-  const getHomapageSlides = useCallback(async () => {
-    const slidesData = await getSlides();
-    setSlides(slidesData as any);
-  }, []);
-
-  useEffect(() => {
-    getHomapageSlides();
-  }, [getSlides]);
-
-  return (
-    <div className="flex justify-center items-center max-h-96 max-w-screen m-10 px-10 rounded-3xl">
-      <Carousel autoSlide={true} slidesCount={slides.length}>
-        {slides.map((slide, index) => (
-          <div className="min-w-full h-96 relative rounded-3xl" key={index}>
-            <Image
-              className="rounded-3xl object-fill"
-              src={slide.image}
-              layout="fill"
-              alt={`Slide ${index + 1}`}
-            />
-          </div>
-        ))}
-      </Carousel>
-    </div>
-  );
-};
-
-export default CarouselSection;
+}

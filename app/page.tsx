@@ -1,55 +1,60 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import React, { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/utils/supabase/client";
 
 import Navbar from "@/components/navbar";
-import LogoutBtn from "@/components/auth/logout-btn";
-import { Button } from "@/components/ui/button";
-import { getVerificationTokenByToken } from "@/data/token";
-
-//Chamindu Lakshan
-
-import React, { useState, useEffect, useCallback } from "react";
-import { User } from "@supabase/supabase-js";
 import CarouselSection from "@/components/carousel-section";
 import CategoryButtonSection from "@/components/categoryButton-section";
 import CartSection from "@/components/cart-section";
-import { DataItem } from "@/data/types";
 import FilteredProductsSection from "@/components/filterProductSection";
-//
+
+import { DataItem } from "@/data/types";
+
 export default function Home() {
   const supabase = createClient();
-  const [user, setUser] = useState<User | null>();
-  const [filteredItems , setFilteredItems] = useState<DataItem[]>([]);
-  const [categoryName , setCategoryName] = useState<string>("");
+  const [loggedUser, setLoggedUser] = useState<boolean>(false);
+  const [filteredItems, setFilteredItems] = useState<DataItem[]>([]);
+  const [categoryName, setCategoryName] = useState<string>("");
 
-  const handleSetItems = (items:DataItem[] , categoryName:string)=>{
+  const handleSetItems = (items: DataItem[], categoryName: string) => {
     setFilteredItems(items);
     setCategoryName(categoryName);
-  }
-  const getSessionUser = useCallback(async () => {
-    const { data, error } = await supabase.auth.getUser();
-    data && setUser(data.user);
-  }, [])
+  };
 
+  const getDbUser = useCallback(async () => {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (user?.is_anonymous === true || user === null || error) {
+      setLoggedUser(false);
+      return;
+    }
+    setLoggedUser(true);
+  }, [supabase]);
 
   useEffect(() => {
-    getSessionUser();
-  }, [getSessionUser]);
+    getDbUser();
+  }, [getDbUser, loggedUser]);
 
   return (
     <div className="w-full">
-      <Navbar user={user} />
-      
-       <CarouselSection/>
+      <Navbar user={loggedUser} />
+
+      <CarouselSection />
 
       <CategoryButtonSection setItems={handleSetItems} />
 
       {filteredItems.length > 0 ? (
-        <FilteredProductsSection items={filteredItems} categoryName = {categoryName} />
+        <FilteredProductsSection
+          items={filteredItems}
+          categoryName={categoryName}
+        />
       ) : (
         <CartSection />
       )}
     </div>
-  );}
+  );
+}
