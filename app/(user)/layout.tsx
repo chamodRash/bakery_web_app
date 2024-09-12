@@ -18,8 +18,6 @@ export default function RootLayout({
       error,
     } = await supabase.auth.getUser();
 
-    console.log(user);
-
     if (user?.is_anonymous === true || user === null || error) {
       setLoggedUser(false);
       return;

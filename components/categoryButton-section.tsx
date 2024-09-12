@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import logo from "@/public/logo.png";
-import { ChevronLeft, ChevronRight } from "react-feather";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getAllCategory, getProductByCategory } from "@/data/product";
 import { CategoryItem } from "@/data/types";
 import { getAllProducts } from "@/data/product";
