@@ -1,12 +1,35 @@
+import { guestLogin } from "@/actions/guest-login";
 import { createClient } from "@/utils/supabase/client";
 
 const supabase = createClient();
 
-export const getUserByPhone = async (phone: string) => {
+export const getSessionUser = async () => {
+  try {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (error) {
+      await guestLogin();
+      return null;
+    }
+
+    const phone = `0${user?.phone?.slice(2)}`;
+
+    const dbuser = await getSessionUserByPhone(phone);
+
+    return dbuser;
+  } catch {
+    return null;
+  }
+};
+
+export const getSessionUserByPhone = async (phone: string = "") => {
   try {
     let { data: user, error: retrieveUserError } = await supabase
-      .from("user")
-      .select("*")
+      .from("profiles")
+      .select("id, phone, name, role, loyaltypoints")
       .eq("phone", phone);
 
     if (retrieveUserError) {
@@ -22,10 +45,71 @@ export const getUserByPhone = async (phone: string) => {
   }
 };
 
+export const getUserByPhone = async (phone: string = "") => {
+  try {
+    let { data: user, error: retrieveUserError } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("phone", phone);
+
+    if (retrieveUserError) {
+      return { error: retrieveUserError };
+    }
+
+    if (Array.isArray(user) && user.length > 0) {
+      return user[0];
+    }
+
+    return user;
+  } catch {
+    return null;
+  }
+};
+
+export const getUserRoleById = async (id: string) => {
+  try {
+    let { data: user, error: retrieveUserError } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", id);
+
+    if (retrieveUserError) {
+      return null;
+    }
+
+    if (Array.isArray(user) && user.length > 0) {
+      return user[0].role;
+    }
+    return user;
+  } catch {
+    return null;
+  }
+};
+
+export const getUserRoleByPhone = async (phone: string) => {
+  try {
+    let { data: user, error: retrieveUserError } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("phone", phone);
+
+    if (retrieveUserError) {
+      return null;
+    }
+
+    if (Array.isArray(user) && user.length > 0) {
+      return user[0].role;
+    }
+    return user;
+  } catch {
+    return null;
+  }
+};
+
 export const getUserByid = async (id: string) => {
   try {
     let { data: user, error: retrieveUserError } = await supabase
-      .from("user")
+      .from("profiles")
       .select("*")
       .eq("id", id);
 

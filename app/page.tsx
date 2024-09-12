@@ -1,29 +1,60 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
+"use client";
+
+import React, { useState, useEffect, useCallback } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 import Navbar from "@/components/navbar";
-import LogoutBtn from "@/components/auth/logout-btn";
-import { Button } from "@/components/ui/button";
-import { getVerificationTokenByToken } from "@/data/token";
+import CarouselSection from "@/components/carousel-section";
+import CategoryButtonSection from "@/components/categoryButton-section";
+import CartSection from "@/components/cart-section";
+import FilteredProductsSection from "@/components/filterProductSection";
 
-export default async function Home() {
+import { DataItem } from "@/data/types";
+
+export default function Home() {
   const supabase = createClient();
+  const [loggedUser, setLoggedUser] = useState<boolean>(false);
+  const [filteredItems, setFilteredItems] = useState<DataItem[]>([]);
+  const [categoryName, setCategoryName] = useState<string>("");
 
-  const { data, error } = await supabase.auth.getUser();
+  const handleSetItems = (items: DataItem[], categoryName: string) => {
+    setFilteredItems(items);
+    setCategoryName(categoryName);
+  };
 
-  // if (error) {
-  //   redirect(`/error?message=${error.message}`);
-  //   console.log(error);
-  // }
+  const getDbUser = useCallback(async () => {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (user?.is_anonymous === true || user === null || error) {
+      setLoggedUser(false);
+      return;
+    }
+    setLoggedUser(true);
+  }, [supabase]);
+
+  useEffect(() => {
+    getDbUser();
+  }, [getDbUser, loggedUser]);
 
   return (
     <div className="w-full">
-      <Navbar user={data.user} />
-      <div className="w-10/12 mx-auto h-screen flex items-center justify-center">
-        <h1 className="text-4xl font-bold text-center">
-          Welcome to Dashboard {data.user ? `+${data.user.phone}` : ""}
-        </h1>
-      </div>
+      <Navbar user={loggedUser} />
+
+      <CarouselSection />
+
+      <CategoryButtonSection setItems={handleSetItems} />
+
+      {filteredItems.length > 0 ? (
+        <FilteredProductsSection
+          items={filteredItems}
+          categoryName={categoryName}
+        />
+      ) : (
+        <CartSection />
+      )}
     </div>
   );
 }
