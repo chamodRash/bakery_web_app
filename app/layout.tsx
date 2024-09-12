@@ -10,7 +10,7 @@ export const metadata = {
   description: "3rd year Project",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
