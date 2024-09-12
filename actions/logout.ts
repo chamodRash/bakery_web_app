@@ -10,7 +10,7 @@ export const logout = async () => {
   await supabase.auth.signOut();
 
   // sign out from the current session only
-  await supabase.auth.signOut({ scope: "global" });
+  await supabase.auth.signOut({ scope: "local" });
 
   revalidatePath("/", "layout");
   redirect("/login");

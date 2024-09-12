@@ -1,27 +1,22 @@
-"use client";
-
 import Image from "next/image";
 import { Search } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
+import { User } from "@supabase/supabase-js";
 
 import Logo from "@/public/logo.png";
 import LoginBtn from "@/components/auth/login-btn";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserMenu } from "./user-menu";
-import Link from "next/link";
 
 interface NavbarProps {
-  user: boolean;
+  user: User | null;
 }
-
-const Navbar = ({ user }: NavbarProps) => {
+const Navbar: React.FC<NavbarProps> = ({ user }) => {
   return (
     <nav className="w-full h-28 bg-secondary drop-shadow-md">
       <div className="w-10/12 mx-auto h-full flex items-center justify-between ">
-        <Link href={"/"}>
-          <Image src={Logo} width={70} height={70} alt="Logo" />
-        </Link>
+        <Image src={Logo} width={70} height={70} alt="Logo" />
         <div className="flex items-center w-2/3 gap-x-10 justify-end">
           <form action="" className="relative flex items-center">
             <Input
@@ -43,9 +38,7 @@ const Navbar = ({ user }: NavbarProps) => {
             className={
               "text-primary hover:bg-white hover:text-primary rounded-full text-xl"
             }>
-            <Link href={"/cart"}>
-              <ShoppingCart />
-            </Link>
+            <ShoppingCart />
           </Button>
 
           {!user && (

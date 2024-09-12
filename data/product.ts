@@ -1,42 +1,55 @@
-"use server";
 
-import { createClient } from "@/utils/supabase/server";
-import { assert } from "console";
+import { createClient } from "@/utils/supabase/client";
 
 const supabase = createClient();
 
-export const getAllProducts = async () =>{    
-    let { data: product, error } = await supabase
-    .from('product')
-    .select('*');
-
-    return product;
+interface Category {
+  id: number;
+  img_url: string;
+  name: string;
+  description: string;
+  products: string;
 }
 
-export const getAllCategory = async () =>{
-    
-    let { data: category, error } = await supabase
-    .from('category')
-    .select('*');
-
-    return category;
+interface Product {
+  id: number;
+  image: string;
+  name: string;
+  categoryid: number;
+  price: string;
+  description: string;
 }
 
-export const getCategoryById = async (id: number) =>{
-    let { data: category, error } = await supabase
-    .from('category')
-    .select('*')
-    .eq('id' , id);
 
-    return category;
+export const fetchCategories = async () => {
+  try {
+    const { data, error } = await supabase.from('category').select('*');
+    if (error) {
+      throw new Error(`Error fetching categories: ${error.message}`);
+    }
+    return data;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
+export const fetchProducts = async (categoriesData: Category[]): Promise<Product[]> => {
+  try {
+    const { data, error } = await supabase.from('product').select('*');
+    if (error) {
+      console.error('Error fetching products:', error);
+      return [];
+    }
+    const enhancedProductData = (data || []).map((product) => {
+      const category = categoriesData.find((cat) => cat.id === product.categoryid);
+      return { ...product, categoryName: category ? category.name : 'Unknown' };
+    });
+    return enhancedProductData;
+  } catch (error) {
+    console.error('Error in fetchProducts:', error);
+    return [];
+  }
 }
 
-export const getProductByCategory = async (categoryId: number) =>{
-    let { data: products, error } = await supabase
-    .from('product')
-    .select('*')
-    .eq('categoryid' , categoryId);
-
-    return products;
-}
 
