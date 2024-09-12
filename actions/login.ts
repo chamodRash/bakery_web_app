@@ -10,6 +10,7 @@ import { getUserByPhone } from "@/data/user";
 import { generateRegisterOTP } from "@/lib/tokens";
 import sendRegisterOTP from "@/lib/sendMsgs";
 import { getVerificationTokenByToken } from "@/data/token";
+import { toast } from "sonner";
 
 const supabase = createClient();
 
@@ -21,11 +22,15 @@ const signInSupabase = async (values: z.infer<typeof LoginSchema>) => {
     password: values.password,
   };
 
-  const { error } = await supabase.auth.signInWithPassword(data);
+  const { data: trysignInData, error } = await supabase.auth.signInWithPassword(
+    data
+  );
 
   if (error) {
     return { error: error.message };
   }
+
+  return { success: trysignInData.user.id };
 };
 
 export async function login(values: z.infer<typeof LoginSchema>) {
@@ -77,7 +82,13 @@ export async function login(values: z.infer<typeof LoginSchema>) {
       .eq("id", existingToken.id);
   }
 
-  await signInSupabase(values);
+  const trySignIn = await signInSupabase(values);
+
+  if (trySignIn?.error) {
+    return { error: trySignIn.error };
+  }
+
+  console.log(`${trySignIn.success} Logged In!`);
 
   revalidatePath("/", "layout");
   redirect("/");

@@ -1,11 +1,8 @@
 "use client";
 
-import { getSessionUser } from "@/data/user";
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Search } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
-import { User } from "@supabase/supabase-js";
 
 import Logo from "@/public/logo.png";
 import LoginBtn from "@/components/auth/login-btn";
@@ -13,29 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserMenu } from "./user-menu";
 import Link from "next/link";
-import { createClient } from "@/utils/supabase/client";
 
-const Navbar = () => {
-  const supabase = createClient();
-  const [loggedUser, setLoggedUser] = useState<User | null>(null);
+interface NavbarProps {
+  user: boolean;
+}
 
-  const getDbUser = async () => {
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-
-    if (user?.is_anonymous === true) {
-      setLoggedUser(null);
-      return;
-    }
-    setLoggedUser(user?.user_metadata.user_phone);
-  };
-
-  useEffect(() => {
-    getDbUser();
-  }, []);
-
+const Navbar = ({ user }: NavbarProps) => {
   return (
     <nav className="w-full h-28 bg-secondary drop-shadow-md">
       <div className="w-10/12 mx-auto h-full flex items-center justify-between ">
@@ -68,14 +48,14 @@ const Navbar = () => {
             </Link>
           </Button>
 
-          {!loggedUser && (
+          {!user && (
             <LoginBtn asChild>
               <Button variant={"default"} size={"lg"}>
                 Sign in
               </Button>
             </LoginBtn>
           )}
-          {loggedUser && <UserMenu />}
+          {user && <UserMenu />}
         </div>
       </div>
     </nav>
