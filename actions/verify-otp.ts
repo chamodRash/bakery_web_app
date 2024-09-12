@@ -26,12 +26,15 @@ export async function verifyOTP(token: number) {
     return { error: "User does not exists!" };
   }
 
-  await supabase
-    .from("profiles")
+  const { data, error: updateError } = await supabase
+    .from("user")
     .update({ phoneverified: new Date() })
     .eq("phone", existingToken.phone);
 
-  await supabase.from("verificationtoken").delete().eq("id", existingToken.id);
+  const { error: deleteError } = await supabase
+    .from("verificationtoken")
+    .delete()
+    .eq("id", existingToken.id);
 
   revalidatePath("/", "layout");
   redirect("/");

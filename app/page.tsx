@@ -1,47 +1,29 @@
-"use client";
-
 import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
-
-import { getSessionUser } from "@/data/user";
+import { createClient } from "@/utils/supabase/server";
 
 import Navbar from "@/components/navbar";
+import LogoutBtn from "@/components/auth/logout-btn";
+import { Button } from "@/components/ui/button";
+import { getVerificationTokenByToken } from "@/data/token";
 
-//Chamindu Lakshan
+export default async function Home() {
+  const supabase = createClient();
 
-import React, { useState, useEffect, useCallback } from "react";
-import { User } from "@supabase/supabase-js";
-import CarouselSection from "@/components/carousel-section";
-import CategoryButtonSection from "@/components/categoryButton-section";
-import CartSection from "@/components/cart-section";
-import { DataItem } from "@/data/types";
-import FilteredProductsSection from "@/components/filterProductSection";
-//
-export default function Home() {
-  const [filteredItems, setFilteredItems] = useState<DataItem[]>([]);
-  const [categoryName, setCategoryName] = useState<string>("");
+  const { data, error } = await supabase.auth.getUser();
 
-  const handleSetItems = (items: DataItem[], categoryName: string) => {
-    setFilteredItems(items);
-    setCategoryName(categoryName);
-  };
+  // if (error) {
+  //   redirect(`/error?message=${error.message}`);
+  //   console.log(error);
+  // }
 
   return (
     <div className="w-full">
-      <Navbar />
-
-      <CarouselSection />
-
-      <CategoryButtonSection setItems={handleSetItems} />
-
-      {filteredItems.length > 0 ? (
-        <FilteredProductsSection
-          items={filteredItems}
-          categoryName={categoryName}
-        />
-      ) : (
-        <CartSection />
-      )}
+      <Navbar user={data.user} />
+      <div className="w-10/12 mx-auto h-screen flex items-center justify-center">
+        <h1 className="text-4xl font-bold text-center">
+          Welcome to Dashboard {data.user ? `+${data.user.phone}` : ""}
+        </h1>
+      </div>
     </div>
   );
 }

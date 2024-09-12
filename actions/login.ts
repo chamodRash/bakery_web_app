@@ -9,8 +9,6 @@ import { LoginSchema } from "@/schemas";
 import { getUserByPhone } from "@/data/user";
 import { generateRegisterOTP } from "@/lib/tokens";
 import sendRegisterOTP from "@/lib/sendMsgs";
-import { getVerificationTokenByToken } from "@/data/token";
-import { toast } from "sonner";
 
 const supabase = createClient();
 
@@ -22,29 +20,17 @@ const signInSupabase = async (values: z.infer<typeof LoginSchema>) => {
     password: values.password,
   };
 
-  const { data: trysignInData, error } = await supabase.auth.signInWithPassword(
-    data
-  );
+  const { error } = await supabase.auth.signInWithPassword(data);
 
   if (error) {
     return { error: error.message };
   }
-
-  return { success: trysignInData.user.id };
 };
 
 export async function login(values: z.infer<typeof LoginSchema>) {
   const user = await getUserByPhone(values.phone);
 
-  if (user?.error) {
-    return { error: user.error.message };
-  }
-
-  if (!user || user.length === 0) {
-    return { error: "User does not exist!" };
-  }
-
-  if (!user.phoneverified && !values.code) {
+  if (!user.phoneverified) {
     const otp = await generateRegisterOTP(values.phone);
 
     const isOTPsent = await sendRegisterOTP(values.phone, otp);
@@ -53,42 +39,13 @@ export async function login(values: z.infer<typeof LoginSchema>) {
       return { error: "Failed to send OTP. Try Login again" };
     }
 
-    return { success: "OTP Sent!" };
+    await signInSupabase(values);
+
+    revalidatePath("/", "layout");
+    redirect("/phone-verification");
   }
 
-  if (!user.phoneverified && values.code) {
-    const existingToken = await getVerificationTokenByToken(
-      Number(values.code)
-    );
-
-    if (!existingToken) {
-      return { error: "OTP does not exists!" };
-    }
-
-    const hasExpired = new Date(existingToken?.expires) < new Date();
-
-    if (hasExpired) {
-      return { error: "OTP has expired!" };
-    }
-
-    await supabase
-      .from("profiles")
-      .update({ phoneverified: new Date() })
-      .eq("phone", existingToken.phone);
-
-    await supabase
-      .from("verificationtoken")
-      .delete()
-      .eq("id", existingToken.id);
-  }
-
-  const trySignIn = await signInSupabase(values);
-
-  if (trySignIn?.error) {
-    return { error: trySignIn.error };
-  }
-
-  console.log(`${trySignIn.success} Logged In!`);
+  await signInSupabase(values);
 
   revalidatePath("/", "layout");
   redirect("/");
