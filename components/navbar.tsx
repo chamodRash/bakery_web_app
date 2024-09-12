@@ -1,29 +1,28 @@
 "use client";
+
 import Image from "next/image";
 import { Search } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
-import { User } from "@supabase/supabase-js";
 
 import Logo from "@/public/logo.png";
 import LoginBtn from "@/components/auth/login-btn";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserMenu } from "./user-menu";
-import {useRouter} from "next/navigation";
+
+import Link from "next/link";
 
 interface NavbarProps {
-  user: User | null;
+  user: boolean;
 }
-const Navbar: React.FC<NavbarProps> = ({ user }) => {
-  const router = useRouter();
 
-  const handleCartClick = () => {
-    router.push("/userCart");
-  };
+const Navbar = ({ user }: NavbarProps) => {
   return (
     <nav className="w-full h-28 bg-secondary drop-shadow-md">
       <div className="w-10/12 mx-auto h-full flex items-center justify-between ">
-        <Image src={Logo} width={70} height={70} alt="Logo" />
+        <Link href={"/"}>
+          <Image src={Logo} width={70} height={70} alt="Logo" />
+        </Link>
         <div className="flex items-center w-2/3 gap-x-10 justify-end">
           <form action="" className="relative flex items-center">
             <Input
@@ -44,8 +43,10 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
             size={"icon"}
             className={
               "text-primary hover:bg-white hover:text-primary rounded-full text-xl"
-            } onClick={handleCartClick}>
-            <ShoppingCart />
+            }>
+            <Link href={"/cart"}>
+              <ShoppingCart />
+            </Link>
           </Button>
 
           {!user && (
