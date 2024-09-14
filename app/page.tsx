@@ -1,23 +1,19 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import React, { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/utils/supabase/client";
 
-import { getSessionUser } from "@/data/user";
-
 import Navbar from "@/components/navbar";
-
-//Chamindu Lakshan
-
-import React, { useState, useEffect, useCallback } from "react";
-import { User } from "@supabase/supabase-js";
 import CarouselSection from "@/components/carousel-section";
 import CategoryButtonSection from "@/components/categoryButton-section";
 import CartSection from "@/components/cart-section";
-import { DataItem } from "@/data/types";
 import FilteredProductsSection from "@/components/filterProductSection";
-//
+
+import { DataItem } from "@/data/types";
+
 export default function Home() {
+  const supabase = createClient();
+  const [loggedUser, setLoggedUser] = useState<boolean>(false);
   const [filteredItems, setFilteredItems] = useState<DataItem[]>([]);
   const [categoryName, setCategoryName] = useState<string>("");
 
@@ -26,9 +22,26 @@ export default function Home() {
     setCategoryName(categoryName);
   };
 
+  const getDbUser = useCallback(async () => {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (user?.is_anonymous === true || user === null || error) {
+      setLoggedUser(false);
+      return;
+    }
+    setLoggedUser(true);
+  }, [supabase]);
+
+  useEffect(() => {
+    getDbUser();
+  }, [getDbUser, loggedUser]);
+
   return (
     <div className="w-full">
-      <Navbar />
+      <Navbar user={loggedUser} />
 
       <CarouselSection />
 
