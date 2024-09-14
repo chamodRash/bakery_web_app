@@ -1,10 +1,10 @@
 "use client";
-import React from 'react';
-import {useState} from 'react';
+import React from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,7 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 
 import {
   Dialog,
@@ -25,53 +25,48 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import Bun from "@/public/bun.jpg";
-import { fetchProductDetails } from '@/actions/product';
-import { addItemToCart } from '@/actions/cart'; 
-import {useRouter} from 'next/navigation';
-
-
+import { fetchProductDetails } from "@/actions/product";
+import { addItemToCart } from "@/actions/cart";
+import { useRouter } from "next/navigation";
 
 const AddToCart: React.FC<{ productId: number }> = ({ productId }) => {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState<any>(null);
   const [showAlertDialog, setShowAlertDialog] = useState(false);
-  const router=useRouter();
-  
+  const router = useRouter();
 
-  const increaseQuantity = () => setQuantity(prev => prev + 1);
-  const decreaseQuantity = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
+  const increaseQuantity = () => setQuantity((prev) => prev + 1);
+  const decreaseQuantity = () =>
+    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
   const handleAddToCart = async () => {
     setLoading(true);
     try {
       const product = await fetchProductDetails(1);
-      if (!product) throw new Error('Product not found');
-      
+      if (!product) throw new Error("Product not found");
+
       const total = product.price * quantity;
 
       await addItemToCart({
-        userid:'77cfe5b7-4d62-4b16-859b-a3769e874686', 
+        userid: "77cfe5b7-4d62-4b16-859b-a3769e874686",
         productid: product.id,
         quantity,
         total,
-        status: true, 
+        status: true,
       });
 
-      console.log('Item added to cart');
+      console.log("Item added to cart");
       setShowAlertDialog(true);
-
-    
-      
     } catch (error) {
       if (error instanceof Error) {
-        console.error('Error adding item to cart:', error.message);
+        console.error("Error adding item to cart:", error.message);
       } else {
-        console.error('An unexpected error occurred:', error);
+        console.error("An unexpected error occurred:", error);
       }
     } finally {
       setLoading(false);
@@ -80,9 +75,8 @@ const AddToCart: React.FC<{ productId: number }> = ({ productId }) => {
 
   const handleContinue = () => {
     setShowAlertDialog(false);
-    window.location.href = '/addToCart';
+    window.location.href = "/addToCart";
   };
-
 
   return (
     <div>
@@ -96,14 +90,21 @@ const AddToCart: React.FC<{ productId: number }> = ({ productId }) => {
               <div className="flex items-center">
                 <Image src={Bun} width={200} height={500} alt="Dotted Bun" />
                 <div className="ml-2 text-xl text-black">
-                  <p style={{ fontWeight: 'bold', fontSize: '20px' }}>Dotted Bun</p><br/>
-                  <p style={{ fontSize: '18px' }}>Qty:</p>
+                  <p className="font-semibold text-[20px]">Dotted Bun</p>
+                  <br />
+                  <p className="text-[18px]">Qty:</p>
                   <div className="flex items-center">
-                    <button onClick={decreaseQuantity} className="px-3 py-1 border rounded-l bg-gray-200 hover:bg-gray-300">
+                    <button
+                      onClick={decreaseQuantity}
+                      className="px-3 py-1 border rounded-l bg-gray-200 hover:bg-gray-300">
                       -
                     </button>
-                    <span className="px-4 py-1 border-t border-b bg-white">{quantity}</span>
-                    <button onClick={increaseQuantity} className="px-3 py-1 border rounded-r bg-gray-200 hover:bg-gray-300">
+                    <span className="px-4 py-1 border-t border-b bg-white">
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={increaseQuantity}
+                      className="px-3 py-1 border rounded-r bg-gray-200 hover:bg-gray-300">
                       +
                     </button>
                   </div>
@@ -116,7 +117,7 @@ const AddToCart: React.FC<{ productId: number }> = ({ productId }) => {
             <div className="flex justify-center mt-4">
               <Badge className="text-lg px-4 py-2">
                 <button onClick={handleAddToCart} disabled={loading}>
-                  {loading ? 'Adding...' : 'Add to Cart'}
+                  {loading ? "Adding..." : "Add to Cart"}
                 </button>
               </Badge>
             </div>
@@ -124,21 +125,24 @@ const AddToCart: React.FC<{ productId: number }> = ({ productId }) => {
         </DialogContent>
       </Dialog>
 
-      
       {showAlertDialog && (
         <AlertDialog open={showAlertDialog} onOpenChange={setShowAlertDialog}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Item added to the cart successfully</AlertDialogTitle>
+              <AlertDialogTitle>
+                Item added to the cart successfully
+              </AlertDialogTitle>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogAction onClick={handleContinue}>Continue</AlertDialogAction>
+              <AlertDialogAction onClick={handleContinue}>
+                Continue
+              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
       )}
     </div>
   );
-}
+};
 
 export default AddToCart;
