@@ -33,7 +33,7 @@ import { fetchProductDetails } from "@/actions/product";
 import { addItemToCart } from "@/actions/cart";
 import { useRouter } from "next/navigation";
 
-const AddToCart: React.FC<{ productId: number }> = ({ productId }) => {
+const AddToCart = ({ productId }: { productId: number }) => {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState<any>(null);
