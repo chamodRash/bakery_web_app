@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState }  from "react";
+import { fetchCartItems } from '@/actions/cart';
 import Image from "next/image";
 import Link from "next/link";
 
@@ -33,72 +34,123 @@ interface NavbarProps {
   user: User | null;
 }
 
-interface CartItem{
+
+interface CartItem {
+  id: number;
+  productid:number;
+  quantity: number;
+  total: number;
+  status:boolean
+  product: {
     id:number;
     name:string;
-    
-    unitPrice:number;
-    quantity:number;
-    
-
-
+    price:number;
+  };  
 }
+
+
 
 const CartPage: React.FC<NavbarProps> = ({ user }) => {
 
     const [cartItems, setCartItems] = React.useState<CartItem[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
+    
+  
 
-    const tempCartItems:CartItem[]=[
-        {
-            id:1,
-            name:'Dotted Bun',
-           
-            unitPrice:100,
-            quantity:1,
-            
-        },
-        {
-            id:2,
-            name:'Dotted Bun',
-            
-            unitPrice:200,
-            quantity:2,
-        },
-        {
-            id:3,
-            name:'Dotted Bun',
-        
-            unitPrice:150,
-            quantity:3,
-        },
-
-        
-    ]
-    React.useEffect(() => {
-        setCartItems(tempCartItems)
+    useEffect(() => {
+      const fetchItems = async () => {
+        try {
+          const data = await fetchCartItems();
+          console.log("Fetched data:", data); 
+          setCartItems(data);
+        } catch (err) {
+          setError("Something went wrong");
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchItems();
     }, []);
 
 
-    const incrementItem = (index: number) => {
-        setCartItems(prevItems =>
-          prevItems.map((item, idx) =>
-            idx === index ? { ...item, quantity: item.quantity + 1 } : item
-          )
-        );
-      };
+    const updateItemInCart = async (id: number, quantity: number, total: number) => {
+      try {
+        const response = await fetch(`/api/cart?id=${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ quantity, total }),
+        });
     
-      const decrementItem = (index: number) => {
-        setCartItems(prevItems =>
-          prevItems.map((item, idx) =>
-            idx === index && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
-          )
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || 'Failed to update item');
+        }
+    
+        // Optionally update state or refetch cart items
+        console.log('Item updated successfully');
+      } catch (error) {
+        console.error('Error updating item:', error);
+      }
+    };
+    
+    const incrementItem = (index: number) => {
+      setCartItems(prevItems => {
+        const item = prevItems[index];
+        const newQuantity = item.quantity + 1;
+        const newTotal = newQuantity * item.product.price;
+        
+        const updatedItems = prevItems.map((item, idx) =>
+          idx === index ? { ...item, quantity: newQuantity, total: newTotal } : item
         );
+        
+        updateItemInCart(prevItems[index].id, newQuantity, newTotal); // Update the database
+        return updatedItems;
+      });
+    };
+    
+    const decrementItem = (index: number) => {
+      setCartItems(prevItems => {
+        const item = prevItems[index];
+        const newQuantity = item.quantity > 1 ? item.quantity - 1 : item.quantity;
+        const newTotal = newQuantity * item.product.price;
+        
+        const updatedItems = prevItems.map((item, idx) =>
+          idx === index ? { ...item, quantity: newQuantity, total: newTotal } : item
+        );
+        
+        updateItemInCart(prevItems[index].id, newQuantity, newTotal); // Update the database
+        return updatedItems;
+      });
+    };
+    
+    
+   
+
+      const deleteItems = async (id: number) => {
+        try {
+          const response = await fetch(`/api/cart?id=${id}`, {
+            method: 'DELETE',
+          });
+      
+          if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.error || 'Failed to delete item');
+          }
+      
+          // Optionally update state or refetch cart items
+          console.log('Item deleted successfully');
+          setCartItems(prevItems => prevItems.filter(item => item.id !== id));
+        } catch (error) {
+          console.error('Error deleting item:', error);
+        }
       };
-    const deleteItem = (index: number) => {
-        setCartItems(prevItems => prevItems.filter((_, idx) => idx !== index));
-      };
-    const ButtonDestructive: React.FC<{ onClick: () => void }> = ({ onClick }) => (
+
+      const ButtonDestructive: React.FC<{ onClick: () => void }> = ({ onClick }) => (
         <Button
           variant="ghost"
           size="icon"
@@ -108,9 +160,11 @@ const CartPage: React.FC<NavbarProps> = ({ user }) => {
           <Trash />
         </Button>
       );
+      
+      
 
       const totalAmount=cartItems.reduce(
-      (total,item)=>total+(item.unitPrice*item.quantity),0
+      (total,item)=>total+(item.product.price*item.quantity),0
       );
 
   const router = useRouter();
@@ -183,10 +237,10 @@ const CartPage: React.FC<NavbarProps> = ({ user }) => {
       </TableHeader>
       <TableBody>
         {cartItems.map((item,index) => (
-          <TableRow key={item.id}>
-            <TableCell><input type="checkbox" /></TableCell>
-            <TableCell className="font-medium">{item.name}<Image src={Bun} width={35} height={35} alt="Bun" /></TableCell>
-            <TableCell>{item.unitPrice}/=</TableCell>
+          <TableRow key={item.productid}>
+            <TableCell><input type="checkbox" checked={item.status} /></TableCell>
+            <TableCell className="font-medium">{item.product.name}<Image src={Bun} width={35} height={35} alt="Bun" /></TableCell>
+            <TableCell>{item.product.price}/=</TableCell>
             <TableCell className="p-2 flex items-center gap-x-2">
             <button
                       onClick={() => decrementItem(index)}
@@ -202,8 +256,8 @@ const CartPage: React.FC<NavbarProps> = ({ user }) => {
                       +
                     </button>
                 </TableCell>
-            <TableCell>{item.unitPrice*item.quantity}/=</TableCell>
-            <TableCell><ButtonDestructive onClick={() => deleteItem(index)} /></TableCell>
+            <TableCell>{item.product.price*item.quantity}/=</TableCell>
+            <TableCell><ButtonDestructive onClick={() => deleteItems(item.id)} /></TableCell>
             
             
           </TableRow>
@@ -226,7 +280,7 @@ const CartPage: React.FC<NavbarProps> = ({ user }) => {
     </Table>
     <div className="flex justify-center mt-4">
   <Badge variant="green" className="text-lg px-4 py-2">
-    <Link href="/checkout">Proceed to Payment</Link>
+    <Link href="/checkout">Checkout</Link>
   </Badge>
 </div>
 
