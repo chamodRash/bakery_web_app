@@ -33,7 +33,7 @@ import { fetchProductDetails } from "@/actions/product";
 import { addItemToCart } from "@/actions/cart";
 import { useRouter } from "next/navigation";
 
-const AddToCart = ({ productId }: { productId: any }) => {
+export default function AddToCart({ productId }: { productId: any }) {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState<any>(null);
@@ -143,6 +143,4 @@ const AddToCart = ({ productId }: { productId: any }) => {
       )}
     </div>
   );
-};
-
-export default AddToCart;
+}
