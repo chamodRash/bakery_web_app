@@ -47,7 +47,7 @@ const AddToCart: React.FC<{ productId: number }> = ({ productId }) => {
   const handleAddToCart = async () => {
     setLoading(true);
     try {
-      const product = await fetchProductDetails(1);
+      const product = await fetchProductDetails(9);
       if (!product) throw new Error("Product not found");
 
       const total = product.price * quantity;
