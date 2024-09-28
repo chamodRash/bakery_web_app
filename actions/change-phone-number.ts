@@ -7,7 +7,7 @@ import bcryptjs from "bcryptjs";
 import otpGenerator from "otp-generator";
 
 import { createClient } from "@/utils/supabase/server";
-import { RegisterSchema } from "@/schemas";
+import { ChangePhoneSchema } from "@/schemas";
 import sendRegisterOTP from "@/lib/sendMsgs";
 import { generateRegisterOTP } from "@/lib/tokens";
 import { getUserByPhone } from "@/data/user";
@@ -15,30 +15,30 @@ import { getVerificationTokenByToken } from "@/data/token";
 
 const supabase = createClient();
 
-const signUpSupabase = async (values: z.infer<typeof RegisterSchema>) => {
+const signUpSupabase = async (values: z.infer<typeof ChangePhoneSchema>) => {
   const data = {
     phone: values.phone.startsWith("0")
       ? "+94" + values.phone.slice(1)
       : `+94${values.phone}`,
-    password: values.password,
     options: {
       data: {
-        full_name: values.name,
         user_phone: values.phone,
         user_role: "USER",
       },
     },
   };
 
-  const { data: signUpError, error } = await supabase.auth.signUp(data);
+  const { data: signUpError, error } = await supabase.auth.updateUser(data);
 
   if (error) {
     return { error: error.message };
   }
 };
 
-export async function register(values: z.infer<typeof RegisterSchema>) {
-  const validateFields = RegisterSchema.safeParse(values);
+export async function changePhoneNumber(
+  values: z.infer<typeof ChangePhoneSchema>
+) {
+  const validateFields = ChangePhoneSchema.safeParse(values);
   if (!validateFields.success) return { error: "Inavalid Fields!" };
 
   if (!values.code) {
@@ -47,7 +47,7 @@ export async function register(values: z.infer<typeof RegisterSchema>) {
     const isOTPsent = await sendRegisterOTP(values.phone, otp);
 
     if (!isOTPsent.sent) {
-      return { error: "Failed to send OTP. Try Login again" };
+      return { error: "Failed to send OTP. Try again later" };
     }
 
     return { success: "OTP Sent!" };
@@ -71,11 +71,6 @@ export async function register(values: z.infer<typeof RegisterSchema>) {
     const res = await signUpSupabase(values);
     if (res?.error) return { error: res.error };
 
-    await supabase
-      .from("profiles")
-      .update({ phoneverified: new Date() })
-      .eq("phone", existingToken.phone);
-
     const trySignUp = await supabase
       .from("verificationtoken")
       .delete()
@@ -85,7 +80,6 @@ export async function register(values: z.infer<typeof RegisterSchema>) {
       return { error: trySignUp.error.message };
     }
 
-    revalidatePath("/", "layout");
-    redirect("/");
+    return { success: "Phone number updated successfully!" };
   }
 }

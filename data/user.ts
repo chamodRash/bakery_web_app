@@ -28,7 +28,7 @@ export const getSessionUser = async () => {
 export const getSessionUserByPhone = async (phone: string = "") => {
   try {
     let { data: user, error: retrieveUserError } = await supabase
-      .from("user")
+      .from("profiles")
       .select("id, phone, name, role, loyaltypoints")
       .eq("phone", phone);
 
@@ -48,8 +48,49 @@ export const getSessionUserByPhone = async (phone: string = "") => {
 export const getUserByPhone = async (phone: string = "") => {
   try {
     let { data: user, error: retrieveUserError } = await supabase
-      .from("user")
+      .from("profiles")
       .select("*")
+      .eq("phone", phone);
+
+    if (retrieveUserError) {
+      return { error: retrieveUserError };
+    }
+
+    if (Array.isArray(user) && user.length > 0) {
+      return user[0];
+    }
+
+    return user;
+  } catch {
+    return null;
+  }
+};
+
+export const getUserRoleById = async (id: string) => {
+  try {
+    let { data: user, error: retrieveUserError } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", id);
+
+    if (retrieveUserError) {
+      return null;
+    }
+
+    if (Array.isArray(user) && user.length > 0) {
+      return user[0].role;
+    }
+    return user;
+  } catch {
+    return null;
+  }
+};
+
+export const getUserRoleByPhone = async (phone: string) => {
+  try {
+    let { data: user, error: retrieveUserError } = await supabase
+      .from("profiles")
+      .select("role")
       .eq("phone", phone);
 
     if (retrieveUserError) {
@@ -57,7 +98,7 @@ export const getUserByPhone = async (phone: string = "") => {
     }
 
     if (Array.isArray(user) && user.length > 0) {
-      return user[0];
+      return user[0].role;
     }
     return user;
   } catch {
@@ -68,7 +109,7 @@ export const getUserByPhone = async (phone: string = "") => {
 export const getUserByid = async (id: string) => {
   try {
     let { data: user, error: retrieveUserError } = await supabase
-      .from("user")
+      .from("profiles")
       .select("*")
       .eq("id", id);
 
