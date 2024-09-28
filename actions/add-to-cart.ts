@@ -23,7 +23,7 @@ export const addToCart = async (
       productid: productId,
       quantity: quantity,
       total: total,
-      status: "checked",
+      status: true,
     },
   ]);
 
