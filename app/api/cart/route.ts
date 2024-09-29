@@ -8,7 +8,6 @@ import {
 import { createClient } from "@/utils/supabase/server";
 
 export async function GET(request: Request) {
-  const supabase = createClient(request);
   try {
     const url = new URL(request.url);
     const userId = Number(url.searchParams.get("userid")); // Get user ID from query params
@@ -27,7 +26,6 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const supabase = createClient(request);
   try {
     const item = await request.json();
     const data = await addItemToCart(item);
@@ -46,7 +44,6 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const supabase = createClient(request);
   try {
     const url = new URL(request.url);
     const id = url.searchParams.get("id");
@@ -67,7 +64,6 @@ export async function DELETE(request: Request) {
 }
 
 export async function PUT(request: Request) {
-  const supabase = createClient(request);
   try {
     const url = new URL(request.url);
     const id = url.searchParams.get("id");
