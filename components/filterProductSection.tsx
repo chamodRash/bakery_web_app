@@ -5,6 +5,7 @@ import { DataItem } from "@/data/types";
 import { Button } from "@/components/ui/button";
 import { HiShoppingCart } from "react-icons/hi";
 import { ProductCard } from "./product-card";
+import Link from "next/link";
 
 interface FilteredProductsSectionProps {
   items: DataItem[];
@@ -30,16 +31,18 @@ const FilteredProductsSection: React.FC<FilteredProductsSectionProps> = ({
 const Cart: React.FC<{ item: DataItem[] }> = ({ item }) => {
   return (
     <div className="container mx-auto py-4 place-items-center">
-      <div className="grid grid-cols-4 gap-4">
-        {item.map((val) => (
-          <ProductCard
-            key={val.id}
-            id={val.id}
-            name={val.name}
-            price={val.price}
-            image={val.image}
-            qty={val.qty}
-          />
+      <div className="flex flex-wrap gap-8 justify-center items-center">
+        {item.map((val, index) => (
+          <Link href={`/product/${val.id}`} key={index}>
+            <ProductCard
+              key={val.id}
+              id={val.id}
+              name={val.name}
+              price={val.price}
+              image={val.image}
+              qty={val.qty}
+            />
+          </Link>
         ))}
       </div>
     </div>
