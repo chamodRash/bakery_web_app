@@ -43,7 +43,8 @@ const Navbar = ({ user }: NavbarProps) => {
             size={"icon"}
             className={
               "text-primary hover:bg-white hover:text-primary rounded-full text-xl"
-            }>
+            }
+            asChild>
             <Link href={"/cart"}>
               <ShoppingCart />
             </Link>

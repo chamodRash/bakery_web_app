@@ -1,64 +1,109 @@
-import { createClient } from '@/utils/supabase/client'; 
+"use server";
 
+import { createClient } from "@/utils/supabase/server";
 
-const supabase=createClient();
+const supabase = createClient();
+
 // Function to fetch cart items
 export const fetchCartItems = async () => {
+  const { data, error } = await supabase.auth.getUser();
+  const userid = data?.user?.id;
+
   try {
     const { data, error } = await supabase
-    .from('cart')
-    .select(`
+      .from("cart")
+      .select(
+        `
       id,
       productid,
       quantity,
       total,
       status,
       product (id,name, price,image)
-    `);
-  
+    `
+      )
+      .eq("userid", userid);
+
     if (error) throw error;
     return data;
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error occurred';
+    const message =
+      error instanceof Error ? error.message : "Unknown error occurred";
     throw new Error(`Failed to fetch cart items: ${message}`);
   }
 };
 
-
-export const addItemToCart = async (item: { userid: string; productid: number; quantity: number; total: number; status: boolean }) => {
+export const fetchCartItemsById = async (id: string) => {
   try {
-    const { data, error } = await supabase.from('cart').insert([item]);
+    const { data, error } = await supabase
+      .from("cart")
+      .select(
+        `
+      id,
+      productid,
+      quantity,
+      total,
+      status,
+      product (id,name, price,image)
+    `
+      )
+      .eq("userid", id);
+
     if (error) throw error;
     return data;
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error occurred';
+    const message =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    throw new Error(`Failed to fetch cart items: ${message}`);
+  }
+};
+
+export const addItemToCart = async (item: {
+  userid: string;
+  productid: number;
+  quantity: number;
+  total: number;
+  status: boolean;
+}) => {
+  try {
+    const { data, error } = await supabase.from("cart").insert([item]);
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Unknown error occurred";
     throw new Error(`Failed to add cart item: ${message}`);
   }
 };
 
-
-
 // Function to delete an item from the cart
 export const deleteItems = async (id: number) => {
   try {
-    const { data, error } = await supabase.from('cart').delete().match({ id });
+    const { data, error } = await supabase.from("cart").delete().match({ id });
     if (error) throw error;
     return data;
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error occurred';
+    const message =
+      error instanceof Error ? error.message : "Unknown error occurred";
     throw new Error(`Failed to delete cart items: ${message}`);
   }
 };
 
-export const updateItemInCart = async (id: number, quantity: number, total: number) => {
+export const updateItemInCart = async (
+  id: number,
+  quantity: number,
+  total: number
+) => {
   try {
-    const { data, error } = await supabase.from('cart').update({ quantity, total }).match({ id });
+    const { data, error } = await supabase
+      .from("cart")
+      .update({ quantity, total })
+      .match({ id });
     if (error) throw error;
     return data;
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error occurred';
+    const message =
+      error instanceof Error ? error.message : "Unknown error occurred";
     throw new Error(`Failed to update cart item: ${message}`);
   }
 };
-
-          
