@@ -42,7 +42,7 @@ interface CartItem {
   };
 }
 
-const CartPage: React.FC<NavbarProps> = () => {
+const CartPage = () => {
   const supabase = createClient();
 
   const [cartItems, setCartItems] = React.useState<any[]>([]);
