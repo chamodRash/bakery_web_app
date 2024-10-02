@@ -53,7 +53,7 @@ const CategoryButtonSection: React.FC<CategoryButtonSectionProps> = ({
 
   return (
     <div>
-      <h1 className="uppercase text-center text-[#5E3719] font-black text-2xl pb-5 pt-5">
+      <h1 className="uppercase text-center text-primary font-black text-2xl pb-5 pt-5">
         Categories
       </h1>
       <div className="flex justify-center items-center space-x-4">

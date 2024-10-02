@@ -23,9 +23,9 @@ const CartSection: React.FC = () => {
   }, []);
 
   return (
-    <div className="container-fluid max-w-screen m-10 px-10">
+    <div className="w-11/12 mx-auto my-10">
       <div className="row">
-        <h1 className="text-center text-[#5E3719] font-black text-2xl pb-5 pt-5">
+        <h1 className="text-center text-primary font-black text-2xl pb-5 pt-5">
           PRODUCTS
         </h1>
         <Cart item={items} />
@@ -36,8 +36,8 @@ const CartSection: React.FC = () => {
 
 const Cart: React.FC<CartProps> = ({ item }) => {
   return (
-    <div className="container mx-auto p-4 place-items-center">
-      <div className="flex flex-wrap gap-8 justify-center items-center">
+    <div className="w-full mx-auto">
+      <div className="w-full flex flex-wrap gap-y-16 gap-x-10 justify-center items-center">
         {item.map((val, index) => (
           <Link href={`/product/${val.id}`} key={index}>
             <ProductCard

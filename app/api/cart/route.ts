@@ -5,7 +5,6 @@ import {
   deleteItems,
   updateItemInCart,
 } from "@/actions/cart";
-import { createClient } from "@/utils/supabase/server";
 
 export async function GET(request: Request) {
   try {
