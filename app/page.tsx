@@ -40,7 +40,7 @@ export default function Home() {
   }, [getDbUser, loggedUser]);
 
   return (
-    <div className="w-full">
+    <div className="pb-16 w-full bg-[#EEF5FF] pt-24">
       <Navbar user={loggedUser} />
 
       <CarouselSection />

@@ -33,7 +33,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Navbar user={loggedUser} />
-        <div className="mx-20 my-16">{children}</div>
+        <div className="pt-24 bg-[#EEF5FF]">{children}</div>
       </body>
     </html>
   );
