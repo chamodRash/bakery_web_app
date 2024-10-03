@@ -37,7 +37,7 @@ export const MyProfile = () => {
   }, [getUserDetails, user]);
 
   return (
-    <div className="w-full">
+    <div className="w-full py-10">
       <ViewProfile
         name={user.name}
         phone={user.phone}
@@ -47,7 +47,7 @@ export const MyProfile = () => {
       <div className="mt-10 w-full flex items-center justify-center gap-x-5">
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="w-56" variant={"secondary"}>
+            <Button className="w-56" variant={"default"}>
               Edit Profile
             </Button>
           </DialogTrigger>
@@ -61,7 +61,7 @@ export const MyProfile = () => {
         </Dialog>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="w-56" variant={"secondary"}>
+            <Button className="w-56" variant={"default"}>
               Change Phone Number
             </Button>
           </DialogTrigger>
@@ -72,7 +72,7 @@ export const MyProfile = () => {
 
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="w-56" variant={"secondary"}>
+            <Button className="w-56" variant={"default"}>
               Change Password
             </Button>
           </DialogTrigger>

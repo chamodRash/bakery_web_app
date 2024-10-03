@@ -84,19 +84,23 @@ const CarouselSection: React.FC = () => {
   }, [getSlides]);
 
   return (
-    <div className="flex justify-center items-center max-h-96 max-w-screen m-10 px-10 rounded-3xl">
-      <Carousel autoSlide={true} slidesCount={slides.length}>
-        {slides.map((slide, index) => (
-          <div className="min-w-full h-96 relative rounded-3xl" key={index}>
-            <Image
-              className="rounded-3xl object-fill"
-              src={slide.image}
-              layout="fill"
-              alt={`Slide ${index + 1}`}
-            />
-          </div>
-        ))}
-      </Carousel>
+    <div className="flex justify-center items-center max-h-[27rem] max-w-screen m-10 px-10 rounded-3xl">
+      {slides.length > 0 && (
+        <Carousel autoSlide={true} slidesCount={slides.length}>
+          {slides.map((slide, index) => (
+            <div
+              className="min-w-full h-[27rem] relative rounded-3xl"
+              key={index}>
+              <Image
+                className="rounded-3xl object-fill"
+                src={slide.image}
+                layout="fill"
+                alt={`Slide ${index + 1}`}
+              />
+            </div>
+          ))}
+        </Carousel>
+      )}
     </div>
   );
 };

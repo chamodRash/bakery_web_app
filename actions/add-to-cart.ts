@@ -1,15 +1,13 @@
 "use server";
 
-import { getSessionUser } from "@/data/sessionUser";
 import { createClient } from "@/utils/supabase/server";
-
-const supabase = createClient();
 
 export const addToCart = async (
   productId: number,
   quantity: number,
   price: number
 ) => {
+  const supabase = createClient();
   const {
     data: { user },
     error: sessionError,
@@ -23,7 +21,7 @@ export const addToCart = async (
       productid: productId,
       quantity: quantity,
       total: total,
-      status: "checked",
+      status: true,
     },
   ]);
 

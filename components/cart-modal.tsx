@@ -40,6 +40,7 @@ export const CartModal = ({
 
     if (error) {
       toast.error("Failed to add item to cart.");
+      console.log(error);
       return;
     }
 
