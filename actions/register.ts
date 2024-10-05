@@ -25,7 +25,6 @@ const signUpSupabase = async (values: z.infer<typeof RegisterSchema>) => {
       data: {
         full_name: values.name,
         user_phone: values.phone,
-        phone_verified: true,
         user_role: "USER",
       },
     },
