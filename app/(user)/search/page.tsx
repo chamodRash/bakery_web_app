@@ -1,5 +1,53 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { DataItem } from "@/data/types";  
+import { getProductsBySearch } from "@/data/product";  
+import { ProductCard } from "@/components/product-card";
+
+
 const SearchPage = () => {
-  return <div>Search Page</div>;
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query") || "" ;  
+  const [products, setProducts] = useState<DataItem[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      
+      try {
+        const res = await getProductsBySearch(query);
+        setProducts(res as any|| []);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [query]);
+
+  if (isLoading) return <p>Loading...</p>;
+
+  if (products.length === 0) return <p>No products found.</p>;
+
+  return (
+    <div className="container mx-auto p-4">
+      <div className="grid grid-cols-4 gap-4">
+        {products.map((product) => (
+          <ProductCard
+          key={product.id}
+          id={product.id}
+          name={product.name}
+          price={product.price}
+          image={product.image}
+          qty={product.qty}
+        />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default SearchPage;

@@ -2,6 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { assert } from "console";
+import { useSearchParams } from "next/navigation";
 
 const supabase = createClient();
 
@@ -57,11 +58,12 @@ export const getProductsByCategory = async (categoryid: number) => {
   return data;
 };
 
-export const getProductsBySearch = async (search: string | undefined) => {
+export const getProductsBySearch = async (queryString: string ) => {
   const { data, error } = await supabase
-    .from("product")
-    .select("*")
-    .ilike("name", `%${search}%`);
+  .from('product') 
+  .select('*')
+  .or(`name.ilike.%${queryString}%`)
+  .order('createdat', { ascending: false });
 
   return data;
 };
