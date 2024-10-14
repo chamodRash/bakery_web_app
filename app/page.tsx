@@ -2,13 +2,21 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { useSearchParams } from "next/navigation";
 
 import Navbar from "@/components/navbar";
 import CarouselSection from "@/components/carousel-section";
 import CategoryButtonSection from "@/components/categoryButton-section";
 import CartSection from "@/components/cart-section";
 import FilteredProductsSection from "@/components/filterProductSection";
-import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext, PaginationLink, PaginationEllipsis } from "@/components/ui/pagination";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 import { DataItem } from "@/data/types";
 
@@ -18,15 +26,19 @@ export default function Home() {
   const [filteredItems, setFilteredItems] = useState<DataItem[]>([]);
   const [categoryName, setCategoryName] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 8; // Number of items per page
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  const itemsPerPage = 12; 
+
+  const searchParams = useSearchParams();
 
   const handleSetItems = (items: DataItem[], categoryName: string) => {
     setFilteredItems(items);
     setCategoryName(categoryName);
-    setCurrentPage(1); // Reset to the first page when filtering
+    setCurrentPage(1); 
   };
 
-  const getDbUser = useCallback(async () => {
+  const getDbUser = useCallback(async () => { 
     const {
       data: { user },
       error,
@@ -39,9 +51,26 @@ export default function Home() {
     setLoggedUser(true);
   }, [supabase]);
 
+  const fetchFilteredItems = useCallback(async () => {
+    // Fetch items based on search term
+    const query = searchParams.get("search") || "";
+    setSearchTerm(query);
+
+    let { data, error } = await supabase
+      .from("product")
+      .select("*")
+      .ilike("name", `%${query}%`); // You can adjust the filtering logic here
+
+    if (data && !error) {
+      setFilteredItems(data);
+      setCurrentPage(1); // Reset to the first page when new data is fetched
+    }
+  }, [searchParams, supabase]);
+
   useEffect(() => {
     getDbUser();
-  }, [getDbUser, loggedUser]);
+    fetchFilteredItems();
+  }, [getDbUser, fetchFilteredItems, loggedUser]);
 
   // Calculate the total number of pages
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
@@ -83,24 +112,22 @@ export default function Home() {
           />
           <Pagination>
             <PaginationContent>
-              <PaginationPrevious
-                onClick={handlePreviousPage}
-                disabled={currentPage === 1}
-              />
+              <PaginationItem>
+                <PaginationPrevious onClick={handlePreviousPage} />
+              </PaginationItem>
               {Array.from({ length: totalPages }, (_, index) => (
                 <PaginationItem key={index}>
                   <PaginationLink
-                    isActive={currentPage === index + 1}
                     onClick={() => handlePageSelect(index + 1)}
+                    isActive={currentPage === index + 1}
                   >
                     {index + 1}
                   </PaginationLink>
                 </PaginationItem>
               ))}
-              <PaginationNext
-                onClick={handleNextPage}
-                disabled={currentPage === totalPages}
-              />
+              <PaginationItem>
+                <PaginationNext onClick={handleNextPage} />
+              </PaginationItem>
             </PaginationContent>
           </Pagination>
         </>

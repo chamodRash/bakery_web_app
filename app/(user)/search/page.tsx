@@ -28,9 +28,9 @@ const SearchPage = () => {
     fetchData();
   }, [query]);
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return  <h2 className="text-center m-10  text-primary font-black text-2xl pb-5 pt-5">Loading....</h2>;
 
-  if (products.length === 0) return <p>No products found.</p>;
+  if (products.length === 0) return <h2 className="text-center m-10  text-primary font-black text-2xl pb-5 pt-5">No products found...</h2>;
 
   return (
     <div className="container mx-auto p-4">
