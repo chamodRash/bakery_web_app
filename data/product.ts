@@ -30,6 +30,19 @@ export const getProductById = async (id: number) => {
   return data;
 };
 
+export const getProductBySlug = async (slug: string | null) => {
+  const { data, error } = await supabase
+    .from("product")
+    .select("*")
+    .eq("slug", slug);
+
+  if (Array.isArray(data) && data.length > 0) {
+    return data[0];
+  }
+
+  return data;
+};
+
 export const getCategoryById = async (id: number) => {
   let { data: category, error } = await supabase
     .from("category")

@@ -30,3 +30,14 @@ export const generateRegisterOTP = async (phone: string) => {
 
   return otp;
 };
+
+export const generateOrderConfirmationCode = () => {
+  const otpString = otpGenerator.generate(6, {
+    digits: true,
+    lowerCaseAlphabets: false,
+    upperCaseAlphabets: false,
+    specialChars: false,
+  });
+  const otp = parseInt(otpString, 10);
+  return otp;
+}

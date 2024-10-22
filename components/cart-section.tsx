@@ -39,16 +39,15 @@ const Cart: React.FC<CartProps> = ({ item }) => {
     <div className="w-full mx-auto">
       <div className="w-full flex flex-wrap gap-y-16 gap-x-10 justify-center items-center">
         {item.map((val, index) => (
-          <Link href={`/product/${val.id}`} key={index}>
-            <ProductCard
-              key={val.id}
-              id={val.id}
-              name={val.name}
-              price={val.price}
-              image={val.image}
-              qty={val.qty}
-            />
-          </Link>
+          <ProductCard
+            key={val.id}
+            id={val.id}
+            slug={val.slug}
+            name={val.name}
+            price={val.price}
+            image={val.image}
+            qty={val.qty}
+          />
         ))}
       </div>
     </div>

@@ -33,16 +33,14 @@ const Cart: React.FC<{ item: DataItem[] }> = ({ item }) => {
     <div className="w-11/12 mx-auto py-4 place-items-center">
       <div className="flex flex-wrap gap-8 justify-center items-center">
         {item.map((val, index) => (
-          <Link href={`/product/${val.id}`} key={index}>
-            <ProductCard
-              key={val.id}
-              id={val.id}
-              name={val.name}
-              price={val.price}
-              image={val.image}
-              qty={val.qty}
-            />
-          </Link>
+          <ProductCard
+            key={val.id}
+            id={val.id}
+            name={val.name}
+            price={val.price}
+            image={val.image}
+            qty={val.qty}
+          />
         ))}
       </div>
     </div>
