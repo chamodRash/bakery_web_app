@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Function to send OTP via Notify.lk API
-export default async function sendRegisterOTP(phoneNumber: string, otp: number) {
+export const sendRegisterOTP = async (phoneNumber: string, otp: number) => {
   const user_id = process.env.NOTIFY_USER_ID;
   const api_key = process.env.NOTIFY_API_KEY;
   const to = `94${phoneNumber?.slice(1)}`;

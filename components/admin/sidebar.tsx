@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Children, useState } from "react";
+import React, { useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import {
   IconArrowLeft,
@@ -96,7 +96,7 @@ export default function AdminSidebar({
         <SidebarBody className="justify-between gap-10">
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             <Link
-              href="#"
+              href="/admin"
               className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
             >
               <Image src={"/logo.jpg"} width={100} height={100} alt="Logo" />
@@ -111,7 +111,7 @@ export default function AdminSidebar({
             <SidebarLink
               link={{
                 label: "Manu Arora",
-                href: "#",
+                href: "/admin/profile",
                 icon: (
                   <User
                     size={10}
