@@ -1,8 +1,4 @@
-import { Inter } from "next/font/google";
-import "@/app/globals.css";
 import AdminSidebar from "@/components/admin/sidebar";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Bakery Web App - Admin panel",
@@ -16,7 +12,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <AdminSidebar>{children}</AdminSidebar>
       </body>
     </html>
