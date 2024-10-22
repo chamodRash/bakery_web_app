@@ -3,6 +3,7 @@ export interface DataItem {
     id: number;
     name: string;
     categoryid: number;
+    slug: string;
     price: number;
     image: string;
     description: string;

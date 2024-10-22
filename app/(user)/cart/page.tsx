@@ -160,7 +160,8 @@ const CartPage = () => {
       variant="ghost"
       size="icon"
       className="text-red-500 hover:bg-red-100"
-      onClick={onClick}>
+      onClick={onClick}
+    >
       <Trash />
     </Button>
   );
@@ -184,7 +185,8 @@ const CartPage = () => {
           fontWeight: "bold",
           margin: "20px 0",
           fontSize: "2.5rem",
-        }}>
+        }}
+      >
         <u>Your Cart</u>
       </h1>
 
@@ -195,7 +197,8 @@ const CartPage = () => {
             fontWeight: "bold",
             margin: "20px 0",
             fontSize: "2.5rem",
-          }}>
+          }}
+        >
           Your Cart is Empty. Start Shopping!
         </h1>
       ) : null}
@@ -232,13 +235,15 @@ const CartPage = () => {
               <TableCell className="p-2 flex items-center gap-x-2">
                 <button
                   onClick={() => decrementItem(index)}
-                  className="p-2 border rounded">
+                  className="p-2 border rounded"
+                >
                   -
                 </button>
                 <span>{item.quantity}</span>
                 <button
                   onClick={() => incrementItem(index)}
-                  className="p-2 border rounded">
+                  className="p-2 border rounded"
+                >
                   +
                 </button>
               </TableCell>
@@ -263,7 +268,7 @@ const CartPage = () => {
 
       <div className="flex justify-center mt-4">
         <Badge variant="green" className="text-lg px-4 py-2">
-          <Link href="/checkout">Checkout</Link>
+          <Link href="/checkout?type=cart">Checkout</Link>
         </Badge>
       </div>
     </>
