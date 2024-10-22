@@ -1,3 +1,5 @@
+"use server";
+
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
