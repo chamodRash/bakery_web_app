@@ -1,19 +1,17 @@
 "use server";
 
 import FilteredProductsSection from "@/components/filterProductSection";
+import { getProductsByCategorySlug } from "@/data/product";
 import { createClient } from "@/utils/supabase/server";
 
 const CategoryPage = async (context: any) => {
   const supabase = createClient();
   const { category: categorySlug } = context.params;
-  const { data, error } = await supabase
-    .from("product")
-    .select("*")
-    .eq("categoryslug", categorySlug);
+  const products = await getProductsByCategorySlug(categorySlug);
 
   return (
     <div className="w-full min-h-screen flex items-center">
-      <FilteredProductsSection items={data} categoryName={categorySlug} />
+      <FilteredProductsSection items={products} categoryName={categorySlug} />
     </div>
   );
 };
