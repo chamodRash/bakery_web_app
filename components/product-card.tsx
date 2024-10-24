@@ -40,7 +40,9 @@ export const ProductCard = ({
 
   return (
     <Card className="w-[250px] h-[350px] rounded-xl shadow-md">
-      <CardHeader className="p-0 h-[60%]" onClick={handleCardClick}>
+      <CardHeader
+        className="p-0 h-[60%] cursor-pointer"
+        onClick={handleCardClick}>
         <Image
           className="w-full h-full bg-cover bg-center object-cover p-0 rounded-t-xl"
           src={image}
@@ -49,7 +51,9 @@ export const ProductCard = ({
           height={300}
         />
       </CardHeader>
-      <CardContent className="px-4 py-5" onClick={handleCardClick}>
+      <CardContent
+        className="px-4 py-5 cursor-pointer"
+        onClick={handleCardClick}>
         <div className="w-full flex items-center justify-between">
           <div className="w-2/3 flex flex-col gap-y-1">
             <CardTitle className="w-full text-base font-bold text-zinc-700 overflow-hidden whitespace-nowrap text-ellipsis">
@@ -69,8 +73,7 @@ export const ProductCard = ({
           name={name}
           image={image}
           price={price}
-          asChild
-        >
+          asChild>
           <Button className="w-3/4 rounded-xl text-white">Buy Now</Button>
         </BuyNowModal>
         <CartModal productid={id} name={name} image={image} price={price}>

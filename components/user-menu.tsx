@@ -28,23 +28,27 @@ export const UserMenu = ({}: Props) => {
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent className="w-44 pl-2">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link href="/profile">
+        <Link className="" href="/profile">
           <DropdownMenuItem className="flex gap-x-3 items-center text-gray-600 cursor-pointer hover:text-primary hover:font-semibold transition hover:bg-secondary">
             <UserRoundSearch size={16} />
             Profile
           </DropdownMenuItem>
         </Link>
-        <DropdownMenuItem className="flex gap-x-3 items-center text-gray-600 cursor-pointer hover:text-primary hover:font-semibold transition hover:bg-secondary">
-          <ShoppingCart size={16} />
-          Cart
-        </DropdownMenuItem>
-        <DropdownMenuItem className="flex gap-x-3 items-center text-gray-600 cursor-pointer hover:text-primary hover:font-semibold transition hover:bg-secondary">
-          <Logs size={16} />
-          Orders
-        </DropdownMenuItem>
+        <Link className="" href="/cart">
+          <DropdownMenuItem className="flex gap-x-3 items-center text-gray-600 cursor-pointer hover:text-primary hover:font-semibold transition hover:bg-secondary">
+            <ShoppingCart size={16} />
+            Cart
+          </DropdownMenuItem>
+        </Link>
+        <Link className="" href="/orders">
+          <DropdownMenuItem className="flex gap-x-3 items-center text-gray-600 cursor-pointer hover:text-primary hover:font-semibold transition hover:bg-secondary">
+            <Logs size={16} />
+            Orders
+          </DropdownMenuItem>
+        </Link>
         <DropdownMenuSeparator />
         <LogoutBtn>
           <DropdownMenuItem className="flex gap-x-3 items-center text-gray-600 cursor-pointer hover:text-primary hover:font-semibold transition hover:bg-secondary">

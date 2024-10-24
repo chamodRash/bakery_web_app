@@ -1,13 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { Search } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
 
 import Logo from "@/public/logo.jpg";
 import LoginBtn from "@/components/auth/login-btn";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { UserMenu } from "./user-menu";
 
 import Link from "next/link";
@@ -17,11 +15,15 @@ interface NavbarProps {
   user: boolean;
 }
 
+const routeHomepage = () => {
+  window.location.href = "/";
+};
+
 const Navbar = ({ user }: NavbarProps) => {
   return (
     <nav className="w-full h-24 bg-white drop-shadow-md fixed top-0 left-0 z-50">
       <div className="w-10/12 mx-auto h-full flex items-center justify-between ">
-        <Link href={"/"}>
+        <div onClick={routeHomepage} className="cursor-pointer">
           <Image
             src={Logo}
             width={150}
@@ -29,7 +31,7 @@ const Navbar = ({ user }: NavbarProps) => {
             alt="Logo"
             className="w-36"
           />
-        </Link>
+        </div>
         <SearchBar />
         <div className="flex items-center w-52 gap-x-10 justify-end">
           <Button

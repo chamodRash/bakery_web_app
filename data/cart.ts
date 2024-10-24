@@ -2,9 +2,9 @@
 
 import { createClient } from "@/utils/supabase/server";
 
-const supabase = createClient();
-
 export const getCartCount = async () => {
+  const supabase = createClient();
+
   const session = await supabase.auth.getUser();
   const userId = session.data.user?.id;
 
@@ -17,6 +17,8 @@ export const getCartCount = async () => {
 };
 
 export const getCartItems = async () => {
+  const supabase = createClient();
+
   const session = await supabase.auth.getUser();
   const userId = session.data.user?.id;
   const products = [];
@@ -44,6 +46,8 @@ export const getCartItems = async () => {
 };
 
 export const getCheckedCartItems = async (userId: string | undefined) => {
+  const supabase = createClient();
+
   const { data, error } = await supabase
     .from("cart")
     .select(
@@ -68,12 +72,16 @@ export const getCheckedCartItems = async (userId: string | undefined) => {
 };
 
 export const deleteCartItemById = async (id: number) => {
+  const supabase = createClient();
+
   const { data, error } = await supabase.from("cart").delete().eq("id", id);
 
   return { data, error };
 };
 
 export const updateCartStatusById = async (id: number, status: string) => {
+  const supabase = createClient();
+
   const { data, error } = await supabase
     .from("cart")
     .update({ status: status })

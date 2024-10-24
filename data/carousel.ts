@@ -1,16 +1,11 @@
-"use server"
+"use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { carouselItemsProps } from "./types";
 
-const supabase = createClient();
+export const getSlides = async (): Promise<carouselItemsProps[]> => {
+  const supabase = createClient();
+  const { data: slider, error } = await supabase.from("slider").select("*");
 
-export const getSlides = async () => {
-  
-  const { data: slider, error } = await supabase
-  .from('slider')
-  .select('image')
-  
-  return slider;
+  return slider as carouselItemsProps[];
 };
-
-

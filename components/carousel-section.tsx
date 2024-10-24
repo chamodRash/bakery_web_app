@@ -5,7 +5,7 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { getSlides } from "@/data/carousel";
-import { CarouselProps } from "@/data/types";
+import { carouselItemsProps, CarouselProps } from "@/data/types";
 import { Button } from "./ui/button";
 
 interface Slide {
@@ -70,24 +70,16 @@ const Carousel: React.FC<CarouselProps> = ({
   );
 };
 
-const CarouselSection: React.FC = () => {
-  const supabase = createClient();
-  const [slides, setSlides] = useState<Slide[]>([]);
+interface carouselSectionProps {
+  carouselItems: carouselItemsProps[];
+}
 
-  const getHomapageSlides = useCallback(async () => {
-    const slidesData = await getSlides();
-    setSlides(slidesData as any);
-  }, []);
-
-  useEffect(() => {
-    getHomapageSlides();
-  }, [getSlides]);
-
+const CarouselSection: React.FC<carouselSectionProps> = ({ carouselItems }) => {
   return (
     <div className="flex justify-center items-center max-h-[27rem] max-w-screen m-10 px-10 rounded-3xl">
-      {slides.length > 0 && (
-        <Carousel autoSlide={true} slidesCount={slides.length}>
-          {slides.map((slide, index) => (
+      {carouselItems.length > 0 && (
+        <Carousel autoSlide={true} slidesCount={carouselItems.length}>
+          {carouselItems.map((slide, index) => (
             <div
               className="min-w-full h-[27rem] relative rounded-3xl"
               key={index}>
