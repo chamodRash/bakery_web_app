@@ -11,6 +11,14 @@ export const getAllProducts = async () => {
   return product;
 };
 
+export const getAllProductsForChart = async () => {
+  let { data: product, error } = await supabase
+    .from("product")
+    .select("name, qty");
+
+  return product;
+};
+
 export const getAllCategory = async () => {
   let { data: category, error } = await supabase.from("category").select("*");
 
@@ -22,6 +30,19 @@ export const getProductById = async (id: number) => {
     .from("product")
     .select("*")
     .eq("id", id);
+
+  if (Array.isArray(data) && data.length > 0) {
+    return data[0];
+  }
+
+  return data;
+};
+
+export const getProductBySlug = async (slug: string) => {
+  const { data, error } = await supabase
+    .from("product")
+    .select("*")
+    .eq("slug", slug);
 
   if (Array.isArray(data) && data.length > 0) {
     return data[0];

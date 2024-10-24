@@ -1,29 +1,41 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers"; // Import cookies from Next.js
 
 export const addToCart = async (
   productId: number,
   quantity: number,
   price: number
 ) => {
-  const supabase = createClient();
-  const {
-    data: { user },
-    error: sessionError,
-  } = await supabase.auth.getUser();
-  const userId = user?.id;
-  const total = quantity * price;
+  try {
+    const total = quantity * price;
 
-  const { data, error } = await supabase.from("cart").insert([
-    {
-      userid: userId,
+    // Get existing cart from cookies
+    const cartCookie = cookies().get("cart")?.value;
+    let cart = cartCookie ? JSON.parse(cartCookie) : [];
+
+    // Add new product to cart
+    cart.push({
       productid: productId,
       quantity: quantity,
       total: total,
       status: true,
-    },
-  ]);
+    });
 
-  return { data, error };
+    // Update cookies with the new cart
+    cookies().set("cart", JSON.stringify(cart));
+
+    // Return success response
+    return {
+      success: true,
+      cart,
+      message: "Product added to cart successfully.",
+    };
+  } catch (error) {
+    // Return error response
+    return {
+      success: false,
+      error: (error as Error).message || "Failed to add product to cart.",
+    };
+  }
 };

@@ -13,9 +13,11 @@ import { Button } from "./ui/button";
 
 import { ShoppingCart } from "lucide-react";
 import { CartModal } from "@/components/cart-modal";
+import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
   id: number;
+  slug: string;
   name: string;
   price: number;
   image: string;
@@ -23,13 +25,22 @@ interface ProductCardProps {
 }
 export const ProductCard = ({
   id,
+  slug,
   name,
   price,
   image,
   qty,
 }: ProductCardProps) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(`/product/${slug}`);
+  };
+
   return (
-    <Card className="w-[250px] h-[350px] rounded-xl shadow-md">
+    <Card
+      onClick={handleClick}
+      className="w-[250px] h-[350px] rounded-xl shadow-md">
       <CardHeader className="p-0 h-[60%]">
         <Image
           className="w-full h-full bg-cover bg-center object-cover p-0 rounded-t-xl"
@@ -49,7 +60,7 @@ export const ProductCard = ({
               {qty}
             </CardDescription>
           </div>
-          <p className="text-lg font-bold text-primary">{`${price * 10}/=`}</p>
+          <p className="text-lg font-bold text-primary">{`${price}/=`}</p>
         </div>
       </CardContent>
       <CardFooter className="px-4 flex gap-x-4 items-center">

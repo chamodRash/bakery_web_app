@@ -1,15 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { fetchCartItems } from "@/actions/cart";
+import { fetchCartItems, getCart } from "@/actions/cart";
 import Image from "next/image";
 import Link from "next/link";
 
-import { Trash } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Minus, Plus, Trash2 } from "lucide-react";
 
-import { User } from "@supabase/supabase-js";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -20,14 +18,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Bun from "@/public/bun.jpg";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+import { Input } from "@/components/ui/input";
 
-interface NavbarProps {
-  user: User | null;
-}
+import toast from "react-hot-toast";
 
 interface CartItem {
   id: number;
@@ -47,16 +42,8 @@ const CartPage = () => {
 
   const [cartItems, setCartItems] = React.useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // const fetchUser = async () => {
-    //   const {data: {user}} = await supabase.auth.getUser();
-
-    //   setUser(user);
-    // }
-
     const fetchItems = async () => {
       try {
         const data = await fetchCartItems();
@@ -64,209 +51,134 @@ const CartPage = () => {
         console.log("Fetched data:", data);
         setCartItems(data);
       } catch (err) {
-        setError("Something went wrong");
+        toast.error("Something went wrong");
       } finally {
         setLoading(false);
       }
     };
 
-    // fetchUser();
     fetchItems();
+    const cart = getCart();
+    console.log("Cart:", cart);
   }, []);
 
-  const updateItemInCart = async (
-    id: number,
-    quantity: number,
-    total: number
-  ) => {
-    try {
-      const response = await fetch(`/api/cart?id=${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ quantity, total }),
-      });
+  const incrementItem = (index: number) => {};
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to update item");
-      }
+  const decrementItem = (index: number) => {};
 
-      // Optionally update state or refetch cart items
-      console.log("Item updated successfully");
-    } catch (error) {
-      console.error("Error updating item:", error);
-    }
-  };
+  const updateItem = (index: number, quantity: number) => {};
 
-  const incrementItem = (index: number) => {
-    setCartItems((prevItems) => {
-      const item = prevItems[index];
-      const newQuantity = item.quantity + 1;
-      const newTotal = newQuantity * item.product.price;
-
-      const updatedItems = prevItems.map((item, idx) =>
-        idx === index
-          ? { ...item, quantity: newQuantity, total: newTotal }
-          : item
-      );
-
-      updateItemInCart(prevItems[index].id, newQuantity, newTotal); // Update the database
-      return updatedItems;
-    });
-  };
-
-  const decrementItem = (index: number) => {
-    setCartItems((prevItems) => {
-      const item = prevItems[index];
-      const newQuantity = item.quantity > 1 ? item.quantity - 1 : item.quantity;
-      const newTotal = newQuantity * item.product.price;
-
-      const updatedItems = prevItems.map((item, idx) =>
-        idx === index
-          ? { ...item, quantity: newQuantity, total: newTotal }
-          : item
-      );
-
-      updateItemInCart(prevItems[index].id, newQuantity, newTotal); // Update the database
-      return updatedItems;
-    });
-  };
-
-  const deleteItems = async (id: number) => {
-    try {
-      const response = await fetch(`/api/cart?id=${id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to delete item");
-      }
-
-      // Optionally update state or refetch cart items
-      console.log("Item deleted successfully");
-      setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
-    } catch (error) {
-      console.error("Error deleting item:", error);
-    }
-  };
-
-  const ButtonDestructive: React.FC<{ onClick: () => void }> = ({
-    onClick,
-  }) => (
-    <Button
-      variant="ghost"
-      size="icon"
-      className="text-red-500 hover:bg-red-100"
-      onClick={onClick}>
-      <Trash />
-    </Button>
-  );
+  const deleteItems = async (id: number) => {};
 
   const totalAmount = cartItems.reduce(
     (total, item) => total + item.product.price * item.quantity,
     0
   );
 
-  const router = useRouter();
-
-  const handleCartClick = () => {
-    router.push("/userCart");
-  };
-
   return (
-    <>
-      <h1
-        style={{
-          textAlign: "center",
-          fontWeight: "bold",
-          margin: "20px 0",
-          fontSize: "2.5rem",
-        }}>
-        <u>Your Cart</u>
+    <div className="min-h-screen">
+      <h1 className="text-center text-primary uppercase font-black text-2xl py-10">
+        My Cart
       </h1>
 
-      {cartItems.length === 0 ? (
-        <h1
-          style={{
-            textAlign: "center",
-            fontWeight: "bold",
-            margin: "20px 0",
-            fontSize: "2.5rem",
-          }}>
-          Your Cart is Empty. Start Shopping!
-        </h1>
-      ) : null}
-
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Select</TableHead>
-            <TableHead>Item</TableHead>
-            <TableHead>Unit Price</TableHead>
-            <TableHead>Quantity</TableHead>
-            <TableHead>Amount</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {cartItems.map((item, index) => (
-            <TableRow key={item.productid}>
-              <TableCell>
-                <Checkbox checked={item.status} />
-              </TableCell>
-              <TableCell className="font-medium flex gap-x-3 items-center">
-                <Image
-                  src={item.product.image}
-                  width={100}
-                  height={100}
-                  alt="Bun"
-                  className="w-10 h-10 rounded-sm object-center object-cover"
-                />
-                <p>{item.product.name}</p>
-              </TableCell>
-              <TableCell>{item.product.price}/=</TableCell>
-              <TableCell className="p-2 flex items-center gap-x-2">
-                <button
-                  onClick={() => decrementItem(index)}
-                  className="p-2 border rounded">
-                  -
-                </button>
-                <span>{item.quantity}</span>
-                <button
-                  onClick={() => incrementItem(index)}
-                  className="p-2 border rounded">
-                  +
-                </button>
-              </TableCell>
-              <TableCell>{item.product.price * item.quantity}/=</TableCell>
-              <TableCell>
-                <ButtonDestructive onClick={() => deleteItems(item.id)} />
-              </TableCell>
+      <div className="w-11/12 mx-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Select</TableHead>
+              <TableHead>Item</TableHead>
+              <TableHead className="text-right">Unit Price</TableHead>
+              <TableHead className="text-center">Quantity</TableHead>
+              <TableHead className="text-center">Amount</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
+          </TableHeader>
 
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan={3}></TableCell>
-            <TableCell style={{ textAlign: "center", fontWeight: "bold" }}>
-              Total Amount
-            </TableCell>
-            <TableCell>{totalAmount}/=</TableCell>
-          </TableRow>
-        </TableFooter>
-      </Table>
+          {cartItems.length === 0 && (
+            <TableCaption>Your cart is empty</TableCaption>
+          )}
+          <TableBody>
+            {cartItems.map((item, index) => (
+              <TableRow key={item.productid} className="justify-items-center">
+                <TableCell>
+                  <Checkbox checked={item.status} />
+                </TableCell>
+                <TableCell className="font-medium flex gap-x-3 items-center">
+                  <Image
+                    src={item.product.image}
+                    width={100}
+                    height={100}
+                    alt="Bun"
+                    className="w-10 h-10 rounded-sm object-center object-cover"
+                  />
+                  <p>{item.product.name}</p>
+                </TableCell>
+                <TableCell className="text-right font-semibold">
+                  {item.product.price}/=
+                </TableCell>
+                <TableCell className="flex items-center justify-center">
+                  <div className="flex items-center justify-center">
+                    <Button
+                      variant={"secondary"}
+                      size={"icon"}
+                      onClick={() => decrementItem(index)}
+                      className="rounded-l-md">
+                      <Minus size={15} />
+                    </Button>
+                    <Input
+                      type="number"
+                      value={item.quantity}
+                      className="w-16 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      onChange={(e) =>
+                        updateItem(index, Number(e.target.value))
+                      }
+                    />
+                    <Button
+                      variant={"secondary"}
+                      size={"icon"}
+                      onClick={() => incrementItem(index)}
+                      className="rounded-r-md">
+                      <Plus size={15} />
+                    </Button>
+                  </div>
+                </TableCell>
+                <TableCell className="text-center font-semibold">
+                  {item.product.price * item.quantity}/=
+                </TableCell>
+                <TableCell className="flex items-center justify-center">
+                  <Button
+                    variant={"destructive"}
+                    size={"icon"}
+                    onClick={() => deleteItems(item.id)}>
+                    <Trash2 size={20} />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
 
-      <div className="flex justify-center mt-4">
-        <Badge variant="green" className="text-lg px-4 py-2">
-          <Link href="/checkout">Checkout</Link>
-        </Badge>
+          {cartItems.length !== 0 && (
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={3}></TableCell>
+                <TableCell style={{ textAlign: "center", fontWeight: "bold" }}>
+                  Total Amount
+                </TableCell>
+                <TableCell className="text-center">{totalAmount}/=</TableCell>
+              </TableRow>
+            </TableFooter>
+          )}
+        </Table>
       </div>
-    </>
+
+      {cartItems.length !== 0 && (
+        <div className="flex justify-center mt-8">
+          <Button variant="default" className="w-52">
+            <Link href="/checkout?type=cart">Checkout</Link>
+          </Button>
+        </div>
+      )}
+    </div>
   );
 };
 export default CartPage;

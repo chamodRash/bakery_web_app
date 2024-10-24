@@ -1,8 +1,12 @@
 "use client";
 
+import { Merienda } from "next/font/google";
+
 import Navbar from "@/components/navbar";
 import { createClient } from "@/utils/supabase/client";
 import { useCallback, useEffect, useState } from "react";
+
+const merienda = Merienda({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
@@ -31,7 +35,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body>
+      <body className={merienda.className}>
         <Navbar user={loggedUser} />
         <div className="pt-24 bg-[#EEF5FF]">{children}</div>
       </body>

@@ -1,8 +1,15 @@
 "use server";
 
+import { cookies } from "next/headers";
+
 import { createClient } from "@/utils/supabase/server";
 
 const supabase = createClient();
+
+export const getCart = () => {
+  const cartCookie = cookies().get("cart")?.value;
+  return cartCookie ? JSON.parse(cartCookie) : [];
+};
 
 // Function to fetch cart items
 export const fetchCartItems = async () => {

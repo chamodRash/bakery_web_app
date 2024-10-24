@@ -1,4 +1,5 @@
 "use client";
+
 import React, { Children, useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import {
@@ -19,7 +20,13 @@ import {
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-export default function SidebarDemo({
+import { Poppins } from "next/font/google";
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
+
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -84,60 +91,51 @@ export default function SidebarDemo({
   ];
   const [open, setOpen] = useState(false);
   return (
-    <div
-      className={cn(
-        "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 border border-neutral-200 dark:border-neutral-700 overflow-hidden",
-        "h-screen" // for your use case, use `h-screen` instead of `h-[60vh]`
-      )}>
-      <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10">
-          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-            <>
-              <Logo />
-            </>
-            <div className="mt-8 flex flex-col gap-2">
-              {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} />
-              ))}
-            </div>
-          </div>
-          <div>
-            <SidebarLink
-              link={{
-                label: "Manu Arora",
-                href: "#",
-                icon: (
-                  <User
-                    size={10}
-                    className="rounded-full bg-zinc-500 text-white w-6 h-6 p-1"
+    <html>
+      <body className={poppins.className}>
+        <div
+          className={cn(
+            "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 border border-neutral-200 dark:border-neutral-700 overflow-hidden",
+            "h-screen" // for your use case, use `h-screen` instead of `h-[60vh]`
+          )}>
+          <Sidebar open={open} setOpen={setOpen}>
+            <SidebarBody className="justify-between gap-10">
+              <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+                <Link
+                  href="/admin"
+                  className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20">
+                  <Image
+                    src={"/logo.jpg"}
+                    width={100}
+                    height={100}
+                    alt="Logo"
                   />
-                ),
-              }}
-            />
-          </div>
-        </SidebarBody>
-      </Sidebar>
-      {children}
-    </div>
+                </Link>
+                <div className="mt-8 flex flex-col gap-2">
+                  {links.map((link, idx) => (
+                    <SidebarLink key={idx} link={link} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <SidebarLink
+                  link={{
+                    label: "Chamod Rashmika",
+                    href: "/admin/profile",
+                    icon: (
+                      <User
+                        size={10}
+                        className="rounded-full bg-zinc-500 text-white w-6 h-6 p-1"
+                      />
+                    ),
+                  }}
+                />
+              </div>
+            </SidebarBody>
+          </Sidebar>
+          {children}
+        </div>
+      </body>
+    </html>
   );
 }
-export const Logo = () => {
-  return (
-    <Link
-      href="#"
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20">
-      <Image src={"/logo.jpg"} width={100} height={100} alt="Logo" />
-    </Link>
-  );
-};
-export const LogoIcon = () => {
-  return (
-    <Link
-      href="#"
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20">
-      <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
-    </Link>
-  );
-};
-
-// Dummy dashboard component with content

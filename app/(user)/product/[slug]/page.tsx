@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { getProductById } from "@/data/product";
+import { getProductById, getProductBySlug } from "@/data/product";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,14 +21,14 @@ import Link from "next/link";
 
 interface ProductDetailsPageProps {
   params: {
-    id: string;
+    slug: string;
   };
 }
 
 export default function ProductDetailsPage({
   params,
 }: ProductDetailsPageProps) {
-  const productID = params.id;
+  const productSlug = params.slug;
   const [filteredItems, setFilteredItems] = useState<DataItem[]>([]);
   const [categoryName, setCategoryName] = useState<string>("");
 
@@ -41,7 +41,7 @@ export default function ProductDetailsPage({
   const [qty, setQty] = useState(1);
 
   const getProduct = useCallback(async () => {
-    const result = await getProductById(Number(productID));
+    const result = await getProductBySlug(productSlug);
 
     setProduct(result);
   }, []);
@@ -51,7 +51,7 @@ export default function ProductDetailsPage({
   }, [getProduct]);
 
   return (
-    <div className="w-full">
+    <div className="w-full pt-10">
       <div className="w-10/12 mx-auto grid grid-cols-2 gap-x-5">
         <Image
           width={600}
