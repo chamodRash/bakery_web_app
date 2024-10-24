@@ -36,6 +36,7 @@ const Cart: React.FC<{ item: DataItem[] }> = ({ item }) => {
           <ProductCard
             key={val.id}
             id={val.id}
+            slug={val.slug}
             name={val.name}
             price={val.price}
             image={val.image}

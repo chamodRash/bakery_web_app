@@ -94,68 +94,48 @@ const CartPage = () => {
             </TableRow>
           </TableHeader>
 
-          {cartItems.length === 0 && (
-            <TableCaption>Your cart is empty</TableCaption>
-          )}
-          <TableBody>
-            {cartItems.map((item, index) => (
-              <TableRow key={item.productid} className="justify-items-center">
-                <TableCell>
-                  <Checkbox checked={item.status} />
-                </TableCell>
-                <TableCell className="font-medium flex gap-x-3 items-center">
-                  <Image
-                    src={item.product.image}
-                    width={100}
-                    height={100}
-                    alt="Bun"
-                    className="w-10 h-10 rounded-sm object-center object-cover"
-                  />
-                  <p>{item.product.name}</p>
-                </TableCell>
-                <TableCell className="text-right font-semibold">
-                  {item.product.price}/=
-                </TableCell>
-                <TableCell className="flex items-center justify-center">
-                  <div className="flex items-center justify-center">
-                    <Button
-                      variant={"secondary"}
-                      size={"icon"}
-                      onClick={() => decrementItem(index)}
-                      className="rounded-l-md">
-                      <Minus size={15} />
-                    </Button>
-                    <Input
-                      type="number"
-                      value={item.quantity}
-                      className="w-16 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                      onChange={(e) =>
-                        updateItem(index, Number(e.target.value))
-                      }
-                    />
-                    <Button
-                      variant={"secondary"}
-                      size={"icon"}
-                      onClick={() => incrementItem(index)}
-                      className="rounded-r-md">
-                      <Plus size={15} />
-                    </Button>
-                  </div>
-                </TableCell>
-                <TableCell className="text-center font-semibold">
-                  {item.product.price * item.quantity}/=
-                </TableCell>
-                <TableCell className="flex items-center justify-center">
-                  <Button
+        <TableBody>
+          {cartItems.map((item, index) => (
+            <TableRow key={item.productid}>
+              <TableCell>
+                <Checkbox checked={item.status} />
+              </TableCell>
+              <TableCell className="font-medium flex gap-x-3 items-center">
+                <Image
+                  src={item.product.image}
+                  width={100}
+                  height={100}
+                  alt="Bun"
+                  className="w-10 h-10 rounded-sm object-center object-cover"
+                />
+                <p>{item.product.name}</p>
+              </TableCell>
+              <TableCell>{item.product.price}/=</TableCell>
+              <TableCell className="p-2 flex items-center gap-x-2">
+                <button
+                  onClick={() => decrementItem(index)}
+                  className="p-2 border rounded">
+                  -
+                </button>
+                <span>{item.quantity}</span>
+                <button
+                  onClick={() => incrementItem(index)}
+                  className="p-2 border rounded">
+                  +
+                </button>
+              </TableCell>
+              <TableCell>{item.product.price * item.quantity}/=</TableCell>
+              <TableCell>
+                <Button
                     variant={"destructive"}
                     size={"icon"}
                     onClick={() => deleteItems(item.id)}>
                     <Trash2 size={20} />
                   </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
 
           {cartItems.length !== 0 && (
             <TableFooter>

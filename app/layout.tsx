@@ -18,8 +18,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={merienda.className}>
-        {children}
-        <Toaster />
+        <div>{children}</div>
+        <Toaster position="top-right" reverseOrder={false} />
       </body>
     </html>
   );

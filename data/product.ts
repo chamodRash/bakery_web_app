@@ -38,7 +38,7 @@ export const getProductById = async (id: number) => {
   return data;
 };
 
-export const getProductBySlug = async (slug: string) => {
+export const getProductBySlug = async (slug: string | null) => {
   const { data, error } = await supabase
     .from("product")
     .select("*")

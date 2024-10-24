@@ -6,6 +6,7 @@ import Link from "next/link";
 
 interface Item {
   id: number;
+  slug: string;
   title: string;
   category: string;
   price: number;
@@ -27,6 +28,7 @@ const ProductsGrid: React.FC<CardProps> = ({ item }) => {
             <ProductCard
               key={index}
               id={val.id}
+              slug={val.slug}
               name={val.title}
               price={val.price}
               image={val.image}
