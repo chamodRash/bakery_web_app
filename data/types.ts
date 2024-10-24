@@ -9,6 +9,7 @@ export interface DataItem {
   image: string;
   description: string;
   qty: string | number;
+  status?: string;
 }
 
 export interface CategoryItem {

@@ -8,7 +8,7 @@ import { ProductCard } from "./product-card";
 import Link from "next/link";
 
 interface FilteredProductsSectionProps {
-  items: any[] | null;
+  items: DataItem[];
   categoryName: string;
 }
 
@@ -36,15 +36,7 @@ const FilteredProductsSection: React.FC<FilteredProductsSectionProps> = ({
           <div className="w-11/12 mx-auto py-4 place-items-center">
             <div className="flex flex-wrap gap-8 justify-center items-center">
               {items?.map((val, index) => (
-                <ProductCard
-                  key={val.id}
-                  id={val.id}
-                  slug={val.slug}
-                  name={val.name}
-                  price={val.price}
-                  image={val.image}
-                  qty={val.qty}
-                />
+                <ProductCard key={val.id} product={val} />
               ))}
             </div>
           </div>

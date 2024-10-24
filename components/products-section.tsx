@@ -31,15 +31,7 @@ const Cart: React.FC<CartProps> = ({ item }) => {
   return (
     <div className="w-full grid sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-y-10 gap-x-10 justify-center items-center">
       {item.map((val, index) => (
-        <ProductCard
-          key={val.id}
-          id={val.id}
-          slug={val.slug}
-          name={val.name}
-          price={val.price}
-          image={val.image}
-          qty={val.qty}
-        />
+        <ProductCard key={val.id} product={val} />
       ))}
     </div>
   );

@@ -15,23 +15,13 @@ import { ShoppingCart } from "lucide-react";
 import { CartModal } from "@/components/cart-modal";
 import { BuyNowModal } from "./buy-now-modal";
 import { useRouter } from "next/navigation";
+import { DataItem } from "@/data/types";
 
 interface ProductCardProps {
-  id: number;
-  slug: string;
-  name: string;
-  price: number;
-  image: string;
-  qty: number | string;
+  product: DataItem;
 }
-export const ProductCard = ({
-  id,
-  slug,
-  name,
-  price,
-  image,
-  qty,
-}: ProductCardProps) => {
+export const ProductCard = ({ product }: ProductCardProps) => {
+  const { id, name, image, price, qty, slug } = product;
   const router = useRouter();
 
   const handleCardClick = () => {
@@ -76,7 +66,7 @@ export const ProductCard = ({
           asChild>
           <Button className="w-3/4 rounded-xl text-white">Buy Now</Button>
         </BuyNowModal>
-        <CartModal productid={id} name={name} image={image} price={price}>
+        <CartModal product={product}>
           <Button variant={"secondary"} size={"icon"} className="rounded-lg">
             <ShoppingCart size={20} />
           </Button>
