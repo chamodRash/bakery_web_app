@@ -67,11 +67,7 @@ const ProductDetailsSection = ({ product }: ProductDetailsSectionProps) => {
             </p>
           </div>
           <div className="w-full grid grid-cols-2 items-center justify-stretch gap-x-5">
-            <CartModal
-              productid={product?.id}
-              name={product?.name}
-              image={product?.image}
-              price={product?.price}>
+            <CartModal product={product}>
               <Button variant={"outline"} className="rounded-full">
                 Add to Cart
               </Button>
