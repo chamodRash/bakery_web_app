@@ -1,9 +1,10 @@
 import { guestLogin } from "@/actions/guest-login";
 import { createClient } from "@/utils/supabase/client";
-
-const supabase = createClient();
+import { UserProps } from "./types";
 
 export const getSessionUser = async () => {
+  const supabase = createClient();
+
   try {
     const {
       data: { user },
@@ -26,6 +27,8 @@ export const getSessionUser = async () => {
 };
 
 export const getSessionUserByPhone = async (phone: string = "") => {
+  const supabase = createClient();
+
   try {
     let { data: user, error: retrieveUserError } = await supabase
       .from("profiles")
@@ -46,6 +49,8 @@ export const getSessionUserByPhone = async (phone: string = "") => {
 };
 
 export const getUserByPhone = async (phone: string = "") => {
+  const supabase = createClient();
+
   try {
     let { data: user, error: retrieveUserError } = await supabase
       .from("profiles")
@@ -67,6 +72,8 @@ export const getUserByPhone = async (phone: string = "") => {
 };
 
 export const getUserRoleById = async (id: string) => {
+  const supabase = createClient();
+
   try {
     let { data: user, error: retrieveUserError } = await supabase
       .from("profiles")
@@ -87,6 +94,8 @@ export const getUserRoleById = async (id: string) => {
 };
 
 export const getUserRoleByPhone = async (phone: string) => {
+  const supabase = createClient();
+
   try {
     let { data: user, error: retrieveUserError } = await supabase
       .from("profiles")
@@ -106,22 +115,15 @@ export const getUserRoleByPhone = async (phone: string) => {
   }
 };
 
-export const getUserByid = async (id: string) => {
-  try {
-    let { data: user, error: retrieveUserError } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", id);
+export const getUserByid = async (
+  id: string | undefined
+): Promise<UserProps[]> => {
+  const supabase = createClient();
 
-    if (retrieveUserError) {
-      return null;
-    }
+  let { data: user, error: retrieveUserError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", id);
 
-    if (Array.isArray(user) && user.length > 0) {
-      return user[0];
-    }
-    return user;
-  } catch {
-    return null;
-  }
+  return user as UserProps[];
 };

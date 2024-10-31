@@ -3,20 +3,10 @@
 import React from "react";
 import { ProductCard } from "./product-card";
 import Link from "next/link";
-
-interface Item {
-  id: number;
-  slug: string;
-  title: string;
-  category: string;
-  price: number;
-  image: string;
-  desc: string;
-  available: number | string;
-}
+import { DataItem } from "@/data/types";
 
 interface CardProps {
-  item: Item[];
+  item: DataItem[];
 }
 
 const ProductsGrid: React.FC<CardProps> = ({ item }) => {
@@ -25,15 +15,7 @@ const ProductsGrid: React.FC<CardProps> = ({ item }) => {
       <div className="mx-10 grid grid-cols-4 gap-4">
         {item.map((val, index) => (
           <Link href={`/product?id=${val.id}`} key={index}>
-            <ProductCard
-              key={index}
-              id={val.id}
-              slug={val.slug}
-              name={val.title}
-              price={val.price}
-              image={val.image}
-              qty={val.available}
-            />
+            <ProductCard key={index} product={val} />
           </Link>
         ))}
       </div>

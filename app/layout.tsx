@@ -1,9 +1,9 @@
-import { Inter } from "next/font/google";
+import { Merienda } from "next/font/google";
 import "./globals.css";
 
 import { Toaster } from "react-hot-toast";
 
-const inter = Inter({ subsets: ["latin"] });
+const merienda = Merienda({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Bakery Web App",
@@ -17,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={merienda.className}>
         <div>{children}</div>
         <Toaster position="top-right" reverseOrder={false} />
       </body>

@@ -22,7 +22,6 @@ export default async function ProductCheckoutPage(context: any) {
     data: { user },
     error: authError,
   } = await supabase.auth.getUser();
-  console.log(user?.user_metadata);
   const product = await getProductBySlug(slug);
 
   return (
@@ -65,12 +64,11 @@ export default async function ProductCheckoutPage(context: any) {
               <TableRow>
                 <TableCell
                   colSpan={3}
-                  className="text-right text-base font-bold"
-                >
+                  className="text-right text-base font-bold">
                   Total
                 </TableCell>
                 <TableCell className="text-right font-bold border-double border-b-2">
-                  Rs. {product.price}.00
+                  Rs. {product.price * Number(qty)}.00
                 </TableCell>
               </TableRow>
             </TableBody>

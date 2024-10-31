@@ -1,36 +1,22 @@
-"use client";
+"use server";
 
-import { useState } from "react";
-
-import { DataItem } from "@/data/types";
+import React from "react";
+import { createClient } from "@/utils/supabase/server";
 
 import CategoryButtonSection from "@/components/categoryButton-section";
-import CartSection from "@/components/cart-section";
-import FilteredProductsSection from "@/components/filterProductSection";
 
-const ProductPage = () => {
-  const [filteredItems, setFilteredItems] = useState<DataItem[]>([]);
-  const [categoryName, setCategoryName] = useState<string>("");
+import { getAllCategory, getAllProducts } from "@/data/product";
+import ProductsSection from "@/components/products-section";
 
-  const handleSetItems = (items: DataItem[], categoryName: string) => {
-    setFilteredItems(items);
-    setCategoryName(categoryName);
-  };
+export default async function Home() {
+  const supabase = createClient();
+  const categories = await getAllCategory();
+  const products = await getAllProducts();
 
   return (
-    <div>
-      <CategoryButtonSection setItems={handleSetItems} />
-
-      {filteredItems.length > 0 ? (
-        <FilteredProductsSection
-          items={filteredItems}
-          categoryName={categoryName}
-        />
-      ) : (
-        <CartSection />
-      )}
+    <div className="pb-16 w-full bg-[#EEF5FF] pt-24">
+      <CategoryButtonSection categoryItems={categories} />
+      <ProductsSection items={products} />
     </div>
   );
-};
-
-export default ProductPage;
+}
