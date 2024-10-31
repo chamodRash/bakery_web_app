@@ -1,23 +1,11 @@
 "use server";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React from "react";
 import { createClient } from "@/utils/supabase/server";
 
 import Navbar from "@/components/navbar";
 import CarouselSection from "@/components/carousel-section";
 import CategoryButtonSection from "@/components/categoryButton-section";
-import CartSection from "@/components/products-section";
-import FilteredProductsSection from "@/components/filterProductSection";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-
-import { DataItem } from "@/data/types";
 import { getAllCategory, getAllProducts } from "@/data/product";
 import ProductsSection from "@/components/products-section";
 import { getSlides } from "@/data/carousel";
