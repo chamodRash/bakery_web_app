@@ -1,52 +1,56 @@
 "use client";
 
 import Image from "next/image";
-import { Search } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
 
-import Logo from "@/public/logo.png";
+import Logo from "@/public/logo.jpg";
 import LoginBtn from "@/components/auth/login-btn";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { UserMenu } from "./user-menu";
+
 import Link from "next/link";
+import { SearchBar } from "./searchBar";
+import useCart from "@/hooks/use-cart";
 
 interface NavbarProps {
   user: boolean;
 }
 
+const routeHomepage = () => {
+  window.location.href = "/";
+};
+
 const Navbar = ({ user }: NavbarProps) => {
+  const cart = useCart();
+
   return (
-    <nav className="w-full h-28 bg-secondary drop-shadow-md">
+    <nav className="w-full h-24 bg-white drop-shadow-md fixed top-0 left-0 z-50">
       <div className="w-10/12 mx-auto h-full flex items-center justify-between ">
-        <Link href={"/"}>
-          <Image src={Logo} width={70} height={70} alt="Logo" />
-        </Link>
-        <div className="flex items-center w-2/3 gap-x-10 justify-end">
-          <form action="" className="relative flex items-center">
-            <Input
-              type="search"
-              className="peer transition-all cursor-pointer z-10 h-12 w-12 rounded-full bg-transparent pl-5 outline-none border-primary focus:z-0 focus:border focus:w-[500px] focus:cursor-text focus:border-primary focus:pl-8 focus:pr-4"
-            />
+        <div onClick={routeHomepage} className="cursor-pointer">
+          <Image
+            src={Logo}
+            width={150}
+            height={150}
+            alt="Logo"
+            className="w-36"
+          />
+        </div>
+        <SearchBar />
+        <div className="flex items-center w-52 gap-x-10 justify-end">
+          <Link href={"/cart"}>
             <Button
-              variant={"ghost"}
-              size={"icon"}
-              className={
-                "absolute transition-all rounded-full text-base ml-3 font-bold text-[hsl(26,58%,23%)] peer-hover:bg-white peer-focus:right-2 peer-focus:text-white peer-focus:bg-primary"
-              }>
-              <Search />
+              variant={"secondary"}
+              size={"sm"}
+              className={"relative text-primary rounded-lg text-xl"}
+              asChild>
+              <div>
+                <ShoppingCart />
+                <span className="bg-primary rounded-lg py-0.5 px-2 ml-1.5 text-sm font-medium text-white">
+                  {cart.items.length}
+                </span>
+              </div>
             </Button>
-          </form>
-          <Button
-            variant={"ghost"}
-            size={"icon"}
-            className={
-              "text-primary hover:bg-white hover:text-primary rounded-full text-xl"
-            }>
-            <Link href={"/cart"}>
-              <ShoppingCart />
-            </Link>
-          </Button>
+          </Link>
 
           {!user && (
             <LoginBtn asChild>

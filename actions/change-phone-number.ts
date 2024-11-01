@@ -8,7 +8,7 @@ import otpGenerator from "otp-generator";
 
 import { createClient } from "@/utils/supabase/server";
 import { ChangePhoneSchema } from "@/schemas";
-import sendRegisterOTP from "@/lib/sendMsgs";
+import {sendRegisterOTP} from "@/lib/sendMsgs";
 import { generateRegisterOTP } from "@/lib/tokens";
 import { getUserByPhone } from "@/data/user";
 import { getVerificationTokenByToken } from "@/data/token";

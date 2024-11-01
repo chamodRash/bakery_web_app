@@ -1,47 +1,39 @@
-"use client";
+"use server";
 
-import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
-
-import { getSessionUser } from "@/data/user";
+import React from "react";
+import { createClient } from "@/utils/supabase/server";
 
 import Navbar from "@/components/navbar";
-
-//Chamindu Lakshan
-
-import React, { useState, useEffect, useCallback } from "react";
-import { User } from "@supabase/supabase-js";
 import CarouselSection from "@/components/carousel-section";
 import CategoryButtonSection from "@/components/categoryButton-section";
-import CartSection from "@/components/cart-section";
-import { DataItem } from "@/data/types";
-import FilteredProductsSection from "@/components/filterProductSection";
-//
-export default function Home() {
-  const [filteredItems, setFilteredItems] = useState<DataItem[]>([]);
-  const [categoryName, setCategoryName] = useState<string>("");
+import { getAllCategory, getAllProducts } from "@/data/product";
+import ProductsSection from "@/components/products-section";
+import { getSlides } from "@/data/carousel";
 
-  const handleSetItems = (items: DataItem[], categoryName: string) => {
-    setFilteredItems(items);
-    setCategoryName(categoryName);
-  };
+export default async function Home() {
+  const supabase = createClient();
+  let loggedUser = true;
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (user?.is_anonymous === true || user === null || error) {
+    loggedUser = false;
+  }
+  const categories = await getAllCategory();
+  const products = await getAllProducts();
+  const carousel = await getSlides();
 
   return (
-    <div className="w-full">
-      <Navbar user={true} />
+    <div className="pb-16 w-full bg-[#EEF5FF] pt-24">
+      <Navbar user={loggedUser} />
 
-      <CarouselSection />
+      <CarouselSection carouselItems={carousel} />
 
-      <CategoryButtonSection setItems={handleSetItems} />
+      <CategoryButtonSection categoryItems={categories} />
 
-      {filteredItems.length > 0 ? (
-        <FilteredProductsSection
-          items={filteredItems}
-          categoryName={categoryName}
-        />
-      ) : (
-        <CartSection />
-      )}
+      <ProductsSection items={products} />
     </div>
   );
 }

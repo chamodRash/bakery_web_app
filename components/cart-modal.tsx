@@ -17,38 +17,26 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { addToCart } from "@/actions/add-to-cart";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
+import useCart from "@/hooks/use-cart";
+import { DataItem } from "@/data/types";
 
 interface CartModalProps {
   children: React.ReactNode;
-  productid: number;
-  name: string;
-  image: string;
-  price: number;
+  product: DataItem;
 }
-export const CartModal = ({
-  children,
-  productid,
-  name,
-  image,
-  price,
-}: CartModalProps) => {
+export const CartModal = ({ children, product }: CartModalProps) => {
+  const { name, image } = product;
   const [qty, setQty] = useState(1);
+  const cart = useCart();
 
   const onsubmit = async () => {
-    const { data, error } = await addToCart(productid, qty, price);
-
-    if (error) {
-      toast.error("Failed to add item to cart.");
-      return;
-    }
-
-    !error && toast.success("Item added to cart.");
+    cart.addToCart(product, qty);
   };
 
   return (
     <Dialog>
-      <DialogTrigger>{children}</DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add to Cart</DialogTitle>
