@@ -102,3 +102,28 @@ export const ChangePasswordSchema = z
   .refine((data) => data.newPassword === data.confirmNewPassword, {
     message: "Passwords do not match",
   });
+
+export const orderFormSchema = z.object({
+  name: z
+    .string()
+    .min(1, { message: "Name is required" })
+    .max(100, { message: "Name must be less than 100 characters" }),
+  phone: z
+    .string({
+      required_error: "Phone Number is required",
+    })
+    .length(10, {
+      message: "Phone Number should have 10 digits",
+    })
+    .startsWith("07", {
+      message: "Phone Number should be 07xxxxxxxx",
+    }),
+  note: z.string().optional(), // Optional field
+  date: z.date({
+    required_error: "Date is required",
+    invalid_type_error: "Invalid date format",
+  }),
+  paymentMethod: z.enum(["cash", "card"], {
+    required_error: "Payment method is required",
+  }),
+});

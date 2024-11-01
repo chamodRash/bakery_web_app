@@ -8,7 +8,7 @@ import { createClient } from "@/utils/supabase/server";
 import { LoginSchema } from "@/schemas";
 import { getUserByPhone } from "@/data/user";
 import { generateRegisterOTP } from "@/lib/tokens";
-import sendRegisterOTP from "@/lib/sendMsgs";
+import {sendRegisterOTP} from "@/lib/sendMsgs";
 import { getVerificationTokenByToken } from "@/data/token";
 import { toast } from "sonner";
 

@@ -9,40 +9,20 @@ import { EditProfile } from "./edit-profile";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { ChangePhoneNumber } from "./change-phone";
 import { ChangePassword } from "./change-password";
+import { UserProps } from "@/data/types";
 
-export const MyProfile = () => {
-  const supabase = createClient();
-  const [user, setUser] = useState<any>({});
+interface MyProfileProps {
+  userData: UserProps;
+}
 
-  const getUserDetails = useCallback(async () => {
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    const phone = `0${user?.phone?.slice(2)}`;
-
-    let { data: profiles, error: dbError } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("phone", phone);
-
-    if (profiles && profiles.length > 0) {
-      setUser(profiles[0]);
-    }
-  }, [supabase]);
-
-  useEffect(() => {
-    getUserDetails();
-  }, [getUserDetails, user]);
-
+export const MyProfile = ({ userData }: MyProfileProps) => {
   return (
-    <div className="w-full py-10">
+    <div className="w-full">
       <ViewProfile
-        name={user.name}
-        phone={user.phone}
-        address={user.address}
-        loyaltypoints={user.loyaltypoints}
+        name={userData.name}
+        phone={userData.phone}
+        address={userData.address}
+        loyaltypoints={userData.loyaltypoints}
       />
       <div className="mt-10 w-full flex items-center justify-center gap-x-5">
         <Dialog>
@@ -53,9 +33,9 @@ export const MyProfile = () => {
           </DialogTrigger>
           <DialogContent>
             <EditProfile
-              name={user.name}
-              phone={user.phone}
-              address={user.address}
+              name={userData.name}
+              phone={userData.phone}
+              address={userData.address}
             />
           </DialogContent>
         </Dialog>
@@ -66,7 +46,7 @@ export const MyProfile = () => {
             </Button>
           </DialogTrigger>
           <DialogContent>
-            <ChangePhoneNumber id={user.id} phone={user.phone} />
+            <ChangePhoneNumber id={userData.id} phone={userData.phone} />
           </DialogContent>
         </Dialog>
 
@@ -77,7 +57,7 @@ export const MyProfile = () => {
             </Button>
           </DialogTrigger>
           <DialogContent>
-            <ChangePassword id={user.id} />
+            <ChangePassword id={userData.id} />
           </DialogContent>
         </Dialog>
       </div>

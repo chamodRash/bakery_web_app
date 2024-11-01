@@ -1,27 +1,32 @@
 "use client";
 
 import Image from "next/image";
-import { Search } from "lucide-react";
 import { ShoppingCart } from "lucide-react";
 
 import Logo from "@/public/logo.jpg";
 import LoginBtn from "@/components/auth/login-btn";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { UserMenu } from "./user-menu";
 
 import Link from "next/link";
 import { SearchBar } from "./searchBar";
+import useCart from "@/hooks/use-cart";
 
 interface NavbarProps {
   user: boolean;
 }
 
+const routeHomepage = () => {
+  window.location.href = "/";
+};
+
 const Navbar = ({ user }: NavbarProps) => {
+  const cart = useCart();
+
   return (
     <nav className="w-full h-24 bg-white drop-shadow-md fixed top-0 left-0 z-50">
       <div className="w-10/12 mx-auto h-full flex items-center justify-between ">
-        <Link href={"/"}>
+        <div onClick={routeHomepage} className="cursor-pointer">
           <Image
             src={Logo}
             width={150}
@@ -29,18 +34,23 @@ const Navbar = ({ user }: NavbarProps) => {
             alt="Logo"
             className="w-36"
           />
-        </Link>
+        </div>
         <SearchBar />
         <div className="flex items-center w-52 gap-x-10 justify-end">
-          <Button
-            variant={"secondary"}
-            size={"icon"}
-            className={"text-primary rounded-lg text-xl"}
-            asChild>
-            <Link href={"/cart"}>
-              <ShoppingCart />
-            </Link>
-          </Button>
+          <Link href={"/cart"}>
+            <Button
+              variant={"secondary"}
+              size={"sm"}
+              className={"relative text-primary rounded-lg text-xl"}
+              asChild>
+              <div>
+                <ShoppingCart />
+                <span className="bg-primary rounded-lg py-0.5 px-2 ml-1.5 text-sm font-medium text-white">
+                  {cart.items.length}
+                </span>
+              </div>
+            </Button>
+          </Link>
 
           {!user && (
             <LoginBtn asChild>

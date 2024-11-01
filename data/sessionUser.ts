@@ -3,9 +3,9 @@
 import { guestLogin } from "@/actions/guest-login";
 import { createClient } from "@/utils/supabase/server";
 
-const supabase = createClient();
-
 export const getSessionUser = async () => {
+  const supabase = createClient();
+
   try {
     const {
       data: { user },
@@ -28,6 +28,8 @@ export const getSessionUser = async () => {
 };
 
 export const getSessionUserByPhone = async (phone: string = "") => {
+  const supabase = createClient();
+
   try {
     let { data: user, error: retrieveUserError } = await supabase
       .from("profiles")
