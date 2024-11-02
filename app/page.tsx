@@ -26,7 +26,7 @@ export default async function Home() {
   const carousel = await getSlides();
 
   return (
-    <div className="pb-16 w-full bg-[#EEF5FF] pt-24">
+    <div className="pb-16 w-full pt-24">
       <Navbar user={loggedUser} />
 
       <CarouselSection carouselItems={carousel} />

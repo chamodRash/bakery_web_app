@@ -48,22 +48,29 @@ const CartPage = () => {
     setCartItems(cart.items);
   }, [cart.items]);
 
-  console.log(cartItems);
-
   useEffect(() => {
     setIsMounted(true);
   }, [isMounted]);
 
-  const incrementItem = (index: number) => {};
+  const onCheckItem = (id: number, status: string) => {
+    cart.checkItem(id, status);
+  };
 
-  const decrementItem = (index: number) => {};
+  const incrementItem = (id: number) => {
+    cart.incrementItem(id);
+  };
 
-  const updateItem = (index: number, quantity: number) => {};
+  const decrementItem = (id: number) => {
+    cart.decrementItem(id);
+  };
 
-  const deleteItems = async (id: number) => {};
+  const deleteItems = (id: number) => {
+    cart.removeFromCart(id);
+  };
 
   const totalAmount = cartItems.reduce(
-    (total, item) => total + item.price * item.qty,
+    (total, item) =>
+      total + (item.status === "checked" ? item.price * item.qty : 0),
     0
   );
 
@@ -78,77 +85,95 @@ const CartPage = () => {
       </h1>
 
       <div className="w-11/12 mx-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Select</TableHead>
-              <TableHead>Item</TableHead>
-              <TableHead className="text-right">Unit Price</TableHead>
-              <TableHead className="text-center">Quantity</TableHead>
-              <TableHead className="text-center">Amount</TableHead>
-              <TableHead className="text-center">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {cartItems.map((item, index) => (
-              <TableRow key={item.id}>
-                <TableCell>
-                  <Checkbox checked={item.status ? true : false} />
-                </TableCell>
-                <TableCell className="font-medium flex gap-x-3 items-center">
-                  <Image
-                    src={item.image}
-                    width={100}
-                    height={100}
-                    alt="Bun"
-                    className="w-10 h-10 rounded-sm object-center object-cover"
-                  />
-                  <p>{item.name}</p>
-                </TableCell>
-                <TableCell className="text-center">{item.price}/=</TableCell>
-                <TableCell className="flex items-center justify-center">
-                  <div>
-                    <button
-                      onClick={() => decrementItem(index)}
-                      className="p-2 border rounded">
-                      -
-                    </button>
-                    <span className="px-2">{item.qty}</span>
-                    <button
-                      onClick={() => incrementItem(index)}
-                      className="p-2 border rounded">
-                      +
-                    </button>
-                  </div>
-                </TableCell>
-                <TableCell className="text-center">
-                  {item.price * item.qty}/=
-                </TableCell>
-                <TableCell className="flex items-center justify-center">
-                  <Button
-                    variant={"destructive"}
-                    size={"icon"}
-                    onClick={() => deleteItems(item.id)}>
-                    <Trash2 size={20} />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-
-          {cartItems.length !== 0 && (
-            <TableFooter>
+        {cartItems.length === 0 ? (
+          <p className="text-center text-lg">
+            Your cart is currently empty. Start Shopping!
+          </p>
+        ) : (
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={3}></TableCell>
-                <TableCell style={{ textAlign: "center", fontWeight: "bold" }}>
-                  Total Amount
-                </TableCell>
-                <TableCell className="text-center">{totalAmount}/=</TableCell>
+                <TableHead className="w-20 text-center px-0">Select</TableHead>
+                <TableHead>Item</TableHead>
+                <TableHead className="text-right">Unit Price</TableHead>
+                <TableHead className="text-center">Quantity</TableHead>
+                <TableHead className="text-center">Amount</TableHead>
+                <TableHead className="text-center">Actions</TableHead>
               </TableRow>
-            </TableFooter>
-          )}
-        </Table>
+            </TableHeader>
+
+            <TableBody>
+              {cartItems.map((item, index) => (
+                <TableRow key={item.id}>
+                  <TableCell className="w-28 pl-0 relative">
+                    <Checkbox
+                      onCheckedChange={() => onCheckItem(item.id, item.status)}
+                      checked={item.status === "checked" ? true : false}
+                      className="w-5 h-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                    />
+                  </TableCell>
+                  <TableCell className="font-medium flex gap-x-3 items-center">
+                    <Image
+                      src={item.image}
+                      width={100}
+                      height={100}
+                      alt="Bun"
+                      className="w-14 h-14 rounded-sm object-center object-cover"
+                    />
+                    <p>{item.name}</p>
+                  </TableCell>
+                  <TableCell className="text-right">{item.price}/=</TableCell>
+                  <TableCell className="relative">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center border border-gray-300 rounded-md">
+                      <Button
+                        size={"icon"}
+                        variant={"ghost"}
+                        onClick={() => decrementItem(item.id)}
+                        className="p-2 bg-transparent rounded-r-none">
+                        -
+                      </Button>
+                      <span className="px-4 py-2 border-x border-gray-300">
+                        {item.qty}
+                      </span>
+                      <Button
+                        size={"icon"}
+                        variant={"ghost"}
+                        onClick={() => incrementItem(item.id)}
+                        className="p-2 bg-transparent rounded-l-none">
+                        +
+                      </Button>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {item.price * item.qty}/=
+                  </TableCell>
+                  <TableCell className="relative">
+                    <Button
+                      variant={"destructive"}
+                      size={"icon"}
+                      onClick={() => deleteItems(item.id)}
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                      <Trash2 size={20} />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+
+            {cartItems.length !== 0 && (
+              <TableFooter>
+                <TableRow>
+                  <TableCell colSpan={3}></TableCell>
+                  <TableCell
+                    style={{ textAlign: "center", fontWeight: "bold" }}>
+                    Total Amount
+                  </TableCell>
+                  <TableCell className="text-center">{totalAmount}/=</TableCell>
+                </TableRow>
+              </TableFooter>
+            )}
+          </Table>
+        )}
       </div>
 
       {cartItems.length !== 0 && (
