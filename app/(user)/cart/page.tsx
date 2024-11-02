@@ -48,16 +48,13 @@ const CartPage = () => {
     setCartItems(cart.items);
   }, [cart.items]);
 
-  const onCheckItem = (id: number) => {
-    const item = cartItems.find((item) => item.id === id);
-    if (item) {
-      cart.checkItem(id);
-    }
-  };
-
   useEffect(() => {
     setIsMounted(true);
   }, [isMounted]);
+
+  const onCheckItem = (id: number, status: string) => {
+    cart.checkItem(id, status);
+  };
 
   const incrementItem = (id: number) => {
     cart.incrementItem(id);
@@ -72,7 +69,8 @@ const CartPage = () => {
   };
 
   const totalAmount = cartItems.reduce(
-    (total, item) => total + (item.status ? item.price * item.qty : 0),
+    (total, item) =>
+      total + (item.status === "checked" ? item.price * item.qty : 0),
     0
   );
 
@@ -109,8 +107,8 @@ const CartPage = () => {
                 <TableRow key={item.id}>
                   <TableCell className="w-28 pl-0 relative">
                     <Checkbox
-                      onCheckedChange={() => onCheckItem(item.id)}
-                      checked={item.status ? true : false}
+                      onCheckedChange={() => onCheckItem(item.id, item.status)}
+                      checked={item.status === "checked" ? true : false}
                       className="w-5 h-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                     />
                   </TableCell>
@@ -126,22 +124,22 @@ const CartPage = () => {
                   </TableCell>
                   <TableCell className="text-right">{item.price}/=</TableCell>
                   <TableCell className="relative">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center border border-secondary-foreground rounded-md">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center border border-gray-300 rounded-md">
                       <Button
                         size={"icon"}
                         variant={"ghost"}
                         onClick={() => decrementItem(item.id)}
-                        className="p-2 bg-transparent">
+                        className="p-2 bg-transparent rounded-r-none">
                         -
                       </Button>
-                      <span className="px-4 py-2 border-x border-secondary-foreground">
+                      <span className="px-4 py-2 border-x border-gray-300">
                         {item.qty}
                       </span>
                       <Button
                         size={"icon"}
                         variant={"ghost"}
                         onClick={() => incrementItem(item.id)}
-                        className="p-2 bg-transparent">
+                        className="p-2 bg-transparent rounded-l-none">
                         +
                       </Button>
                     </div>

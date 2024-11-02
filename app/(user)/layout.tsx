@@ -2,6 +2,7 @@ import { Merienda } from "next/font/google";
 
 import Navbar from "@/components/navbar";
 import { createClient } from "@/utils/supabase/server";
+import { Toaster } from "react-hot-toast";
 
 const merienda = Merienda({ subsets: ["latin"] });
 
@@ -25,7 +26,7 @@ export default async function RootLayout({
     <html lang="en">
       <body className={merienda.className}>
         <Navbar user={loggedUser} />
-        <div className="pt-24 bg-[#EEF5FF]">{children}</div>
+        <div className="pt-24">{children}</div>
       </body>
     </html>
   );
