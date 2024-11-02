@@ -43,27 +43,31 @@ const CartPage = () => {
   const [isMounted, setIsMounted] = useState(false);
 
   const cart = useCart();
-
+  
   useEffect(() => {
     setCartItems(cart.items);
   }, [cart.items]);
 
-  console.log(cartItems);
+  const onCheckItem = (id: number) => {
+    const item = cartItems.find(item => item.id === id);
+    if (item) {
+      cart.checkItem(id, !item.status); 
+    }
+  };
 
   useEffect(() => {
     setIsMounted(true);
   }, [isMounted]);
 
-  const incrementItem = (index: number) => {};
+  const incrementItem = (id: number) => {cart.incrementItem(id)};
 
-  const decrementItem = (index: number) => {};
+  const decrementItem = (id: number) => {cart.decrementItem(id)};
 
-  const updateItem = (index: number, quantity: number) => {};
-
-  const deleteItems = async (id: number) => {};
+  
+  const deleteItems =  (id: number) => {cart.removeFromCart(id)};
 
   const totalAmount = cartItems.reduce(
-    (total, item) => total + item.price * item.qty,
+    (total, item) => total + (item.status?item.price * item.qty:0),
     0
   );
 
@@ -78,6 +82,9 @@ const CartPage = () => {
       </h1>
 
       <div className="w-11/12 mx-auto">
+      {cartItems.length === 0 ? (
+        <p className="text-center text-lg">Your cart is currently empty. Start Shopping!</p>
+      ) :(
         <Table>
           <TableHeader>
             <TableRow>
@@ -94,7 +101,7 @@ const CartPage = () => {
             {cartItems.map((item, index) => (
               <TableRow key={item.id}>
                 <TableCell>
-                  <Checkbox checked={item.status ? true : false} />
+                  <Checkbox onCheckedChange={()=>onCheckItem(item.id)} checked={item.status ? true : false} />
                 </TableCell>
                 <TableCell className="font-medium flex gap-x-3 items-center">
                   <Image
@@ -110,13 +117,13 @@ const CartPage = () => {
                 <TableCell className="flex items-center justify-center">
                   <div>
                     <button
-                      onClick={() => decrementItem(index)}
+                      onClick={() => decrementItem(item.id)}
                       className="p-2 border rounded">
                       -
                     </button>
                     <span className="px-2">{item.qty}</span>
                     <button
-                      onClick={() => incrementItem(index)}
+                      onClick={() => incrementItem(item.id)}
                       className="p-2 border rounded">
                       +
                     </button>
@@ -149,6 +156,7 @@ const CartPage = () => {
             </TableFooter>
           )}
         </Table>
+      )}
       </div>
 
       {cartItems.length !== 0 && (
