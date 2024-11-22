@@ -10,6 +10,7 @@ export interface DataItem {
   description: string;
   qty: string | number;
   status?: string;
+  categoryslug: string;
 }
 
 export interface CategoryItem {
