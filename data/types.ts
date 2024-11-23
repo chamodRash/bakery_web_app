@@ -65,3 +65,10 @@ export interface ordersProps {
     total: number;
   }[];
 }
+
+export interface stockProps {
+  id: string;
+  name: string;
+  qty: number;
+  qty_unit: string;
+}
