@@ -10,6 +10,7 @@ export interface DataItem {
   description: string;
   qty: string | number;
   status?: string;
+  categoryslug: string;
 }
 
 export interface CategoryItem {
@@ -63,4 +64,11 @@ export interface ordersProps {
     quantity: number;
     total: number;
   }[];
+}
+
+export interface stockProps {
+  id: string;
+  name: string;
+  qty: number;
+  qty_unit: string;
 }
