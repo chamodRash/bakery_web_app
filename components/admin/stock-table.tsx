@@ -1,6 +1,10 @@
 "use client";
 
 import { stockProps } from "@/data/types";
+import {useState} from "react";
+import { deleteItems } from "@/data/stock"; 
+import { toast } from "react-hot-toast"; 
+
 
 import {
   Table,
@@ -31,12 +35,21 @@ interface StockTableProps {
   stock: stockProps[];
 }
 
-const StockTable = ({ stock }: StockTableProps) => {
-  const deleteStock = (stockID: string) => {
-    // Delete categories
-    console.log("Delete categories");
-  };
 
+const StockTable = ({ stock }: StockTableProps) => {
+  const [loading, setLoading] = useState(false);
+
+  const deleteStock = async (id: string) => {
+    try {
+      setLoading(true);
+      await deleteItems(id); 
+      toast.success("Item deleted successfully!");
+    } catch (error) {
+      toast.error("Failed to delete the item");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <Table>
       <TableCaption>Stocks</TableCaption>
