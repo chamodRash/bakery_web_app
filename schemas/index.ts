@@ -187,9 +187,12 @@ export const stockSchema = z.object({
   name: z.string().min(1, {
     message: "Name is Required",
   }),
-  qty: z.number().min(1, {
-    message: "Quantity is Required",
-  }),
+  qty: z.preprocess(
+    (value) => (value ? Number(value) : undefined),
+    z.number().min(1, {
+      message: "Quantity is Required",
+    })
+  ),
   qty_unit: z.string().min(1, {
     message: "Quantity Unit is Required",
   }),

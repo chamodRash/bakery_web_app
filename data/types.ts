@@ -8,7 +8,7 @@ export interface DataItem {
   price: number;
   image: string;
   description: string;
-  qty: string | number;
+  qty: number;
   status?: string;
   categoryslug: string;
 }

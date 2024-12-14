@@ -1,13 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useState } from "react";
+import { toast } from "react-hot-toast"; 
 import { stockSchema } from "@/schemas";
 
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -16,7 +15,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -30,18 +28,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "../ui/textarea";
+import { updateStock } from "@/data/stock"; 
 import { stockProps } from "@/data/types";
-import Image from "next/image";
-import { Label } from "../ui/label";
 
-interface AddCategoryProps {
+interface EditStockProps {
   children: React.ReactNode;
   stock: stockProps;
+  onStockUpdate?: () => void; 
 }
 
-const EditStock = ({ children, stock }: AddCategoryProps) => {
-  // 1. Define your form.
+const EditStock = ({ children, stock, onStockUpdate }: EditStockProps) => {
   const form = useForm<z.infer<typeof stockSchema>>({
     resolver: zodResolver(stockSchema),
     defaultValues: {
@@ -51,25 +47,34 @@ const EditStock = ({ children, stock }: AddCategoryProps) => {
     },
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof stockSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+  
+  const onSubmit = async (values: z.infer<typeof stockSchema>) => {
+    try {
+    
+      await updateStock(stock.id, values.name, values.qty, values.qty_unit);
+      toast.success("Stock updated successfully!");
+
+      
+      if (onStockUpdate) {
+        onStockUpdate();
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update stock.");
+    }
+  };
 
   return (
     <Dialog>
-      <DialogTrigger className="" asChild>
-        {children}
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Product - {stock.name}</DialogTitle>
+          <DialogTitle>Edit Stock - {stock.name}</DialogTitle>
         </DialogHeader>
-        <div className="w-full h-60vh overflow-y-auto">
+        <div className="w-full max-h-[60vh] overflow-y-auto">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              
               <FormField
                 control={form.control}
                 name="name"
@@ -79,35 +84,40 @@ const EditStock = ({ children, stock }: AddCategoryProps) => {
                     <FormControl>
                       <Input {...field} placeholder="Wheat Flour" />
                     </FormControl>
-                    {/* <FormDescription /> */}
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              
               <FormField
                 control={form.control}
                 name="qty"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Stock Quantity</FormLabel>
+                    <FormLabel>Stock Quantity:</FormLabel>
                     <FormControl>
                       <Input {...field} type="number" placeholder="100" />
                     </FormControl>
-                    <FormDescription />
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              
               <FormField
                 control={form.control}
                 name="qty_unit"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Quantity Unit</FormLabel>
+                    <FormLabel>Quantity Unit:</FormLabel>
                     <FormControl>
-                      <Select {...field} defaultValue={field.value}>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Unit of measurement " />
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Unit of measurement" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="int">Integer</SelectItem>
@@ -118,15 +128,14 @@ const EditStock = ({ children, stock }: AddCategoryProps) => {
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormDescription>
-                      Whether the quantity is int, g, kg, ml, l
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              
               <Button type="submit" className="w-40">
-                Edit
+                Save Changes
               </Button>
             </form>
           </Form>

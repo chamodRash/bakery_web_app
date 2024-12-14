@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
 import { stockSchema } from "@/schemas";
+import toast from "react-hot-toast";
 
 import {
   Dialog,
@@ -34,6 +35,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { CategoryItem } from "@/data/types";
+import {addStock} from "@/data/stock";
 
 interface AddCategoryProps {
   children: React.ReactNode;
@@ -44,17 +46,32 @@ const AddStock = ({ children }: AddCategoryProps) => {
   const form = useForm<z.infer<typeof stockSchema>>({
     resolver: zodResolver(stockSchema),
     defaultValues: {
-      qty: 0,
-      qty_unit: "int",
+      
     },
   });
 
+  const [isLoading,setIsLoading]=useState(false);
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof stockSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+  const onSubmit = async (values: z.infer<typeof stockSchema>) => {
+    try {
+      setIsLoading(true);
+      await addStock({
+        name: values.name,
+        qty: Number(values.qty),
+        qty_unit: values.qty_unit,
+      });
+      toast.success("Stock added successfully!");
+
+      
+      form.reset();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to add stock."
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Dialog>
@@ -104,7 +121,7 @@ const AddStock = ({ children }: AddCategoryProps) => {
                   <FormItem>
                     <FormLabel>Quantity Unit</FormLabel>
                     <FormControl>
-                      <Select {...field} defaultValue={field.value}>
+                    <Select value={field.value} onValueChange={field.onChange}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Unit of measurement " />
                         </SelectTrigger>
