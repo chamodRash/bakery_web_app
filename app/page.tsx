@@ -6,8 +6,8 @@ import { createClient } from "@/utils/supabase/server";
 import Navbar from "@/components/navbar";
 import CarouselSection from "@/components/carousel-section";
 import CategoryButtonSection from "@/components/categoryButton-section";
+import ProductsWithPagination from "@/components/ui/productsPagination";
 import { getAllCategory, getAllProducts } from "@/data/product";
-import ProductsSection from "@/components/products-section";
 import { getSlides } from "@/data/carousel";
 
 export default async function Home() {
@@ -21,6 +21,7 @@ export default async function Home() {
   if (user?.is_anonymous === true || user === null || error) {
     loggedUser = false;
   }
+
   const categories = await getAllCategory();
   const products = await getAllProducts();
   const carousel = await getSlides();
@@ -33,7 +34,8 @@ export default async function Home() {
 
       <CategoryButtonSection categoryItems={categories} />
 
-      <ProductsSection items={products} />
+      {/* Pass Products to the Client Component */}
+      <ProductsWithPagination products={products} />
     </div>
   );
 }

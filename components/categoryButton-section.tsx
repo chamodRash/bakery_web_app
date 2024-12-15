@@ -9,7 +9,7 @@ import { CategoryItem } from "@/data/types";
 import { getAllProducts } from "@/data/product";
 import { Button } from "./ui/button";
 import Link from "next/link";
-
+ 
 interface CategoryButtonSectionProps {
   categoryItems: CategoryItem[];
 }
