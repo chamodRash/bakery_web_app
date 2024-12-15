@@ -1,18 +1,15 @@
 "use server";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React from "react";
 import { createClient } from "@/utils/supabase/server";
+import { getSlides } from "@/data/carousel";
+import { getAllCategory, getAllProducts } from "@/data/product";
 
 import Navbar from "@/components/navbar";
 import CarouselSection from "@/components/carousel-section";
-import CategoryButtonSection from "@/components/categoryButton-section";
-import CartSection from "@/components/products-section";
-import FilteredProductsSection from "@/components/filterProductSection";
-
-import { DataItem } from "@/data/types";
-import { getAllCategory, getAllProducts } from "@/data/product";
 import ProductsSection from "@/components/products-section";
-import { getSlides } from "@/data/carousel";
+import CategoryButtonSection from "@/components/categoryButton-section";
+import { Toaster } from "react-hot-toast";
 
 export default async function Home() {
   const supabase = createClient();
@@ -38,6 +35,8 @@ export default async function Home() {
       <CategoryButtonSection categoryItems={categories} />
 
       <ProductsSection items={products} />
+
+      {/* <Toaster position="top-right" reverseOrder={false} /> */}
     </div>
   );
 }

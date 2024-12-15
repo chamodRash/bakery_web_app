@@ -46,7 +46,9 @@ export const UpdateStockQty = ({ children, stock }: UpdateStockQtyProps) => {
     } finally {
       setLoading(false);
     }
-    router.refresh();
+    setTimeout(() => {
+      router.refresh();
+    }, 1000);
   };
 
   return (

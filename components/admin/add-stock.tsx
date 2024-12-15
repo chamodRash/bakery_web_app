@@ -72,7 +72,9 @@ const AddStock = ({ children }: AddCategoryProps) => {
     } finally {
       setIsLoading(false);
     }
-    router.refresh();
+    setTimeout(() => {
+      router.refresh();
+    }, 1000);
   };
 
   return (
@@ -146,7 +148,9 @@ const AddStock = ({ children }: AddCategoryProps) => {
                 )}
               />
               <DialogClose asChild>
-                <Button type="submit">Create</Button>
+                <Button type="submit" disabled={isLoading}>
+                  Create
+                </Button>
               </DialogClose>
             </form>
           </Form>

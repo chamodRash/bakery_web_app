@@ -19,8 +19,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={merienda.className}>
         <div>{children}</div>
-        <Toaster position="top-right" reverseOrder={false} />
       </body>
+      <Toaster position="top-right" reverseOrder={false} />
     </html>
   );
 }

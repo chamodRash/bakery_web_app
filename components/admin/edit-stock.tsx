@@ -63,7 +63,9 @@ const EditStock = ({ children, stock, onStockUpdate }: EditStockProps) => {
       console.error(error);
       toast.error("Failed to update stock.");
     }
-    router.refresh();
+    setTimeout(() => {
+      router.refresh();
+    }, 1000);
   };
 
   return (

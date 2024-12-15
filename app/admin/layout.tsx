@@ -1,4 +1,5 @@
 import AdminSidebar from "@/components/admin/sidebar";
+import { Toaster } from "react-hot-toast";
 
 export const metadata = {
   title: "Bakery Web App - Admin panel",
@@ -14,6 +15,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AdminSidebar>{children}</AdminSidebar>
+        {/* <Toaster position="top-right" reverseOrder={false} /> */}
       </body>
     </html>
   );
