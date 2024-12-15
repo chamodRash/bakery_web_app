@@ -6,7 +6,6 @@ import toast from "react-hot-toast";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -19,12 +18,14 @@ import { useState } from "react";
 import { DataItem, stockProps } from "@/data/types";
 import { Button } from "../ui/button";
 import { updateStockQuantity } from "@/data/stock";
+import { useRouter } from "next/navigation";
 
 interface UpdateStockQtyProps {
   children: React.ReactNode;
   stock: stockProps;
 }
 export const UpdateStockQty = ({ children, stock }: UpdateStockQtyProps) => {
+  const router = useRouter();
   const { id, name, qty_unit } = stock;
   const [qty, setQty] = useState<number>(stock.qty as number);
   const [loading, setLoading] = useState<boolean>(false);
@@ -35,18 +36,18 @@ export const UpdateStockQty = ({ children, stock }: UpdateStockQtyProps) => {
       return;
     }
 
-    setLoading(true); 
+    setLoading(true);
     try {
-      await updateStockQuantity(id, qty); 
+      await updateStockQuantity(id, qty);
       toast.success("Stock quantity updated successfully!");
     } catch (error) {
       console.error("Failed to update stock quantity:", error);
       toast.error("Failed to update stock quantity. Please try again.");
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
+    router.refresh();
   };
-
 
   return (
     <Dialog>
@@ -68,24 +69,23 @@ export const UpdateStockQty = ({ children, stock }: UpdateStockQtyProps) => {
                 value={qty}
                 onChange={(e) => {
                   const inputValue = parseInt(e.target.value, 10);
-                  setQty(Math.max(0, Math.min(inputValue || 0))); 
+                  setQty(Math.max(0, Math.min(inputValue || 0)));
                 }}
-                min="0" 
-                
                 disabled={loading}
               />
             </div>
 
-            
-            <DialogClose className="w-full flex items-center justify-center">
-              <Button
-                variant={"default"}
-                className="w-full"
-                onClick={onsubmit}
-                disabled={loading}>
-                {loading ? "Updating..." : "Update"}
-              </Button>
-            </DialogClose>
+            <DialogFooter>
+              <DialogClose className="w-full">
+                <Button
+                  variant={"default"}
+                  className="w-full"
+                  onClick={onsubmit}
+                  disabled={loading}>
+                  {loading ? "Updating..." : "Update"}
+                </Button>
+              </DialogClose>
+            </DialogFooter>
           </div>
         </div>
       </DialogContent>

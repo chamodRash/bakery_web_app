@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { toast } from "react-hot-toast"; 
+import { toast } from "react-hot-toast";
 import { stockSchema } from "@/schemas";
 
 import {
@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,16 +29,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { updateStock } from "@/data/stock"; 
+import { updateStock } from "@/data/stock";
 import { stockProps } from "@/data/types";
+import { useRouter } from "next/navigation";
 
 interface EditStockProps {
   children: React.ReactNode;
   stock: stockProps;
-  onStockUpdate?: () => void; 
+  onStockUpdate?: () => void;
 }
 
 const EditStock = ({ children, stock, onStockUpdate }: EditStockProps) => {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof stockSchema>>({
     resolver: zodResolver(stockSchema),
     defaultValues: {
@@ -47,14 +51,11 @@ const EditStock = ({ children, stock, onStockUpdate }: EditStockProps) => {
     },
   });
 
-  
   const onSubmit = async (values: z.infer<typeof stockSchema>) => {
     try {
-    
       await updateStock(stock.id, values.name, values.qty, values.qty_unit);
       toast.success("Stock updated successfully!");
 
-      
       if (onStockUpdate) {
         onStockUpdate();
       }
@@ -62,6 +63,7 @@ const EditStock = ({ children, stock, onStockUpdate }: EditStockProps) => {
       console.error(error);
       toast.error("Failed to update stock.");
     }
+    router.refresh();
   };
 
   return (
@@ -74,7 +76,6 @@ const EditStock = ({ children, stock, onStockUpdate }: EditStockProps) => {
         <div className="w-full max-h-[60vh] overflow-y-auto">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              
               <FormField
                 control={form.control}
                 name="name"
@@ -89,7 +90,6 @@ const EditStock = ({ children, stock, onStockUpdate }: EditStockProps) => {
                 )}
               />
 
-              
               <FormField
                 control={form.control}
                 name="qty"
@@ -104,7 +104,6 @@ const EditStock = ({ children, stock, onStockUpdate }: EditStockProps) => {
                 )}
               />
 
-              
               <FormField
                 control={form.control}
                 name="qty_unit"
@@ -114,8 +113,7 @@ const EditStock = ({ children, stock, onStockUpdate }: EditStockProps) => {
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
+                        defaultValue={field.value}>
                         <SelectTrigger>
                           <SelectValue placeholder="Unit of measurement" />
                         </SelectTrigger>
@@ -133,10 +131,11 @@ const EditStock = ({ children, stock, onStockUpdate }: EditStockProps) => {
                 )}
               />
 
-              
-              <Button type="submit" className="w-40">
-                Save Changes
-              </Button>
+              <DialogClose asChild>
+                <Button variant={"default"} className="w-full">
+                  Update Stock
+                </Button>
+              </DialogClose>
             </form>
           </Form>
         </div>

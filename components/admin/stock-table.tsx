@@ -1,10 +1,9 @@
 "use client";
 
 import { stockProps } from "@/data/types";
-import {useState} from "react";
-import { deleteItems } from "@/data/stock"; 
-import { toast } from "react-hot-toast"; 
-
+import { useState } from "react";
+import { deleteItems } from "@/data/stock";
+import { toast } from "react-hot-toast";
 
 import {
   Table,
@@ -30,26 +29,29 @@ import { PenLine, Plus, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { UpdateStockQty } from "./update-stock-qty";
 import EditStock from "./edit-stock";
+import { useRouter } from "next/navigation";
 
 interface StockTableProps {
   stock: stockProps[];
 }
 
-
 const StockTable = ({ stock }: StockTableProps) => {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const deleteStock = async (id: string) => {
     try {
       setLoading(true);
-      await deleteItems(id); 
+      await deleteItems(id);
       toast.success("Item deleted successfully!");
     } catch (error) {
       toast.error("Failed to delete the item");
     } finally {
       setLoading(false);
     }
+    router.refresh();
   };
+
   return (
     <Table>
       <TableCaption>Stocks</TableCaption>

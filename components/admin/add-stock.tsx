@@ -13,6 +13,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogClose,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
@@ -35,22 +36,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
 import { CategoryItem } from "@/data/types";
-import {addStock} from "@/data/stock";
+import { addStock } from "@/data/stock";
+import { useRouter } from "next/navigation";
 
 interface AddCategoryProps {
   children: React.ReactNode;
 }
 
 const AddStock = ({ children }: AddCategoryProps) => {
+  const router = useRouter();
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof stockSchema>>({
     resolver: zodResolver(stockSchema),
-    defaultValues: {
-      
-    },
+    defaultValues: {},
   });
 
-  const [isLoading,setIsLoading]=useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof stockSchema>) => {
     try {
@@ -62,7 +64,6 @@ const AddStock = ({ children }: AddCategoryProps) => {
       });
       toast.success("Stock added successfully!");
 
-      
       form.reset();
     } catch (error) {
       toast.error(
@@ -71,6 +72,7 @@ const AddStock = ({ children }: AddCategoryProps) => {
     } finally {
       setIsLoading(false);
     }
+    router.refresh();
   };
 
   return (
@@ -121,7 +123,9 @@ const AddStock = ({ children }: AddCategoryProps) => {
                   <FormItem>
                     <FormLabel>Quantity Unit</FormLabel>
                     <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Unit of measurement " />
                         </SelectTrigger>
@@ -141,7 +145,9 @@ const AddStock = ({ children }: AddCategoryProps) => {
                   </FormItem>
                 )}
               />
-              <Button type="submit">Create</Button>
+              <DialogClose asChild>
+                <Button type="submit">Create</Button>
+              </DialogClose>
             </form>
           </Form>
         </div>
