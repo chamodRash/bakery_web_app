@@ -2,41 +2,99 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { assert } from "console";
+import { CategoryItem, DataItem } from "./types";
 
-const supabase = createClient();
+export const getAllProducts = async (): Promise<DataItem[]> => {
+  const supabase = createClient();
+  let { data: products, error } = await supabase.from("product").select("*");
 
-export const getAllProducts = async () =>{    
-    let { data: product, error } = await supabase
-    .from('product')
-    .select('*');
+  return products as DataItem[];
+};
 
-    return product;
-}
+export const getAllProductsForChart = async () => {
+  const supabase = createClient();
+  let { data: product, error } = await supabase
+    .from("product")
+    .select("name, qty");
 
-export const getAllCategory = async () =>{
-    
-    let { data: category, error } = await supabase
-    .from('category')
-    .select('*');
+  return product;
+};
 
-    return category;
-}
+export const getAllCategory = async (): Promise<CategoryItem[]> => {
+  const supabase = createClient();
+  let { data: category, error } = await supabase
+    .from("category")
+    .select("id, name, description, img_url, slug");
 
-export const getCategoryById = async (id: number) =>{
-    let { data: category, error } = await supabase
-    .from('category')
-    .select('*')
-    .eq('id' , id);
+  return category as CategoryItem[];
+};
 
-    return category;
-}
+export const getProductById = async (id: number) => {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("product")
+    .select("*")
+    .eq("id", id);
 
-export const getProductByCategory = async (categoryId: number) =>{
-    let { data: products, error } = await supabase
-    .from('product')
-    .select('*')
-    .eq('categoryid' , categoryId);
+  if (Array.isArray(data) && data.length > 0) {
+    return data[0];
+  }
 
-    return products;
-}
+  return data;
+};
 
+export const getProductBySlug = async (slug: string | null) => {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("product")
+    .select("*")
+    .eq("slug", slug);
+
+  if (Array.isArray(data) && data.length > 0) {
+    return data[0];
+  }
+
+  return data;
+};
+
+export const getCategoryById = async (id: number) => {
+  const supabase = createClient();
+  let { data: category, error } = await supabase
+    .from("category")
+    .select("*")
+    .eq("id", id);
+
+  return category;
+};
+
+export const getProductByCategory = async (categoryId: number) => {
+  const supabase = createClient();
+  let { data: products, error } = await supabase
+    .from("product")
+    .select("*")
+    .eq("categoryid", categoryId);
+
+  return products;
+};
+
+export const getProductsByCategorySlug = async (
+  categoryslug: string
+): Promise<DataItem[]> => {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("product")
+    .select("*")
+    .eq("categoryslug", categoryslug);
+
+  return data as DataItem[];
+};
+
+export const getProductsBySearch = async (search: string | undefined) => {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("product")
+    .select("*")
+    .ilike("name", `%${search}%`);
+
+  return data;
+};

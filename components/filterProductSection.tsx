@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { DataItem } from "@/data/types";
 import { Button } from "@/components/ui/button";
 import { HiShoppingCart } from "react-icons/hi";
 import { ProductCard } from "./product-card";
+import Link from "next/link";
 
 interface FilteredProductsSectionProps {
   items: DataItem[];
@@ -15,35 +16,34 @@ const FilteredProductsSection: React.FC<FilteredProductsSectionProps> = ({
   items,
   categoryName,
 }) => {
-  return (
-    <div className="container-fluid max-w-screen m-10 px-10">
-      <div className="row">
-        <h1 className="text-center text-[#5E3719] font-black text-2xl pb-5 pt-5">
-          {categoryName}
-        </h1>
-        <Cart item={items} />
-      </div>
-    </div>
-  );
-};
+  const [isMounted, setIsMounted] = useState(false);
 
-const Cart: React.FC<{ item: DataItem[] }> = ({ item }) => {
-  return (
-    <div className="container mx-auto py-4 place-items-center">
-      <div className="grid grid-cols-4 gap-4">
-        {item.map((val) => (
-          <ProductCard
-            key={val.id}
-            id={val.id}
-            name={val.name}
-            price={val.price}
-            image={val.image}
-            qty={val.qty}
-          />
-        ))}
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
+
+  if (isMounted) {
+    return (
+      <div className="container-fluid max-w-screen m-10 px-10">
+        <div className="row">
+          <h1 className="text-center text-primary font-black text-2xl pb-5 pt-5">
+            {categoryName}
+          </h1>
+          <div className="w-11/12 mx-auto py-4 place-items-center">
+            <div className="flex flex-wrap gap-8 justify-center items-center">
+              {items?.map((val, index) => (
+                <ProductCard key={val.id} product={val} />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 };
 
 export default FilteredProductsSection;

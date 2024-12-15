@@ -10,7 +10,13 @@ const font = Poppins({
 export const AuthHeader = ({ label }: { label: string }) => {
   return (
     <div className="w-full flex flex-col gap-y-3 items-center justify-center">
-      <Image src={"/logo.png"} alt="logo" width={80} height={80} />
+      <Image
+        src={"/logo.jpg"}
+        alt="logo"
+        width={150}
+        height={150}
+        className="w-40"
+      />
       <h3
         className={cn(
           "text-center text-zinc-900 text-2xl font-semibold underline",

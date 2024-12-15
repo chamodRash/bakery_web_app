@@ -1,8 +1,8 @@
 import { createClient } from "@/utils/supabase/client";
 
-const supabase = createClient();
-
 export const getVerificationTokenByPhone = async (phone: string) => {
+  const supabase = createClient();
+
   try {
     let { data: verificationtoken, error: retrieveUserError } = await supabase
       .from("verificationtoken")
@@ -23,6 +23,8 @@ export const getVerificationTokenByPhone = async (phone: string) => {
 };
 
 export const getVerificationTokenByToken = async (token: number) => {
+  const supabase = createClient();
+
   try {
     let { data: verificationtoken, error: retrieveUserError } = await supabase
       .from("verificationtoken")
