@@ -1,17 +1,13 @@
 "use server";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React from "react";
 import { createClient } from "@/utils/supabase/server";
 
 import Navbar from "@/components/navbar";
 import CarouselSection from "@/components/carousel-section";
 import CategoryButtonSection from "@/components/categoryButton-section";
-import CartSection from "@/components/products-section";
-import FilteredProductsSection from "@/components/filterProductSection";
-
-import { DataItem } from "@/data/types";
+import ProductsWithPagination from "@/components/ui/productPagination";
 import { getAllCategory, getAllProducts } from "@/data/product";
-import ProductsSection from "@/components/products-section";
 import { getSlides } from "@/data/carousel";
 
 export default async function Home() {
@@ -25,6 +21,7 @@ export default async function Home() {
   if (user?.is_anonymous === true || user === null || error) {
     loggedUser = false;
   }
+
   const categories = await getAllCategory();
   const products = await getAllProducts();
   const carousel = await getSlides();
@@ -37,7 +34,7 @@ export default async function Home() {
 
       <CategoryButtonSection categoryItems={categories} />
 
-      <ProductsSection items={products} />
+      <ProductsWithPagination products={products} />
     </div>
   );
 }
