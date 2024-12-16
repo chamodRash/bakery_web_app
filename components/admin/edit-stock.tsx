@@ -39,7 +39,7 @@ interface EditStockProps {
   onStockUpdate?: () => void;
 }
 
-const EditStock = ({ children, stock, onStockUpdate }: EditStockProps) => {
+export const EditStock = ({ children, stock, onStockUpdate }: EditStockProps) => {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof stockSchema>>({
@@ -132,7 +132,7 @@ const EditStock = ({ children, stock, onStockUpdate }: EditStockProps) => {
               />
 
               <DialogClose asChild>
-                <Button variant={"default"} className="w-full">
+                <Button type="submit" variant={"default"} className="w-full">
                   Update Stock
                 </Button>
               </DialogClose>
