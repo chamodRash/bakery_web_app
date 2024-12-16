@@ -58,6 +58,7 @@ export interface ordersProps {
   deliverydatetime: Date;
   deliveryaddress: string;
   paymentmethod: string;
+  order_type: string;
   orderitem: {
     id: number;
     productid: number;
