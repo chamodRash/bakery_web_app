@@ -11,6 +11,7 @@ import { UserMenu } from "./user-menu";
 import Link from "next/link";
 import { SearchBar } from "./searchBar";
 import useCart from "@/hooks/use-cart";
+import React from "react";
 
 interface NavbarProps {
   user: boolean;
@@ -22,6 +23,11 @@ const routeHomepage = () => {
 
 const Navbar = ({ user }: NavbarProps) => {
   const cart = useCart();
+  const [isMount, setIsMount] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMount(true);
+  }, []);
 
   return (
     <nav className="w-full h-24 bg-white drop-shadow-md fixed top-0 left-0 z-50">

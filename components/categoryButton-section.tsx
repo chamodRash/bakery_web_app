@@ -19,6 +19,11 @@ const CategoryButtonSection: React.FC<CategoryButtonSectionProps> = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 8;
+  const [isMount, setIsMount] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMount(true);
+  }, []);
 
   const handlePrevClick = () => {
     if (currentIndex > 0) {

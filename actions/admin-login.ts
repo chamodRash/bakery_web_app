@@ -33,12 +33,8 @@ const signInSupabase = async (values: z.infer<typeof LoginSchema>) => {
   return { success: trysignInData.user.id };
 };
 
-export async function login(values: z.infer<typeof LoginSchema>) {
+export async function adminLogin(values: z.infer<typeof LoginSchema>) {
   const user = await getUserByPhone(values.phone);
-
-  if (user?.role === "ADMIN" || user?.role === "MASTER") {
-    return { error: "Admins cannot login here! Use /admin/login" };
-  }
 
   if (user?.error) {
     return { error: user.error.message };
@@ -48,7 +44,15 @@ export async function login(values: z.infer<typeof LoginSchema>) {
     return { error: "User does not exist!" };
   }
 
-  if (!user.phoneverified && !values.code) {
+  if (user?.role === "USER") {
+    return { error: "Users cannot login here!" };
+  }
+
+  if (!user?.phoneverified && !values.code) {
+    return { error: "Phone not verified!" };
+  }
+
+  if (user.phoneverified && !values.code) {
     const otp = await generateRegisterOTP(values.phone);
 
     const isOTPsent = await sendRegisterOTP(values.phone, otp);
@@ -60,7 +64,7 @@ export async function login(values: z.infer<typeof LoginSchema>) {
     return { success: "OTP Sent!" };
   }
 
-  if (!user.phoneverified && values.code) {
+  if (values.code) {
     const existingToken = await getVerificationTokenByToken(
       Number(values.code)
     );
@@ -76,11 +80,6 @@ export async function login(values: z.infer<typeof LoginSchema>) {
     }
 
     await supabase
-      .from("profiles")
-      .update({ phoneverified: new Date() })
-      .eq("phone", existingToken.phone);
-
-    await supabase
       .from("verificationtoken")
       .delete()
       .eq("id", existingToken.id);
@@ -92,8 +91,6 @@ export async function login(values: z.infer<typeof LoginSchema>) {
     return { error: trySignIn.error };
   }
 
-  console.log(`${trySignIn.success} Logged In!`);
-
-  revalidatePath("/", "layout");
-  redirect("/");
+  revalidatePath("/admin", "layout");
+  redirect("/admin");
 }

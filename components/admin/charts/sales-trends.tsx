@@ -48,7 +48,6 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const timeframes = [
-  { label: "Today", value: "today" },
   { label: "This Month", value: "this_month" },
   { label: "Last Month", value: "last_month" },
   { label: "Last 3 Months", value: "3_months" },
@@ -74,7 +73,7 @@ export function SalesTrendsChart() {
   const [activeChart, setActiveChart] =
     React.useState<keyof typeof chartConfig>("online");
 
-  const [selectedTimeframe, setSelectedTimeframe] = useState("today");
+  const [selectedTimeframe, setSelectedTimeframe] = useState("this_month");
   const [tendingSales, setTendingSales] = useState<OrderChartType[]>([]);
   const [total, setTotal] = useState({ online: 0, pos: 0 });
 
@@ -116,9 +115,6 @@ export function SalesTrendsChart() {
 
       const today = new Date();
       switch (selectedTimeframe) {
-        case "today":
-          fromDate = new Date(today.setHours(0, 0, 0, 0));
-          break;
         case "this_month":
           fromDate = new Date(today.getFullYear(), today.getMonth(), 1);
           break;
