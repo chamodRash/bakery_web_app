@@ -22,6 +22,25 @@ export const getAllOrders = async () => {
   }
 };
 
+export const getAllOrdersByDateRange = async ({ from, to }: any) => {
+  const supabase = createClient();
+  try {
+    let { data: orders, error } = await supabase
+      .from("order")
+      .select("id, total, order_type, createdat")
+      .gte("createdat", from)
+      .lte("createdat", to);
+
+    if (error) {
+      return error;
+    }
+
+    return orders;
+  } catch (error) {
+    return error;
+  }
+};
+
 export const getOrdersByUserId = async (
   id: string | undefined
 ): Promise<ordersProps[]> => {
@@ -35,4 +54,24 @@ export const getOrdersByUserId = async (
     .eq("userid", id);
 
   return orders as ordersProps[];
+};
+
+export const getTrendingProducts = async ({ from, to }: any) => {
+  const supabase = createClient();
+  try {
+    let { data: orders, error } = await supabase
+      .from("orderitem")
+      .select("productid, product(id, name), quantity")
+      .gte("createdat", from)
+      .lte("createdat", to)
+      .order("quantity", { ascending: false });
+
+    if (error) {
+      return error;
+    }
+
+    return orders;
+  } catch (error) {
+    return error;
+  }
 };

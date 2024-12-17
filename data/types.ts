@@ -8,8 +8,9 @@ export interface DataItem {
   price: number;
   image: string;
   description: string;
-  qty: string | number;
+  qty: number;
   status?: string;
+  categoryslug: string;
 }
 
 export interface CategoryItem {
@@ -57,10 +58,18 @@ export interface ordersProps {
   deliverydatetime: Date;
   deliveryaddress: string;
   paymentmethod: string;
+  order_type: string;
   orderitem: {
     id: number;
     productid: number;
     quantity: number;
     total: number;
   }[];
+}
+
+export interface stockProps {
+  id: string;
+  name: string;
+  qty: number;
+  qty_unit: string;
 }
