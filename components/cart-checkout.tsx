@@ -13,7 +13,6 @@ import Image from "next/image";
 import CheckoutDetails from "@/components/checkout-details";
 import useCart from "@/hooks/use-cart";
 import { useEffect, useState } from "react";
-import { DataItem } from "@/data/types";
 
 interface CartCheckoutProps {
   fullName: string;

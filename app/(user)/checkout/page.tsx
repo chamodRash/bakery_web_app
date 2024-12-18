@@ -13,9 +13,6 @@ import { getProductBySlug } from "@/data/product";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/server";
 import CheckoutDetails from "@/components/checkout-details";
-import { getOrderById } from "@/data/order";
-import OrderSuccess from "@/components/order-success";
-import OrderCancel from "@/components/order-error";
 import CartCheckout from "@/components/cart-checkout";
 
 interface contextProps {
