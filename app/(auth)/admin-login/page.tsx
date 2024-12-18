@@ -30,10 +30,12 @@ import { LoginSchema } from "@/schemas";
 import Image from "next/image";
 import { adminLogin } from "@/actions/admin-login";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const LoginForm = () => {
   const [isPending, startTransition] = useTransition();
   const [isOTP, setIsOTP] = useState(false);
+  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(LoginSchema),
@@ -50,9 +52,14 @@ const LoginForm = () => {
         if (data?.error) {
           toast.error(data?.error);
         }
-        if (data?.success == "OTP Sent!") {
+        if (data?.success) {
           toast.success(data?.success);
-          setIsOTP(true);
+          if (data?.success == "OTP Sent!") {
+            setIsOTP(true);
+          } else if (data?.success == "Logged in!") {
+            // redirect to admin dashboard
+            router.push("/admin");
+          }
         }
       });
     });
@@ -93,7 +100,7 @@ const LoginForm = () => {
                               type="text"
                               disabled={isPending}
                               className={
-                                "border-0 shadow-none focus-visible:outline-none"
+                                "border-0 shadow-none focus-visible:outline-0"
                               }
                             />
                           </FormControl>
@@ -118,7 +125,7 @@ const LoginForm = () => {
                               type="password"
                               disabled={isPending}
                               className={
-                                "border-0 shadow-none focus-visible:outline-none"
+                                "border-0 shadow-none focus-visible:outline-0"
                               }
                             />
                           </FormControl>

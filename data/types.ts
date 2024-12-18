@@ -53,17 +53,26 @@ export interface UserProps {
 
 export interface ordersProps {
   id: number;
+  userid: string;
   total: number;
   status: string;
   deliverydatetime: Date;
   deliveryaddress: string;
   paymentmethod: string;
   order_type: string;
+  createdat: Date;
+  updatedat: Date;
   orderitem: {
     id: number;
     productid: number;
     quantity: number;
     total: number;
+    product: {
+      id: number;
+      name: string;
+      price: number;
+      image: string;
+    };
   }[];
 }
 

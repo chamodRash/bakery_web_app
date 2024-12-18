@@ -52,38 +52,59 @@ export async function adminLogin(values: z.infer<typeof LoginSchema>) {
     return { error: "Phone not verified!" };
   }
 
-  if (user.phoneverified && !values.code) {
-    const otp = await generateRegisterOTP(values.phone);
+  // if (user.phoneverified && !values.code) {
+  //   const otp = await generateRegisterOTP(values.phone);
 
-    const isOTPsent = await sendRegisterOTP(values.phone, otp);
+  //   const isOTPsent = await sendRegisterOTP(values.phone, otp);
 
-    if (!isOTPsent.sent) {
-      return { error: "Failed to send OTP. Try Login again" };
-    }
+  //   if (!isOTPsent.sent) {
+  //     return { error: "Failed to send OTP. Try Login again" };
+  //   }
 
-    return { success: "OTP Sent!" };
-  }
+  //   return { success: "OTP Sent!" };
+  // }
 
-  if (values.code) {
-    const existingToken = await getVerificationTokenByToken(
-      Number(values.code)
-    );
+  // if (values.code) {
+  //   const existingToken = await getVerificationTokenByToken(
+  //     Number(values.code)
+  //   );
 
-    if (!existingToken) {
-      return { error: "OTP does not exists!" };
-    }
+  //   if (!existingToken) {
+  //     return { error: "OTP does not exists!" };
+  //   }
 
-    const hasExpired = new Date(existingToken?.expires) < new Date();
+  //   const hasExpired = new Date(existingToken?.expires) < new Date();
 
-    if (hasExpired) {
-      return { error: "OTP has expired!" };
-    }
+  //   if (hasExpired) {
+  //     return { error: "OTP has expired!" };
+  //   }
 
-    await supabase
-      .from("verificationtoken")
-      .delete()
-      .eq("id", existingToken.id);
-  }
+  //   await supabase
+  //     .from("verificationtoken")
+  //     .delete()
+  //     .eq("id", existingToken.id);
+
+  //   // Sign in the user after OTP verification
+  //   const trySignIn = await signInSupabase(values);
+
+  //   if (trySignIn?.error) {
+  //     return { error: trySignIn.error };
+  //   }
+
+  //   // Wait for Supabase to sync the session before returning success
+  //   const {
+  //     data: { user: sessionUser },
+  //   } = await supabase.auth.getUser();
+
+  //   if (!sessionUser) {
+  //     return {
+  //       error: "Session could not be established. Try logging in again.",
+  //     };
+  //   }
+
+  //   console.log("User logged in:", sessionUser.id);
+  //   return { success: "Logged in!" };
+  // }
 
   const trySignIn = await signInSupabase(values);
 
@@ -91,6 +112,17 @@ export async function adminLogin(values: z.infer<typeof LoginSchema>) {
     return { error: trySignIn.error };
   }
 
-  revalidatePath("/admin", "layout");
-  redirect("/admin");
+  // Wait for Supabase to sync the session before redirecting
+  const {
+    data: { user: sessionUser },
+  } = await supabase.auth.getUser();
+
+  if (!sessionUser) {
+    return { error: "Session could not be established. Try logging in again." };
+  }
+
+  return { success: "Logged in!" };
+
+  // Now perform the redirect
+  // redirect("/admin");
 }

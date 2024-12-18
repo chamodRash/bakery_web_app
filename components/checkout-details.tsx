@@ -35,21 +35,27 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { orderFormSchema } from "@/schemas";
 import { z } from "zod";
-import { placeProductCashOrder } from "@/actions/checkout";
+import {
+  placeProductCardOrder,
+  placeProductCashOrder,
+} from "@/actions/checkout";
 import toast from "react-hot-toast";
 import BeatLoader from "react-spinners/BeatLoader";
+import useCart from "@/hooks/use-cart";
 
 interface props {
-  product: DataItem;
-  qty: number;
+  items: { product: DataItem; qty: number }[];
+  type: "cart" | "product";
   name: string;
   phone: string | undefined;
 }
 
-const CheckoutDetails = ({ product, qty, name, phone }: props) => {
+const CheckoutDetails = ({ items, type, name, phone }: props) => {
   const [date, setDate] = useState<Date>();
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [isCard, setIsCard] = useState(false);
+  const cart = useCart();
 
   const form = useForm<z.infer<typeof orderFormSchema>>({
     resolver: zodResolver(orderFormSchema),
@@ -63,16 +69,47 @@ const CheckoutDetails = ({ product, qty, name, phone }: props) => {
   });
 
   function onSubmit(values: z.infer<typeof orderFormSchema>) {
+    console.log(values);
     if (values.paymentMethod === "cash") {
       startTransition(() => {
-        placeProductCashOrder(product, qty, values).then((result) => {
-          console.log(result);
-          if (result.error) {
-            toast.error(result.error);
+        placeProductCashOrder({ items, values }).then((result) => {
+          if (result?.error) {
+            toast.error("Something went wrong! try again later.");
           }
-          if (result.success) {
+          if (result?.success) {
             toast.success(result.success);
+            if (type === "cart") {
+              const selectedCartItems = cart.items.filter(
+                (item) => item.status === "checked"
+              );
+              selectedCartItems.map((item) => {
+                cart.removeFromCart(item.id);
+              });
+            }
             setOrderSuccess(true);
+          }
+        });
+      });
+    } else if (values.paymentMethod === "card") {
+      startTransition(() => {
+        placeProductCardOrder({ items, values }).then((result) => {
+          if (result?.redirectUrl) {
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = result?.redirectUrl;
+
+            Object.keys(result?.params).forEach((key) => {
+              const input = document.createElement("input");
+              input.type = "hidden";
+              input.name = key;
+              input.value = String(
+                result?.params[key as keyof typeof result.params]
+              );
+              form.appendChild(input);
+            });
+
+            document.body.appendChild(form);
+            form.submit();
           }
         });
       });
@@ -165,8 +202,7 @@ const CheckoutDetails = ({ product, qty, name, phone }: props) => {
                         className={cn(
                           "w-full pl-3 text-left font-normal",
                           !field.value && "text-muted-foreground"
-                        )}
-                      >
+                        )}>
                         {field.value ? (
                           format(field.value, "PPP")
                         ) : (
@@ -204,7 +240,9 @@ const CheckoutDetails = ({ product, qty, name, phone }: props) => {
                   Payment Method <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
-                  <Select {...field}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Payment Method" />
                     </SelectTrigger>
@@ -218,6 +256,7 @@ const CheckoutDetails = ({ product, qty, name, phone }: props) => {
               </FormItem>
             )}
           />
+
           <Button className="w-full mt-10" type="submit" disabled={isPending}>
             Checkout Now
           </Button>
