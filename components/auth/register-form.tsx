@@ -126,7 +126,7 @@ const RegisterForm = () => {
                           type="text"
                           disabled={isPending}
                           className={
-                            "border-0 shadow-none focus-visible:ring-0 "
+                            "border-0 shadow-none focus-visible:outline-0 "
                           }
                         />
                       </FormControl>
@@ -153,7 +153,7 @@ const RegisterForm = () => {
                           name="phone"
                           disabled={isPending}
                           className={
-                            "border-0 shadow-none focus-visible:ring-0"
+                            "border-0 shadow-none focus-visible:outline-0"
                           }
                         />
                       </FormControl>
@@ -179,7 +179,7 @@ const RegisterForm = () => {
                           name="password"
                           disabled={isPending}
                           className={
-                            "border-0 shadow-none focus-visible:ring-0"
+                            "border-0 shadow-none focus-visible:outline-0"
                           }
                         />
                       </FormControl>
@@ -205,7 +205,7 @@ const RegisterForm = () => {
                           name="confirmPassword"
                           disabled={isPending}
                           className={
-                            "border-0 shadow-none focus-visible:ring-0"
+                            "border-0 shadow-none focus-visible:outline-0"
                           }
                         />
                       </FormControl>

@@ -185,9 +185,9 @@ export const placeProductCardOrder = async ({
     redirectUrl: "https://sandbox.payhere.lk/pay/checkout",
     params: {
       merchant_id: merchantId,
-      return_url: "http://localhost:3000/orders?status=success",
-      cancel_url: "http://localhost:3000/orders?status=cancel",
-      notify_url: "http://localhost:3000/api/payhere/notify",
+      return_url: "https://bakery-web-app.vercel.app/order/",
+      cancel_url: "https://bakery-web-app.vercel.app/order/",
+      notify_url: "https://bakery-web-app.vercel.app/api/payhere/notify",
       order_id: orderId,
       items: "cart items",
       currency: currency,

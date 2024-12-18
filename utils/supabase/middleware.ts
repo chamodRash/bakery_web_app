@@ -49,6 +49,7 @@ export async function updateSession(request: NextRequest) {
 
   const {
     data: { user },
+    error,
   } = await supabase.auth.getUser();
 
   // Allow public routes for all users
@@ -74,7 +75,7 @@ export async function updateSession(request: NextRequest) {
   if (user && adminRoutes) {
     const userRole = user?.user_metadata?.user_role;
 
-    if (userRole !== "ADMIN" && userRole !== "MASTER") {
+    if (userRole === "USER") {
       const redirectUrl = request.nextUrl.clone();
       redirectUrl.pathname = "/";
       return NextResponse.redirect(redirectUrl);

@@ -100,8 +100,7 @@ const CartCheckout = ({ fullName, phone }: CartCheckoutProps) => {
                 <TableRow>
                   <TableCell
                     colSpan={3}
-                    className="text-right text-base font-bold"
-                  >
+                    className="text-right text-base font-bold">
                     Total
                   </TableCell>
                   <TableCell className="text-right font-bold border-double border-b-2">

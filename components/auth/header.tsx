@@ -11,7 +11,7 @@ export const AuthHeader = ({ label }: { label: string }) => {
   return (
     <div className="w-full flex flex-col gap-y-3 items-center justify-center">
       <Image
-        src={"/logo.jpg"}
+        src={"/logo.png"}
         alt="logo"
         width={150}
         height={150}

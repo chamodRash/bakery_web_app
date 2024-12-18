@@ -9,7 +9,7 @@ export const getAllOrders = async () => {
     let { data: orders, error } = await supabase
       .from("order")
       .select(
-        "id, total, status, deliverydatetime, deliveryaddress, paymentmethod, orderitem(id, productid, quantity, total)"
+        "id, userid, total, status, deliverydatetime, deliveryaddress, paymentmethod, createdat, updatedat, ordernotes, confirmationcode, order_type, orderitem(id, productid, quantity, total)"
       );
 
     if (error) {
@@ -20,6 +20,36 @@ export const getAllOrders = async () => {
   } catch (error) {
     return error;
   }
+};
+
+export const getAllOrdersByUserID = async (
+  id: number
+): Promise<ordersProps> => {
+  const supabase = createClient();
+  let { data: orders, error } = await supabase
+    .from("order")
+    .select(
+      "id, userid, total, status, deliverydatetime, deliveryaddress, paymentmethod, createdat, updatedat, ordernotes, confirmationcode, order_type, orderitem(id, productid, quantity, total, product(id, name, price, image))"
+    )
+    .eq("userid", id);
+
+  return orders as unknown as ordersProps;
+};
+
+export const getOrderById = async (
+  id: number | undefined
+): Promise<ordersProps> => {
+  const supabase = createClient();
+
+  let { data: order, error } = await supabase
+    .from("order")
+    .select(
+      "id, total, status, deliverydatetime, deliveryaddress, paymentmethod, order_type, orderitem(id, productid, quantity, total, product(id, name, price, image))"
+    )
+    .eq("id", id)
+    .single();
+
+  return order as unknown as ordersProps;
 };
 
 export const getAllOrdersByDateRange = async ({ from, to }: any) => {
@@ -49,11 +79,11 @@ export const getOrdersByUserId = async (
   let { data: orders, error } = await supabase
     .from("order")
     .select(
-      "id, total, status, deliverydatetime, deliveryaddress, paymentmethod, orderitem(id, productid, quantity, total)"
+      "id, total, status, deliverydatetime, deliveryaddress, paymentmethod, orderitem(id, productid, quantity, total, product(id, name, price, image))"
     )
     .eq("userid", id);
 
-  return orders as ordersProps[];
+  return orders as unknown as ordersProps[];
 };
 
 export const getTrendingProducts = async ({ from, to }: any) => {

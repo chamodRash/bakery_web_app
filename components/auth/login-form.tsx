@@ -92,7 +92,7 @@ const LoginForm = () => {
                           type="text"
                           disabled={isPending}
                           className={
-                            "border-0 shadow-none focus-visible:ring-0"
+                            "border-0 shadow-none focus-visible:outline-0"
                           }
                         />
                       </FormControl>
@@ -117,7 +117,7 @@ const LoginForm = () => {
                           type="password"
                           disabled={isPending}
                           className={
-                            "border-0 shadow-none focus-visible:ring-0"
+                            "border-0 shadow-none focus-visible:outline-0"
                           }
                         />
                       </FormControl>

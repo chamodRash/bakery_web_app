@@ -48,11 +48,8 @@ export const getProductBySlug = async (slug: string | null) => {
   const { data, error } = await supabase
     .from("product")
     .select("*")
-    .eq("slug", slug);
-
-  if (Array.isArray(data) && data.length > 0) {
-    return data[0];
-  }
+    .eq("slug", slug)
+    .single();
 
   return data;
 };
