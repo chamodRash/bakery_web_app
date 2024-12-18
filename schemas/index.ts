@@ -169,6 +169,9 @@ export const productSchema = z.object({
   slug: z.string().min(1, {
     message: "Slug is Required",
   }),
+  status: z.string().min(1, {
+    message: "Status is Required",
+  }),
   img: z
     .instanceof(File)
     .optional()

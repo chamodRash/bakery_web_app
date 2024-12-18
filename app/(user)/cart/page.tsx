@@ -99,6 +99,7 @@ const CartPage = () => {
                 <TableHead className="text-center">Quantity</TableHead>
                 <TableHead className="text-center">Amount</TableHead>
                 <TableHead className="text-center">Actions</TableHead>
+      
               </TableRow>
             </TableHeader>
 
