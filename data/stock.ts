@@ -17,6 +17,13 @@ export const getStock = async (): Promise<stockProps[]> => {
   return stock as stockProps[];
 };
 
+export const getAllStocksForChart = async () => {
+  const supabase = createClient();
+  let { data: stock, error } = await supabase.from("stock").select("name, qty");
+
+  return stock;
+};
+
 export const addStock = async (item: {
   name: string;
   qty: number;

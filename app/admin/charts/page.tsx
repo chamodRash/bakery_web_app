@@ -29,7 +29,7 @@ const ChartsPage = async ({ searchParams }: ChartsPageProps) => {
         <ProductsInventory chartData={products} />
       )}
       {searchParams && searchParams.chart === "stock-levels" && (
-        <StockLevelsChart chartData={stock} />
+        <StockLevelsChart chartData={stock} place="charts" />
       )}
       {searchParams && searchParams.chart === "trending-products" && (
         <TrendingProductsChart />

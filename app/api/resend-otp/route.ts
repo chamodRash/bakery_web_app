@@ -1,34 +1,29 @@
+import { NextResponse } from "next/server";
 import { resendOTP } from "@/actions/register";
-import { NextApiRequest, NextApiResponse } from "next";
 
-interface ResendOTPRequest extends NextApiRequest {
-  body: {
-    phone: string;
-  };
-}
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const { phone } = body;
 
-interface ResendOTPResponse {
-  success?: string;
-  error?: string;
-}
-
-export default async function handler(
-  req: ResendOTPRequest,
-  res: NextApiResponse
-) {
-  if (req.method === "POST") {
-    const { phone } = req.body;
     if (!phone) {
-      return res.status(400).json({ error: "Phone number is required." });
+      return NextResponse.json(
+        { error: "Phone number is required." },
+        { status: 400 }
+      );
     }
 
-    const result: ResendOTPResponse = await resendOTP(phone);
+    const result = await resendOTP(phone);
+
     if (result?.error) {
-      return res.status(400).json({ error: result.error });
+      return NextResponse.json({ error: result.error }, { status: 400 });
     }
 
-    return res.status(200).json({ success: result.success });
+    return NextResponse.json({ success: result.success }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "An unexpected error occurred." },
+      { status: 500 }
+    );
   }
-
-  return res.status(405).json({ error: "Method not allowed." });
 }
