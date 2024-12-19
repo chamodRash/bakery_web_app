@@ -18,6 +18,8 @@ export const LoginSchema = z.object({
   code: z.optional(z.string()),
 });
 
+// export const AdminRegisterSchema = z.object();
+
 export const RegisterSchema = z
   .object({
     name: z.string().min(1, {

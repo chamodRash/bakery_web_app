@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
+// import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import {
   IconArrowLeft,
   IconBrandTabler,
@@ -90,15 +90,13 @@ export default function AdminSidebar({
       className={cn(
         "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 border border-neutral-200 dark:border-neutral-700 overflow-hidden",
         "h-screen"
-      )}
-    >
-      <Sidebar open={open} setOpen={setOpen}>
+      )}>
+      {/*<Sidebar open={open} setOpen={setOpen}>
         <SidebarBody className="justify-between gap-10">
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             <Link
               href="/admin"
-              className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
-            >
+              className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20">
               <Image src={"/logo.jpg"} width={100} height={100} alt="Logo" />
             </Link>
             <div className="mt-8 flex flex-col gap-2">
@@ -121,8 +119,9 @@ export default function AdminSidebar({
               }}
             />
           </div>
-        </SidebarBody>
+        </SidebarBody>}
       </Sidebar>
+      */}
       {children}
     </div>
   );

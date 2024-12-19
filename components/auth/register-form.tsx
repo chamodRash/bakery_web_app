@@ -32,13 +32,16 @@ import { register } from "@/actions/register";
 import { Phone } from "lucide-react";
 import { LockKeyhole } from "lucide-react";
 import { PencilLine } from "lucide-react";
-import { guestLogin } from "@/actions/guest-login";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { signInGuest } from "@/actions/login";
 
 const RegisterForm = () => {
   const [errors, setErrors] = useState("");
   const [success, setSuccess] = useState("");
   const [isPending, startTransition] = useTransition();
   const [isOTP, setIsOTP] = useState(false);
+  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(RegisterSchema),
@@ -63,6 +66,23 @@ const RegisterForm = () => {
         if (data?.success == "OTP Sent!") {
           setIsOTP(true);
         }
+      });
+    });
+  };
+
+  const guestLogin = () => {
+    startTransition(() => {
+      signInGuest().then((data) => {
+        if (data?.error) {
+          toast.error(data?.error);
+        }
+        if (data?.success) {
+          toast.success(data?.success);
+        }
+
+        setTimeout(() => {
+          router.push("/");
+        }, 1000);
       });
     });
   };
@@ -126,7 +146,7 @@ const RegisterForm = () => {
                           type="text"
                           disabled={isPending}
                           className={
-                            "border-0 shadow-none focus-visible:ring-0 "
+                            "border-0 shadow-none focus-visible:outline-0 "
                           }
                         />
                       </FormControl>
@@ -153,7 +173,7 @@ const RegisterForm = () => {
                           name="phone"
                           disabled={isPending}
                           className={
-                            "border-0 shadow-none focus-visible:ring-0"
+                            "border-0 shadow-none focus-visible:outline-0"
                           }
                         />
                       </FormControl>
@@ -179,7 +199,7 @@ const RegisterForm = () => {
                           name="password"
                           disabled={isPending}
                           className={
-                            "border-0 shadow-none focus-visible:ring-0"
+                            "border-0 shadow-none focus-visible:outline-0"
                           }
                         />
                       </FormControl>
@@ -205,7 +225,7 @@ const RegisterForm = () => {
                           name="confirmPassword"
                           disabled={isPending}
                           className={
-                            "border-0 shadow-none focus-visible:ring-0"
+                            "border-0 shadow-none focus-visible:outline-0"
                           }
                         />
                       </FormControl>

@@ -44,12 +44,15 @@ const StockTable = ({ stock }: StockTableProps) => {
       setLoading(true);
       await deleteItems(id);
       toast.success("Item deleted successfully!");
+
+      setTimeout(() => {
+        router.refresh();
+      }, 1000);
     } catch (error) {
       toast.error("Failed to delete the item");
     } finally {
       setLoading(false);
     }
-    router.refresh();
   };
 
   return (

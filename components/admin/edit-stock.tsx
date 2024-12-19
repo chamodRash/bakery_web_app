@@ -36,10 +36,9 @@ import { useRouter } from "next/navigation";
 interface EditStockProps {
   children: React.ReactNode;
   stock: stockProps;
-  onStockUpdate?: () => void;
 }
 
-const EditStock = ({ children, stock, onStockUpdate }: EditStockProps) => {
+const EditStock = ({ children, stock }: EditStockProps) => {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof stockSchema>>({
@@ -53,17 +52,24 @@ const EditStock = ({ children, stock, onStockUpdate }: EditStockProps) => {
 
   const onSubmit = async (values: z.infer<typeof stockSchema>) => {
     try {
-      await updateStock(stock.id, values.name, values.qty, values.qty_unit);
-      toast.success("Stock updated successfully!");
-
-      if (onStockUpdate) {
-        onStockUpdate();
+      const data = await updateStock(
+        stock.id,
+        values.name,
+        values.qty,
+        values.qty_unit
+      );
+      if (data?.error) {
+        toast.error(data?.error);
+        console.log(data?.error);
       }
+      toast.success("Stock updated successfully!");
     } catch (error) {
       console.error(error);
       toast.error("Failed to update stock.");
     }
-    router.refresh();
+    setTimeout(() => {
+      router.refresh();
+    }, 1000);
   };
 
   return (
@@ -132,7 +138,7 @@ const EditStock = ({ children, stock, onStockUpdate }: EditStockProps) => {
               />
 
               <DialogClose asChild>
-                <Button variant={"default"} className="w-full">
+                <Button type={"submit"} variant={"default"} className="w-full">
                   Update Stock
                 </Button>
               </DialogClose>
