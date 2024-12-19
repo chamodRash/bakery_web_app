@@ -8,7 +8,7 @@ import { createClient } from "@/utils/supabase/server";
 import { LoginSchema } from "@/schemas";
 import { getUserByPhone } from "@/data/user";
 import { generateRegisterOTP } from "@/lib/tokens";
-import {sendRegisterOTP} from "@/lib/sendMsgs";
+import { sendRegisterOTP } from "@/lib/sendMsgs";
 import { getVerificationTokenByToken } from "@/data/token";
 import { toast } from "sonner";
 
@@ -27,14 +27,32 @@ const signInSupabase = async (values: z.infer<typeof LoginSchema>) => {
   );
 
   if (error) {
-    return { error: error.message };
+    return { error: "supabase: " + error.message };
   }
 
   return { success: trysignInData.user.id };
 };
 
+export const signInGuest = async () => {
+  const { data, error } = await supabase.auth.signInAnonymously({
+    // options: {
+    //   captchaToken: process.env.HCAPTCHA_SECRET_KEY,
+    // },
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { success: "Successfully signed in as a guest!" };
+};
+
 export async function login(values: z.infer<typeof LoginSchema>) {
   const user = await getUserByPhone(values.phone);
+
+  if (user?.role === "ADMIN" || user?.role === "MASTER") {
+    return { error: "Admins cannot login here! Use /admin/login" };
+  }
 
   if (user?.error) {
     return { error: user.error.message };

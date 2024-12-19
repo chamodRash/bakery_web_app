@@ -3,7 +3,16 @@
  * These routes do not require authentication
  * @types {string[]}
  */
-export const publicRoutes = ["/", "/phone-verification"];
+export const publicRoutes = [
+  "/",
+  "/login",
+  "/register",
+  "/admin-login",
+  "/forgot-password",
+  "/reset-password",
+  "/new-password",
+  "/authError",
+];
 
 /**
  * An array of routes that are accessible to the public
@@ -14,9 +23,18 @@ export const authRoutes = [
   "/login",
   "/register",
   "/authError",
-  "/reset",
   "/new-password",
+  "/forgot-password",
+  "/reset-password",
+  "/admin-login",
 ];
+
+/**
+ * An array of routes that are accessible to the admins
+ * These routes will redirect logged in users to /
+ * @types {string[]}
+ */
+export const adminRoutes = ["/admin"];
 
 /**
  * The prefix for API authentication routes

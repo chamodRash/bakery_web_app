@@ -15,6 +15,12 @@ interface ProductsSectionProps {
 }
 
 const ProductsSection: React.FC<ProductsSectionProps> = ({ items }) => {
+  const [isMount, setIsMount] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMount(true);
+  }, []);
+
   return (
     <div className="w-10/12 mx-auto my-10">
       <div className="row">

@@ -75,6 +75,12 @@ interface carouselSectionProps {
 }
 
 const CarouselSection: React.FC<carouselSectionProps> = ({ carouselItems }) => {
+  const [isMount, setIsMount] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMount(true);
+  }, []);
+
   return (
     <div className="flex justify-center items-center max-h-[27rem] max-w-screen m-10 px-10 rounded-3xl">
       {carouselItems.length > 0 && (
