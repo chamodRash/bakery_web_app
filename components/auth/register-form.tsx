@@ -32,13 +32,16 @@ import { register } from "@/actions/register";
 import { Phone } from "lucide-react";
 import { LockKeyhole } from "lucide-react";
 import { PencilLine } from "lucide-react";
-import { guestLogin } from "@/actions/guest-login";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { signInGuest } from "@/actions/login";
 
 const RegisterForm = () => {
   const [errors, setErrors] = useState("");
   const [success, setSuccess] = useState("");
   const [isPending, startTransition] = useTransition();
   const [isOTP, setIsOTP] = useState(false);
+  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(RegisterSchema),
@@ -63,6 +66,23 @@ const RegisterForm = () => {
         if (data?.success == "OTP Sent!") {
           setIsOTP(true);
         }
+      });
+    });
+  };
+
+  const guestLogin = () => {
+    startTransition(() => {
+      signInGuest().then((data) => {
+        if (data?.error) {
+          toast.error(data?.error);
+        }
+        if (data?.success) {
+          toast.success(data?.success);
+        }
+
+        setTimeout(() => {
+          router.push("/");
+        }, 1000);
       });
     });
   };

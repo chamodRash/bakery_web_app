@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -28,16 +29,19 @@ import { Phone } from "lucide-react";
 import { LockKeyhole } from "lucide-react";
 
 import { LoginSchema } from "@/schemas";
-import { login } from "@/actions/login";
+import { login, signInGuest } from "@/actions/login";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
-import { guestLogin } from "@/actions/guest-login";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const LoginForm = () => {
   const [errors, setErrors] = useState("");
   const [success, setSuccess] = useState("");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [isOTP, setIsOTP] = useState(false);
+  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(LoginSchema),
@@ -60,6 +64,36 @@ const LoginForm = () => {
         if (data?.success == "OTP Sent!") {
           setIsOTP(true);
         }
+      });
+    });
+  };
+
+  const handleVerifyCaptcha = (token: string) => {
+    setCaptchaToken(token);
+  };
+
+  const handleExpireCaptcha = () => {
+    setCaptchaToken(null);
+  };
+
+  const guestLogin = () => {
+    if (!captchaToken) {
+      setErrors("Please complete the captcha.");
+      return;
+    }
+
+    startTransition(() => {
+      signInGuest().then((data) => {
+        if (data?.error) {
+          toast.error(data?.error);
+        }
+        if (data?.success) {
+          toast.success(data?.success);
+        }
+
+        setTimeout(() => {
+          router.push("/");
+        }, 1000);
       });
     });
   };
@@ -159,6 +193,11 @@ const LoginForm = () => {
               />
             </div>
           )}
+          <HCaptcha
+            sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY!} // Replace with your hCaptcha site key
+            onVerify={handleVerifyCaptcha}
+            onExpire={handleExpireCaptcha}
+          />
           <div className="flex flex-row-reverse items-center justify-center gap-2">
             <Button
               type="submit"
@@ -174,7 +213,7 @@ const LoginForm = () => {
               className={"rounded-full"}
               variant={"secondary"}
               size={"lg"}>
-              Login as Guest
+              {isPending ? "Logging in..." : "Login as Guest"}
             </Button>
           </div>
         </form>
