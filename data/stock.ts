@@ -3,6 +3,8 @@
 import { createClient } from "@/utils/supabase/server";
 import { stockProps } from "./types";
 
+const supabase=createClient();
+
 export const getStock = async (): Promise<stockProps[]> => {
   const supabase = createClient();
   let { data: stock, error } = await supabase
@@ -17,12 +19,12 @@ export const getStock = async (): Promise<stockProps[]> => {
   return stock as stockProps[];
 };
 
+
 export const addStock = async (item: {
-  name: string;
+  name:string,
   qty: number;
   qty_unit: string;
 }) => {
-  const supabase = createClient();
   try {
     const { data, error } = await supabase.from("stock").insert([item]);
     if (error) throw error;
@@ -36,11 +38,10 @@ export const addStock = async (item: {
 
 export const updateStock = async (
   id: string,
-  name: string,
+  name:string,
   qty: number,
   qty_unit: string
 ) => {
-  const supabase = createClient();
   try {
     const { data, error } = await supabase
       .from("stock")
@@ -57,12 +58,14 @@ export const updateStock = async (
   }
 };
 
-export const updateStockQuantity = async (id: string, qty: number) => {
-  const supabase = createClient();
+export const updateStockQuantity = async (
+  id: string,
+  qty: number,
+) => {
   try {
     const { data, error } = await supabase
       .from("stock")
-      .update({ qty })
+      .update({ qty})
       .match({ id });
     if (error) throw error;
     return data;
@@ -73,8 +76,8 @@ export const updateStockQuantity = async (id: string, qty: number) => {
   }
 };
 
+
 export const deleteItems = async (id: string) => {
-  const supabase = createClient();
   try {
     const { data, error } = await supabase.from("stock").delete().match({ id });
     if (error) throw error;
