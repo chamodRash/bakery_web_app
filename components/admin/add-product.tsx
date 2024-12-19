@@ -517,21 +517,7 @@ const AddProduct = ({ children, categories }: AddCategoryProps) => {
                 )}
               />
               <Button type="submit">Create</Button>
-              <p>Hello World  dddddddddddddddddddddddddddddddddddddd
-                ddddddddddddddddddddddddddddddddddddddddddddddddd
-                ddddddddddddddddddddddddddddddddddddddddddddddddd
-                dddddddddddddddddddddddddddddddddddddddddddddddddd
-                dddddddddddddddddddddddddddddddddddddddddddddddddd
-                ddddddddddddddddddddddddddddddddddddddddddddddddddd
-                ddddddddddddddddddddddddddddddddddddddddddddddddddd
-                ddddddddddddddddddddddddddddddddddddddddddddddddddd
-
-
-
-
-
-
-              </p>
+              
             </form>
           </Form>
         </div>
