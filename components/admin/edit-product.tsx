@@ -34,6 +34,9 @@ import { Textarea } from "../ui/textarea";
 import { CategoryItem, DataItem } from "@/data/types";
 import Image from "next/image";
 import { Label } from "../ui/label";
+import { updateProduct } from "@/data/product";
+import toast from "react-hot-toast";
+import {useRouter} from "next/navigation";
 
 interface AddCategoryProps {
   children: React.ReactNode;
@@ -45,6 +48,7 @@ const EditProduct = ({ children, product, categories }: AddCategoryProps) => {
   //   const [categoryName, setCategoryName] = useState<string>("");
   const [productSlug, setProductSlug] = useState<string>(product.slug);
   const [uploadNewImg, setUploadNewImg] = useState<boolean>(false);
+  const router=useRouter();
 
   const updateSlug = (e: any) => {
     const name = e.target.value;
@@ -63,18 +67,30 @@ const EditProduct = ({ children, product, categories }: AddCategoryProps) => {
       name: product.name,
       description: product.description,
       price: product.price,
-      //   img: product.image,
       slug: product.slug,
       categorySlug: product.categoryslug,
     },
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof productSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+  const onSubmit = async (values: z.infer<typeof productSchema>) => {
+    try {
+      await updateProduct(
+        product.id, 
+        values.name,
+        values.price,
+        values.description,
+        values.slug,
+        values.categorySlug
+      );
+      toast.success("Stock updated successfully!");
+
+    
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update stock.");
+    }
+    router.refresh();
+  };
 
   return (
     <Dialog>
@@ -112,8 +128,6 @@ const EditProduct = ({ children, product, categories }: AddCategoryProps) => {
                       <Input
                         {...field}
                         value={productSlug}
-                        className="hidden"
-                        disabled
                       />
                     </FormControl>
                     <FormDescription />

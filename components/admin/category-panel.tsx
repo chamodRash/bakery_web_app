@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import AddCategory from "./add-category";
 import EditCategory from "./edit-category";
+import { deleteCategory } from "@/data/product";
+import toast from "react-hot-toast";
 
 interface CategoryPanelProps {
   category: CategoryItem[];
@@ -28,10 +30,30 @@ interface CategoryPanelProps {
 const CategoryPanel = ({ category, catSlug }: CategoryPanelProps) => {
   const router = useRouter();
   const [checkedCategory, setCheckedCategory] = useState<CategoryItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false); 
 
-  const deleteCheckedCategories = () => {
-    // Delete categories
-    console.log("Delete categories");
+  const deleteCheckedCategories = async () => {
+    if (checkedCategory.length === 0) {
+      toast.error("No categories selected for deletion.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      for (const cat of checkedCategory) {
+        await deleteCategory(cat.id); 
+      }
+
+      toast.success("Categories deleted successfully!");
+      router.refresh(); 
+      setCheckedCategory([]); 
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to delete categories."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
