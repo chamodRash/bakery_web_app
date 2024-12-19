@@ -8,12 +8,26 @@ import otpGenerator from "otp-generator";
 
 import { createClient } from "@/utils/supabase/server";
 import { RegisterSchema } from "@/schemas";
-import {sendRegisterOTP} from "@/lib/sendMsgs";
+import { sendRegisterOTP } from "@/lib/sendMsgs";
 import { generateRegisterOTP } from "@/lib/tokens";
 import { getUserByPhone } from "@/data/user";
 import { getVerificationTokenByToken } from "@/data/token";
 
 const supabase = createClient();
+
+export async function resendOTP(phone: string) {
+  // Generate a new OTP
+  const otp = await generateRegisterOTP(phone);
+
+  // Send the OTP
+  const isOTPsent = await sendRegisterOTP(phone, otp);
+
+  if (!isOTPsent.sent) {
+    return { error: "Failed to resend OTP. Try again later." };
+  }
+
+  return { success: "OTP Resent!" };
+}
 
 const signUpSupabase = async (values: z.infer<typeof RegisterSchema>) => {
   const data = {

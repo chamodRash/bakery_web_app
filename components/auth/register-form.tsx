@@ -41,6 +41,7 @@ const RegisterForm = () => {
   const [success, setSuccess] = useState("");
   const [isPending, startTransition] = useTransition();
   const [isOTP, setIsOTP] = useState(false);
+  const [showResendOTP, setShowResendOTP] = useState(false);
   const router = useRouter();
 
   const form = useForm({
@@ -65,6 +66,9 @@ const RegisterForm = () => {
         }
         if (data?.success == "OTP Sent!") {
           setIsOTP(true);
+          setTimeout(() => {
+            setShowResendOTP(true);
+          }, 60000);
         }
       });
     });
@@ -84,6 +88,38 @@ const RegisterForm = () => {
           router.push("/");
         }, 1000);
       });
+    });
+  };
+
+  const resendCode = () => {
+    setErrors("");
+    setSuccess("");
+
+    startTransition(() => {
+      const phone = form.getValues("phone"); // Get the phone number from the form values
+      if (!phone) {
+        toast.error("Phone number is required to resend OTP.");
+        return;
+      }
+
+      fetch("/api/resend-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.error) {
+            setErrors(data.error);
+          }
+          if (data?.success) {
+            setSuccess(data.success);
+            toast.success(data.success);
+          }
+        })
+        .catch(() => {
+          setErrors("Failed to resend OTP. Please try again.");
+        });
     });
   };
 
@@ -122,6 +158,13 @@ const RegisterForm = () => {
                       </FormControl>
                     </FormItem>
                     <FormMessage className={"text-xs ml-5"} />
+                    {showResendOTP && (
+                      <p
+                        onClick={() => resendCode}
+                        className="text-sm text-primary text-center underline">
+                        Resend OTP
+                      </p>
+                    )}
                   </div>
                 )}
               />
@@ -244,15 +287,17 @@ const RegisterForm = () => {
               disabled={isPending}>
               Register
             </Button>
-            <Button
-              onClick={() => {
-                guestLogin();
-              }}
-              className={"rounded-full"}
-              variant={"secondary"}
-              size={"lg"}>
-              Login as Guest
-            </Button>
+            {!isOTP && (
+              <Button
+                onClick={() => {
+                  guestLogin();
+                }}
+                className={"rounded-full"}
+                variant={"secondary"}
+                size={"lg"}>
+                Login as Guest
+              </Button>
+            )}
           </div>
         </form>
       </Form>

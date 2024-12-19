@@ -202,3 +202,16 @@ export const stockSchema = z.object({
     message: "Quantity Unit is Required",
   }),
 });
+
+export const phoneNumberSchema = z.object({
+  phone: z
+    .string({
+      required_error: "Phone Number is required",
+    })
+    .length(10, {
+      message: "Phone Number should have 10 digits",
+    })
+    .startsWith("07", {
+      message: "Phone Number should be 07xxxxxxxx",
+    }),
+});
