@@ -1,3 +1,5 @@
+"use server";
+
 import { getVerificationTokenByToken } from "@/data/token";
 import { sendRegisterOTP } from "@/lib/sendMsgs";
 import { generateRegisterOTP } from "@/lib/tokens";

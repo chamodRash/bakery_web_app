@@ -1,3 +1,5 @@
+"use client";
+
 import {
   checkUserExists,
   sendOtp,
@@ -6,28 +8,9 @@ import {
 } from "@/actions/reset-password";
 import { CardWrapper } from "@/components/auth/card-wrapper";
 import { Button } from "@/components/ui/button";
-import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  FormDescription,
-} from "@/components/ui/form";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
-import { FormError } from "@/components/form-error";
-import { FormSuccess } from "@/components/form-success";
-import { Phone } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { phoneNumberSchema } from "@/schemas";
 import toast from "react-hot-toast";
@@ -37,9 +20,6 @@ const ResetPasswordPage = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [errors, setErrors] = useState("");
-  const [success, setSuccess] = useState("");
-  const [isPending, startTransition] = useTransition();
 
   const phoneForm = useForm({
     resolver: zodResolver(phoneNumberSchema),
