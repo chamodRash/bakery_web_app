@@ -30,8 +30,13 @@ const ProductDetailsSection = ({ product }: ProductDetailsSectionProps) => {
           />
         </div>
         <div className="flex flex-col justify-center">
-          <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
-          <p className="text-xl font-semibold mb-4">
+          <h1 className="text-4xl font-bold mb-2">{product.name}</h1>
+          {product.qty === 0 ? (
+            <p className="text-red-500">out of stock</p>
+          ) : (
+            <p>Available stock: {product.qty}</p>
+          )}
+          <p className="text-xl font-semibold mt-4 mb-4">
             Rs. {product.price.toFixed(2)}
           </p>
           <div className="flex items-center gap-4 mb-4">
@@ -41,17 +46,26 @@ const ProductDetailsSection = ({ product }: ProductDetailsSectionProps) => {
               id="qty"
               value={qty}
               onChange={(e) => setQty(Number(e.target.value))}
+              min={1}
+              max={product.qty}
               className="w-16"
             />
           </div>
           <p className="text-muted-foreground mb-6">{product.description}</p>
           <div className="w-full grid grid-cols-2 items-center justify-stretch gap-x-5">
             <CartModal product={product}>
-              <Button variant={"outline"} className="rounded-lg">
+              <Button
+                variant={"outline"}
+                className="rounded-lg"
+                disabled={qty === 0}>
                 Add to Cart
               </Button>
             </CartModal>
-            <Button variant={"default"} className="rounded-lg" asChild>
+            <Button
+              variant={"default"}
+              className="rounded-lg"
+              disabled={qty === 0}
+              asChild>
               <Link href={`/checkout?slug=${product?.slug}&qty=${qty}`}>
                 Buy Now
               </Link>

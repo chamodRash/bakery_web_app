@@ -25,6 +25,7 @@ interface BuyNowModalProps {
   productid: number;
   productSlug: string;
   name: string;
+  productqty: number;
   image: string;
   price: number;
   asChild?: boolean;
@@ -34,11 +35,17 @@ export const BuyNowModal = ({
   productid,
   productSlug,
   name,
+  productqty,
   image,
   price,
   asChild,
 }: BuyNowModalProps) => {
   const [qty, setQty] = useState(1);
+
+  if (qty < 1 || qty > productqty) {
+    qty < 1 && setQty(qty + 1);
+    qty > 1 && setQty(qty - 1);
+  }
 
   return (
     <Dialog>
@@ -66,8 +73,7 @@ export const BuyNowModal = ({
                 <Button
                   size={"icon"}
                   variant={"outline"}
-                  onClick={() => setQty(qty - 1)}
-                >
+                  onClick={() => setQty(qty - 1)}>
                   -
                 </Button>
                 <Input
@@ -81,8 +87,7 @@ export const BuyNowModal = ({
                 <Button
                   size={"icon"}
                   variant={"outline"}
-                  onClick={() => setQty(qty + 1)}
-                >
+                  onClick={() => setQty(qty + 1)}>
                   +
                 </Button>
               </div>
@@ -91,8 +96,7 @@ export const BuyNowModal = ({
               <Button
                 variant={"outline"}
                 className="w-full rounded-full border-primary text-primary hover:bg-primary hover:text-white"
-                asChild
-              >
+                asChild>
                 <Link href={`checkout?slug=${productSlug}&qty=${qty}`}>
                   Buy Now
                 </Link>
