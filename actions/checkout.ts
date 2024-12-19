@@ -9,8 +9,6 @@ import { sendOrderSuccessMsg } from "@/lib/sendMsgs";
 import md5 from "crypto-js/md5";
 import { getOrderById } from "@/data/order";
 
-const supabase = createClient();
-
 const generateHash = (
   merchantId: string,
   orderId: string,
@@ -39,6 +37,7 @@ export const placeProductCashOrder = async ({
   items,
   values,
 }: placeOrderProps) => {
+  const supabase = createClient();
   const {
     data: { user },
     error: sessionError,
@@ -119,6 +118,7 @@ export const placeProductCardOrder = async ({
   items,
   values,
 }: placeOrderProps) => {
+  const supabase = createClient();
   const {
     data: { user },
     error: sessionError,
@@ -206,6 +206,7 @@ export const placeProductCardOrder = async ({
 };
 
 export const payOrderAgain = async (orderRecord: ordersProps) => {
+  const supabase = createClient();
   const {
     data: { user },
     error: sessionError,
