@@ -10,6 +10,7 @@ import CarouselSection from "@/components/carousel-section";
 import ProductsSection from "@/components/products-section";
 import CategoryButtonSection from "@/components/categoryButton-section";
 import { Toaster } from "react-hot-toast";
+import { Footer } from "@/components/footer";
 
 export default async function Home() {
   const supabase = createClient();
@@ -27,7 +28,7 @@ export default async function Home() {
   const carousel = await getSlides();
 
   return (
-    <div className="pb-16 w-full pt-24">
+    <div className="w-full pt-24">
       <Navbar user={loggedUser} />
 
       <CarouselSection carouselItems={carousel} />
@@ -36,7 +37,7 @@ export default async function Home() {
 
       <ProductsSection items={products} />
 
-      {/* <Toaster position="top-right" reverseOrder={false} /> */}
+      <Footer />
     </div>
   );
 }

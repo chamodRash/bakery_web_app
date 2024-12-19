@@ -6,6 +6,8 @@ import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { payOrderAgain } from "@/actions/checkout";
+import { ReviewDialog } from "./leave-a-review";
 
 interface OrdersPageSectionProps {
   orders: ordersProps[];
@@ -24,8 +26,6 @@ const OrdersPageSection = ({ orders }: OrdersPageSectionProps) => {
       (order.paymentmethod === "card" && order.status === "paid")
   );
   const pickedOrders = orders.filter((order) => order.status === "picked");
-
-  console.log(toPayOrders);
 
   return (
     <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
@@ -52,6 +52,30 @@ const OrdersPageSection = ({ orders }: OrdersPageSectionProps) => {
 };
 
 function OrderList({ orders }: { orders: ordersProps[] }) {
+  const handlePayNow = async (order: ordersProps) => {
+    try {
+      const result = await payOrderAgain(order);
+      if (result?.redirectUrl) {
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = result.redirectUrl;
+
+        Object.keys(result.params).forEach((key) => {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = key;
+          input.value = result.params[key as keyof typeof result.params];
+          form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+      }
+    } catch (error) {
+      console.error("Error processing payment:", error);
+    }
+  };
+
   return (
     <div className="space-y-8">
       {orders.map((order) => (
@@ -94,14 +118,16 @@ function OrderList({ orders }: { orders: ordersProps[] }) {
             </Link>
             <div className="space-x-2">
               {order.status === "unpaid" && order.paymentmethod === "card" && (
-                <>
+                <div className="flex items-center gap-x-5">
                   <Button variant="destructive">Delete Order</Button>
-                  <Button>Pay Again</Button>
-                </>
+                  <Button onClick={() => handlePayNow(order)}>Pay Now</Button>
+                </div>
               )}
               {order.paymentmethod === "cash" ||
                 (order.paymentmethod === "card" && order.status === "paid" && (
-                  <Button>Leave a Review</Button>
+                  <ReviewDialog productName={order.orderitem[0].product.name}>
+                    <Button>Leave a Review</Button>
+                  </ReviewDialog>
                 ))}
             </div>
           </div>

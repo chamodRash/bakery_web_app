@@ -17,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={merienda.className}>
+      <body className={`overflow-x-hidden ${merienda.className}`}>
         <div>{children}</div>
       </body>
       <Toaster position="top-right" reverseOrder={false} />

@@ -54,11 +54,6 @@ const items = [
     icon: Layers3,
   },
   {
-    title: "Employees",
-    url: "/admin/employees",
-    icon: UsersRound,
-  },
-  {
     title: "Charts",
     url: "/admin/charts",
     icon: TrendingUp,
