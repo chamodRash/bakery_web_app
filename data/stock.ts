@@ -24,6 +24,7 @@ export const addStock = async (item: {
   name:string,
   qty: number;
   qty_unit: string;
+  unit_price:number;
 }) => {
   try {
     const { data, error } = await supabase.from("stock").insert([item]);
@@ -36,20 +37,24 @@ export const addStock = async (item: {
   }
 };
 
+
+
 export const updateStock = async (
   id: string,
   name:string,
   qty: number,
-  qty_unit: string
+  qty_unit: string,
+  unit_price:number,
 ) => {
   try {
     const { data, error } = await supabase
       .from("stock")
-      .update({ name, qty, qty_unit })
-      .eq("id", id);
+      .update({ name, qty, qty_unit ,unit_price})
+      .match({id});
     if (error) {
       return { error: `Failed to update stock item: ${error.message}` };
     }
+    console.log("Stock updated:", data);
     return data;
   } catch (error) {
     const message =

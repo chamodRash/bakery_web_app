@@ -39,7 +39,9 @@ export const UpdateStockQty = ({ children, stock }: UpdateStockQtyProps) => {
     setLoading(true);
     try {
       await updateStockQuantity(id, qty);
+      location.reload();
       toast.success("Stock quantity updated successfully!");
+      
     } catch (error) {
       console.error("Failed to update stock quantity:", error);
       toast.error("Failed to update stock quantity. Please try again.");
