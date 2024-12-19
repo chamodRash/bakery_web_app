@@ -14,12 +14,14 @@ import Image from "next/image";
 import { createClient } from "@/utils/supabase/server";
 import CheckoutDetails from "@/components/checkout-details";
 import CartCheckout from "@/components/cart-checkout";
+import { getOrderById } from "@/data/order";
+import { payOrderAgain } from "@/actions/checkout";
 
 interface contextProps {
   searchParams: {
     slug: string;
     qty: string;
-    order_id: string;
+    order: string;
     status: "success" | "cancel";
     type: string;
   };

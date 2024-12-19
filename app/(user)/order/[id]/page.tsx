@@ -11,6 +11,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { payOrderAgain } from "@/actions/checkout";
+import { ordersProps } from "@/data/types";
 
 export default async function OrderPage({
   params,
@@ -20,6 +22,30 @@ export default async function OrderPage({
   // In a real application, you would fetch the order data based on the ID
   const order = await getOrderById(Number(params?.id));
   const user = await getUserByid(order.userid);
+
+  const handlePayNow = async (order: ordersProps) => {
+    try {
+      const result = await payOrderAgain(order);
+      if (result?.redirectUrl) {
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = result.redirectUrl;
+
+        Object.keys(result.params).forEach((key) => {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = key;
+          input.value = result.params[key as keyof typeof result.params];
+          form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+      }
+    } catch (error) {
+      console.error("Error processing payment:", error);
+    }
+  };
 
   return (
     <div className="min-h-screen w-full">
@@ -115,10 +141,10 @@ export default async function OrderPage({
             <Link href="/orders">Back to Orders</Link>
           </Button>
           {order.status === "To Pay" && (
-            <>
+            <div>
               <Button variant="destructive">Delete Order</Button>
-              <Button>Pay Now</Button>
-            </>
+              <Button onClick={() => handlePayNow(order)}>Pay Now</Button>
+            </div>
           )}
           {order.status === "Picked" && <Button>Leave a Review</Button>}
         </div>

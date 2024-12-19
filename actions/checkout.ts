@@ -1,12 +1,13 @@
 "use server";
 
 import * as z from "zod";
-import { DataItem } from "@/data/types";
+import { DataItem, ordersProps } from "@/data/types";
 import { createClient } from "@/utils/supabase/server";
 import { orderFormSchema } from "@/schemas";
 import { generateOrderConfirmationCode } from "@/lib/tokens";
 import { sendOrderSuccessMsg } from "@/lib/sendMsgs";
 import md5 from "crypto-js/md5";
+import { getOrderById } from "@/data/order";
 
 const supabase = createClient();
 
@@ -185,9 +186,9 @@ export const placeProductCardOrder = async ({
     redirectUrl: "https://sandbox.payhere.lk/pay/checkout",
     params: {
       merchant_id: merchantId,
-      return_url: "https://bakery-web-app.vercel.app/order/",
-      cancel_url: "https://bakery-web-app.vercel.app/order/",
-      notify_url: "https://bakery-web-app.vercel.app/api/payhere/notify",
+      return_url: "https://ea74-103-21-166-216.ngrok-free.app/checkout/success",
+      cancel_url: "https://ea74-103-21-166-216.ngrok-free.app/checkout/failed",
+      notify_url: "https://ea74-103-21-166-216.ngrok-free.app/api/payhere",
       order_id: orderId,
       items: "cart items",
       currency: currency,
@@ -196,6 +197,49 @@ export const placeProductCardOrder = async ({
       last_name: values.name.split(" ").slice(1).join(" "),
       email: "", // Replace with actual email
       phone: values.phone,
+      address: "", // Replace with actual address
+      city: "", // Replace with actual city
+      country: "Sri Lanka",
+      hash: hash,
+    },
+  };
+};
+
+export const payOrderAgain = async (orderRecord: ordersProps) => {
+  const {
+    data: { user },
+    error: sessionError,
+  } = await supabase.auth.getUser();
+  const full_name = user?.user_metadata.full_name;
+
+  const orderId = orderRecord.id;
+  const amount = orderRecord.total;
+  const currency = "LKR";
+  const merchantId = process.env.PAYHERE_MERCHANT_ID!;
+  const merchantSecret = process.env.PAYHERE_MERCHANT_SECRET!;
+  const hash = generateHash(
+    merchantId,
+    orderId.toString(),
+    amount,
+    currency,
+    merchantSecret
+  );
+
+  return {
+    redirectUrl: "https://sandbox.payhere.lk/pay/checkout",
+    params: {
+      merchant_id: merchantId,
+      return_url: "https://ea74-103-21-166-216.ngrok-free.app/checkout/success",
+      cancel_url: "https://ea74-103-21-166-216.ngrok-free.app/checkout/failed",
+      notify_url: "https://ea74-103-21-166-216.ngrok-free.app/api/payhere",
+      order_id: orderId,
+      items: "cart items",
+      currency: currency,
+      amount: amount,
+      first_name: full_name.split(" ")[0],
+      last_name: full_name.split(" ").slice(1).join(" "),
+      email: "", // Replace with actual email
+      phone: user?.phone,
       address: "", // Replace with actual address
       city: "", // Replace with actual city
       country: "Sri Lanka",

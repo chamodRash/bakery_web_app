@@ -121,7 +121,7 @@ const POS = () => {
   return (
     <div className="w-full h-full bg-white">
       <Tabs defaultValue="pos" className="w-full h-screen">
-        <TabsList className="h-14 max-h-14 rounded-none">
+        <TabsList className="pl-16 h-14 max-h-14 rounded-none">
           <TabsTrigger value="pos">POS (F11)</TabsTrigger>
           <TabsTrigger value="online">Online Orders (F12)</TabsTrigger>
         </TabsList>

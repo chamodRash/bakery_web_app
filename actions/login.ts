@@ -27,10 +27,24 @@ const signInSupabase = async (values: z.infer<typeof LoginSchema>) => {
   );
 
   if (error) {
-    return { error: error.message };
+    return { error: "supabase: " + error.message };
   }
 
   return { success: trysignInData.user.id };
+};
+
+export const signInGuest = async () => {
+  const { data, error } = await supabase.auth.signInAnonymously({
+    // options: {
+    //   captchaToken: process.env.HCAPTCHA_SECRET_KEY,
+    // },
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { success: "Successfully signed in as a guest!" };
 };
 
 export async function login(values: z.infer<typeof LoginSchema>) {

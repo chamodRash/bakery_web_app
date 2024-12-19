@@ -5,7 +5,10 @@ import { stockProps } from "./types";
 
 export const getStock = async (): Promise<stockProps[]> => {
   const supabase = createClient();
-  let { data: stock, error } = await supabase.from("stock").select("*");
+  let { data: stock, error } = await supabase
+    .from("stock")
+    .select("*")
+    .order("name", { ascending: true });
 
   if (error) {
     throw new Error(error.message);
@@ -42,13 +45,15 @@ export const updateStock = async (
     const { data, error } = await supabase
       .from("stock")
       .update({ name, qty, qty_unit })
-      .match({ id });
-    if (error) throw error;
+      .eq("id", id);
+    if (error) {
+      return { error: `Failed to update stock item: ${error.message}` };
+    }
     return data;
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unknown error occurred";
-    throw new Error(`Failed to update stock item: ${message}`);
+    return { error: `Failed to update stock item: ${message}` };
   }
 };
 
