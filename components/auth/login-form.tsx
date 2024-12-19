@@ -77,10 +77,10 @@ const LoginForm = () => {
   };
 
   const guestLogin = () => {
-    if (!captchaToken) {
-      setErrors("Please complete the captcha.");
-      return;
-    }
+    // if (!captchaToken) {
+    //   setErrors("Please complete the captcha.");
+    //   return;
+    // }
 
     startTransition(() => {
       signInGuest().then((data) => {
@@ -193,18 +193,18 @@ const LoginForm = () => {
               />
             </div>
           )}
-          <HCaptcha
+          {/* <HCaptcha
             sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY!} // Replace with your hCaptcha site key
             onVerify={handleVerifyCaptcha}
             onExpire={handleExpireCaptcha}
-          />
+          /> */}
           <div className="flex flex-row-reverse items-center justify-center gap-2">
             <Button
               type="submit"
               className={"rounded-full"}
               size={"lg"}
               disabled={isPending}>
-              Login
+              {isPending ? "Logging in..." : "Login"}
             </Button>
             <Button
               onClick={() => {

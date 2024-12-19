@@ -35,9 +35,9 @@ const signInSupabase = async (values: z.infer<typeof LoginSchema>) => {
 
 export const signInGuest = async () => {
   const { data, error } = await supabase.auth.signInAnonymously({
-    options: {
-      captchaToken: process.env.HCAPTCHA_SECRET_KEY,
-    },
+    // options: {
+    //   captchaToken: process.env.HCAPTCHA_SECRET_KEY,
+    // },
   });
 
   if (error) {
