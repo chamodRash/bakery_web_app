@@ -5,7 +5,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
 import { stockSchema } from "@/schemas";
-import toast from "react-hot-toast";
+import {toast} from "react-hot-toast";
+
 
 import {
   Dialog,
@@ -43,6 +44,8 @@ interface AddCategoryProps {
   children: React.ReactNode;
 }
 
+
+  
 const AddStock = ({ children }: AddCategoryProps) => {
   const router = useRouter();
 
@@ -52,9 +55,12 @@ const AddStock = ({ children }: AddCategoryProps) => {
     defaultValues: {},
   });
 
+  
+
   const [isLoading, setIsLoading] = useState(false);
   // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof stockSchema>) => {
+    
     try {
       setIsLoading(true);
       await addStock({
@@ -64,7 +70,8 @@ const AddStock = ({ children }: AddCategoryProps) => {
       });
       toast.success("Stock added successfully!");
 
-      form.reset();
+
+     
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Failed to add stock."
@@ -148,9 +155,7 @@ const AddStock = ({ children }: AddCategoryProps) => {
                 )}
               />
               <DialogClose asChild>
-                <Button type="submit" disabled={isLoading}>
-                  Create
-                </Button>
+                <Button  type="submit">Create</Button>
               </DialogClose>
             </form>
           </Form>

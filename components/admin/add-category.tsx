@@ -24,6 +24,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
+import { addCategory } from "@/data/product";
+import toast from "react-hot-toast";
+import { createClient } from "@/utils/supabase/client";
+import {useRouter} from "next/navigation";
 
 interface AddCategoryProps {
   children: React.ReactNode;
@@ -31,6 +35,11 @@ interface AddCategoryProps {
 
 const AddCategory = ({ children }: AddCategoryProps) => {
   const [categorySlug, setCategorySlug] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [fileURL, setFileURL] = useState<string>("");
+
+  const supabase=createClient();
 
   const updateSlug = (e: any) => {
     const name = e.target.value;
@@ -40,20 +49,84 @@ const AddCategory = ({ children }: AddCategoryProps) => {
       .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
       .replace(/\s+/g, "-"); // Replace spaces with hyphens
     setCategorySlug(slug);
+    form.setValue("slug",slug);
   };
+  const router = useRouter();
 
-  // 1. Define your form.
+  // Form setup with react-hook-form
   const form = useForm<z.infer<typeof addCategorySchema>>({
     resolver: zodResolver(addCategorySchema),
-    defaultValues: {},
+    defaultValues: {
+      name: "",
+      description: "",
+      slug: "",
+      img: undefined,
+    },
+    
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof addCategorySchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+  // Upload file to Supabase Storage
+  const handleFileUpload = async (file: File) => {
+    try {
+      setUploading(true);
+
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      // Upload file
+      const { error: uploadError } = await supabase.storage
+        .from("category") // Bucket name
+        .upload(filePath, file);
+
+      if (uploadError) throw new Error(uploadError.message);
+
+      // Get public URL
+      const { data } = supabase.storage.from("category").getPublicUrl(filePath);
+      if (!data.publicUrl) throw new Error("Failed to retrieve file URL.");
+
+      setFileURL(data.publicUrl);
+      return data.publicUrl;
+    } catch (error: any) {
+      toast.error("Image upload failed: " + error.message);
+      throw error;
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // Submit handler
+  const onSubmit = async (values: z.infer<typeof addCategorySchema>) => {
+    try {
+      setIsLoading(true);
+
+      // Upload image if provided
+      let imageUrl = "";
+      if (values.img) {
+        imageUrl = await handleFileUpload(values.img); // Upload and get the URL
+      }
+
+      // Call addProduct with all values
+      await addCategory({
+        name: values.name,
+        description: values.description,
+        slug: values.slug,
+        img_url: imageUrl, 
+      });
+      console.log(values);
+
+      toast.success("Category added successfully!");
+      form.reset(); // Reset form fields
+      setFileURL(""); // Clear file state
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to add category."
+      );
+    } finally {
+      setIsLoading(false);
+      router.refresh();
+    }
+  };
 
   return (
     <Dialog>
@@ -77,9 +150,9 @@ const AddCategory = ({ children }: AddCategoryProps) => {
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="Cake"
+                        placeholder="Pastries"
                         // value={field.name ? field.name : ""}
-                        onChange={updateSlug}
+                      
                       />
                     </FormControl>
                     {/* <FormDescription /> */}
@@ -112,13 +185,18 @@ const AddCategory = ({ children }: AddCategoryProps) => {
                     <FormLabel>Image:</FormLabel>
                     <FormControl>
                       <input
-                        {...form}
                         type="file"
                         className="cursor-pointer block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-secondary file:text-primary hover:file:bg-primary/80"
+                        onChange={(e) => {
+                          const file = e.target.files ? e.target.files[0] : null;
+                          if (file) {
+                            field.onChange(file); // Manually update react-hook-form with the selected file
+                          }
+                        }}
                       />
                     </FormControl>
                     <FormDescription>
-                      Upload a fair image that represent your new category.
+                      Upload a fair image that represents your new product.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -135,7 +213,15 @@ const AddCategory = ({ children }: AddCategoryProps) => {
                         {...field}
                         placeholder="cake"
                         value={categorySlug}
-                        disabled
+                        onChange={(e) => {
+                          // Update slug directly when name changes or if user changes slug
+                          const slug = e.target.value.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-");
+                          setCategorySlug(slug); // Update state dynamically
+              
+                          // Make sure React Hook Form also updates the value (this is important if slug is part of the form)
+                          field.onChange(e); // Ensures RHF updates the value
+                        }}
+                        
                       />
                     </FormControl>
                     <FormDescription />

@@ -2,8 +2,6 @@
 
 import React from "react";
 import { createClient } from "@/utils/supabase/server";
-import { getSlides } from "@/data/carousel";
-import { getAllCategory, getAllProducts } from "@/data/product";
 
 import Navbar from "@/components/navbar";
 import CarouselSection from "@/components/carousel-section";
