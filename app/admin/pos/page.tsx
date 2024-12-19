@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import { Printer } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getAllCategory } from "@/data/product";
 import { createClient } from "@/utils/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -14,38 +14,31 @@ import { Separator } from "@/components/ui/separator";
 import { OnlineOrdersDataTable } from "./online-orders-data-table";
 import { OnlineOrdersColumns } from "./online-orders-columns";
 
-const orderItems = [
-  {
-    name: "Croissant",
-    qty: 12,
-    price: 250.0, // Price in LKR
-    total: 3000.0, // 12 * 250.0
-  },
-  {
-    name: "Baguette",
-    qty: 8,
-    price: 300.0, // Price in LKR
-    total: 2400.0, // 8 * 300.0
-  },
-  {
-    name: "Blueberry Muffin",
-    qty: 10,
-    price: 200.0, // Price in LKR
-    total: 2000.0, // 10 * 200.0
-  },
-  {
-    name: "Chocolate Cake",
-    qty: 2,
-    price: 2500.0, // Price in LKR
-    total: 5000.0, // 2 * 2500.0
-  },
-  {
-    name: "Cinnamon Roll",
-    qty: 6,
-    price: 350.0, // Price in LKR
-    total: 2100.0, // 6 * 350.0
-  },
-];
+interface Order {
+  id: any;
+  userid: any;
+  deliverydatetime: any;
+  status: any;
+  paymentmethod: any;
+  createdat: any;
+  confirmationcode: any;
+  order_type: any;
+  orderitem: {
+    id: any;
+    productid: any;
+    orderid: any;
+    quantity: any;
+    product: {
+      id: any;
+      name: any;
+      price: any;
+      image: any;
+    }[];
+  }[];
+}
+interface OrderWithPhone extends Omit<Order, "phone"> {
+  phone?: string; // Add phone property to the type
+}
 
 const supabase = createClient();
 
@@ -56,34 +49,70 @@ const POS = () => {
   const [orderItems, setOrderItems] = useState<any[]>([]);
   const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    const getAllCategory = async () => {
-      let { data: category, error } = await supabase
-        .from("category")
-        .select("*");
+  const getAllCategory = useCallback(async () => {
+    let { data: category, error } = await supabase.from("category").select("*");
+    if (category) {
       setCategories(category);
-    };
-    const getAllProducts = async () => {
-      let { data: product, error } = await supabase
-        .from("product")
-        .select("id, name, price, qty");
-      product?.sort((a, b) => a.name.localeCompare(b.name));
-      setProducts(product);
-    };
-    const getAllOrders = async () => {
-      let { data: order, error } = await supabase
-        .from("order")
-        .select(
-          "id, userid, deliverydatetime, deliveryaddress, status, paymentmethod, orderitem(id, orderid, quantity, product(productid, name, price)), profiles(userid, name, phone)"
-        );
-      if (order) {
-        setOrderItems(order);
-      }
-    };
+    } else if (error) {
+      console.error("Error fetching categories:", error);
+    }
+  }, []);
 
+  const getAllProducts = useCallback(async () => {
+    let { data: product, error } = await supabase
+      .from("product")
+      .select("id, name, price, qty");
+    if (product) {
+      product.sort((a, b) => a.name.localeCompare(b.name));
+      setProducts(product);
+    } else if (error) {
+      console.error("Error fetching products:", error);
+    }
+  }, []);
+
+  const getAllOrders = useCallback(async () => {
+    let { data: order, error } = await supabase
+      .from("order")
+      .select(
+        "id, userid, deliverydatetime, status, paymentmethod, createdat, confirmationcode, order_type, orderitem(id, productid, orderid, quantity, product(id, name, price, image))"
+      )
+      .eq("order_type", "online")
+      .order("deliverydatetime", { ascending: true });
+
+    // Get all user IDs from the orders
+    let userIDs = order?.map((order) => order.userid) || [];
+
+    // Get all users with the IDs
+    let { data: users, error: userError } = await supabase
+      .from("profiles")
+      .select("id, phone")
+      .in("id", userIDs);
+
+    // Map the user IDs to the orders and add user: {id, phone} to the relevant order
+    if (users && order) {
+      (order as OrderWithPhone[]).forEach((orderItem) => {
+        // Find the corresponding user by ID
+        let user = users.find((user) => user.id === orderItem.userid);
+
+        // Add the phone number to the order if a matching user is found
+        if (user) {
+          orderItem.phone = user.phone;
+        }
+      });
+    }
+
+    if (order) {
+      setOrderItems(order);
+    } else if (error) {
+      console.error("Error fetching orders:", error);
+    }
+  }, []);
+
+  useEffect(() => {
     getAllCategory();
     getAllProducts();
-  }, []);
+    getAllOrders();
+  }, [getAllCategory, getAllProducts, getAllOrders]);
 
   useEffect(() => {
     setIsClient(true);
@@ -92,7 +121,7 @@ const POS = () => {
   return (
     <div className="w-full h-full bg-white">
       <Tabs defaultValue="pos" className="w-full h-screen">
-        <TabsList className="h-14 max-h-14 rounded-none">
+        <TabsList className="pl-16 h-14 max-h-14 rounded-none">
           <TabsTrigger value="pos">POS (F11)</TabsTrigger>
           <TabsTrigger value="online">Online Orders (F12)</TabsTrigger>
         </TabsList>
@@ -151,14 +180,11 @@ const POS = () => {
           </div>
         </TabsContent>
         <TabsContent value="online">
-          <h2 className="text-xl font-semibold tracking-wide my-5 text-center">
+          {/* <h2 className="text-xl font-semibold tracking-wide my-5 text-center">
             Online Orders
-          </h2>
-          <div className="w-11/12 mx-auto">
-            <OnlineOrdersDataTable
-              columns={OnlineOrdersColumns}
-              data={orderItems}
-            />
+          </h2> */}
+          <div className="container mx-auto">
+            <OnlineOrdersDataTable data={orderItems} />
           </div>
         </TabsContent>
       </Tabs>

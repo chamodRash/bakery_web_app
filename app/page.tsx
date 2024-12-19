@@ -1,18 +1,17 @@
 "use server";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React from "react";
 import { createClient } from "@/utils/supabase/server";
 
 import Navbar from "@/components/navbar";
 import CarouselSection from "@/components/carousel-section";
-import CategoryButtonSection from "@/components/categoryButton-section";
-import CartSection from "@/components/products-section";
-import FilteredProductsSection from "@/components/filterProductSection";
-
-import { DataItem } from "@/data/types";
+import ProductsWithPagination from "@/components/ui/productPagination";
 import { getAllCategory, getAllProducts } from "@/data/product";
-import ProductsSection from "@/components/products-section";
 import { getSlides } from "@/data/carousel";
+import ProductsSection from "@/components/products-section";
+import CategoryButtonSection from "@/components/categoryButton-section";
+import { Toaster } from "react-hot-toast";
+import { Footer } from "@/components/footer";
 
 export default async function Home() {
   const supabase = createClient();
@@ -25,19 +24,22 @@ export default async function Home() {
   if (user?.is_anonymous === true || user === null || error) {
     loggedUser = false;
   }
+
   const categories = await getAllCategory();
   const products = await getAllProducts();
   const carousel = await getSlides();
 
   return (
-    <div className="pb-16 w-full pt-24">
+    <div className="w-full pt-24">
       <Navbar user={loggedUser} />
 
       <CarouselSection carouselItems={carousel} />
 
       <CategoryButtonSection categoryItems={categories} />
 
-      <ProductsSection items={products} />
+      <ProductsWithPagination products={products} />
+
+      <Footer />
     </div>
   );
 }

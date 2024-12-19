@@ -21,10 +21,6 @@ const OrdersPage = async () => {
       <h2 className="text-2xl font-bold text-primary mt-16 mb-10 text-center">
         My Orders
       </h2>
-      {/* <div className="w-1/3 flex flex-col gap-y-5">
-        <Button variant={"secondary"}>Profile</Button>
-        <Button variant={"secondary"}>Orders</Button>
-      </div> */}
       <div className="w-10/12 mx-auto">
         <OrdersPageSection orders={orders} />
       </div>

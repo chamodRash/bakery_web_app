@@ -42,31 +42,59 @@ export async function updateSession(request: NextRequest) {
 
   const isPublicRoutes = publicRoutes.includes(request.nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(request.nextUrl.pathname);
+  const adminRoutes = request.nextUrl.pathname.startsWith("/admin");
+  const manageAdminsRoute = request.nextUrl.pathname.startsWith(
+    "/admin/manage-admins"
+  );
 
   const {
     data: { user },
+    error,
   } = await supabase.auth.getUser();
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith("/") &&
-    !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/register")
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-
-    return NextResponse.redirect(url);
+  // Allow public routes for all users
+  if (publicRoutes.includes(request.nextUrl.pathname)) {
+    return NextResponse.next();
   }
 
-  if (user && isAuthRoute) {
-    // if there is user, potentially prevent them by going to auth routes
-    const url = request.nextUrl.clone();
-    url.pathname = "/";
-
-    return NextResponse.redirect(url);
+  // Restrict logged-in users from accessing auth routes
+  if (user && authRoutes.includes(request.nextUrl.pathname)) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/";
+    return NextResponse.redirect(redirectUrl);
   }
+
+  // Restrict access to `/admin/*` for non-logged-in users
+  if (!user && adminRoutes) {
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = "/login";
+    return NextResponse.redirect(loginUrl);
+  }
+
+  // Restrict `/admin/*` to ADMIN and MASTER roles only
+  if (user && adminRoutes) {
+    const userRole = user?.user_metadata?.user_role;
+
+    if (userRole === "USER") {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/";
+      return NextResponse.redirect(redirectUrl);
+    }
+  }
+
+  // Restrict `/admin/manage-admins` to MASTER role only
+  if (user && manageAdminsRoute) {
+    const userRole = user?.user_metadata?.user_role;
+
+    if (userRole !== "MASTER") {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/admin";
+      return NextResponse.redirect(redirectUrl);
+    }
+  }
+
+  // Default to allow all other cases
+  return NextResponse.next();
 
   // if (!user && !isPublicRoutes) {
   //   let callbackurl = request.nextUrl.pathname;

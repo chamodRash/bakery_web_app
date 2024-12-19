@@ -79,7 +79,9 @@ const AddStock = ({ children }: AddCategoryProps) => {
     } finally {
       setIsLoading(false);
     }
-    router.refresh();
+    setTimeout(() => {
+      router.refresh();
+    }, 1000);
   };
 
   return (
