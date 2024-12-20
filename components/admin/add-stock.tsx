@@ -49,6 +49,7 @@ interface AddCategoryProps {
 const AddStock = ({ children }: AddCategoryProps) => {
   const router = useRouter();
 
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof stockSchema>>({
     resolver: zodResolver(stockSchema),
@@ -67,6 +68,7 @@ const AddStock = ({ children }: AddCategoryProps) => {
         name: values.name,
         qty: Number(values.qty),
         qty_unit: values.qty_unit,
+        unit_price:Number(values.unit_price),
       });
       toast.success("Stock added successfully!");
 
@@ -89,9 +91,9 @@ const AddStock = ({ children }: AddCategoryProps) => {
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Product</DialogTitle>
+          <DialogTitle>Add Stock</DialogTitle>
           <DialogDescription>
-            Enter the details of your new Product.
+            Enter the details of your new Stock.
           </DialogDescription>
         </DialogHeader>
         <div className="w-full">
@@ -113,12 +115,35 @@ const AddStock = ({ children }: AddCategoryProps) => {
               />
               <FormField
                 control={form.control}
+                name="unit_price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Unit Price</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="number" placeholder="100"
+                      onChange={(e) => {
+                        const inputValue = parseInt(e.target.value, 10) || 0;
+                        field.onChange(Math.max(0, inputValue)); // Prevent negatives
+                      }}
+                       />
+                    </FormControl>
+                    <FormDescription />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="qty"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Stock Quantity</FormLabel>
                     <FormControl>
-                      <Input {...field} type="number" placeholder="100" />
+                      <Input {...field} type="number" placeholder="100"
+                      onChange={(e) => {
+                        const inputValue = parseInt(e.target.value, 10) || 0;
+                        field.onChange(Math.max(0, inputValue)); // Prevent negatives
+                      }} />
                     </FormControl>
                     <FormDescription />
                     <FormMessage />

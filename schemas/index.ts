@@ -201,6 +201,13 @@ export const stockSchema = z.object({
   qty_unit: z.string().min(1, {
     message: "Quantity Unit is Required",
   }),
+
+  unit_price: z.preprocess(
+    (value) => (value ? Number(value) : undefined),
+    z.number().min(1, {
+      message: "Unit Price is Required",
+    })
+  ),
 });
 
 export const phoneNumberSchema = z.object({
