@@ -5,6 +5,8 @@ import { getAllOrders } from "@/data/order";
 import { getAllProductsForChart } from "@/data/product";
 import { ProductsChart } from "@/components/admin/products-chart";
 import OnlineOrdersDqashboard from "@/components/admin/online-orders-dashboard";
+import { getAllStocksForChart } from "@/data/stock";
+import { StockLevelsChart } from "@/components/admin/charts/stock-levels";
 
 const chartConfig = {
   desktop: {
@@ -20,6 +22,7 @@ const chartConfig = {
 const Dashboard = async () => {
   const orders = await getAllOrders();
   const products = await getAllProductsForChart();
+  const stock = await getAllStocksForChart();
 
   return (
     <div className="w-full h-screen p-5 grid grid-rows-3 gap-y-5 overflow-hidden">
@@ -35,8 +38,8 @@ const Dashboard = async () => {
           <ProductsChart chartData={products} />
         </div>
         <div className="w-full rounded-lg bg-white p-5">
-          <h1 className="text-lg font-bold mb-1">Products quantity</h1>
-          <ProductsChart chartData={products} />
+          <h1 className="text-lg font-bold mb-1">Stock Levels</h1>
+          <StockLevelsChart chartData={stock} place="dashboard" />
         </div>
       </div>
     </div>

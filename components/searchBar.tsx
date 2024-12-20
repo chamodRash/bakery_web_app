@@ -50,8 +50,8 @@ export const SearchBar = ({}: Props) => {
     }
   }, [searchParams, value]);
 
-  const isSearchPage = searchParams.has("query");
-
+  //const isSearchPage = searchParams.has("query");
+  const isSearchPage = pathname === "/search";
   const isProductPage = pathname.startsWith("/product/");
 
   const shouldShowSuggestions = !isProductPage && !isSearchPage;
@@ -88,7 +88,7 @@ export const SearchBar = ({}: Props) => {
                 return product.name.toLowerCase().includes(query);
               })
               .map((product) => (
-                <Link key={product.id} href={`/product/${product.id}`}>
+                <Link key={product.id} href={`/product/${product.slug}`}>
                   <h3>{product.name}</h3>
                 </Link>
               ))}

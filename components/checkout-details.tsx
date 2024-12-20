@@ -42,6 +42,7 @@ import {
 import toast from "react-hot-toast";
 import BeatLoader from "react-spinners/BeatLoader";
 import useCart from "@/hooks/use-cart";
+import { useRouter } from "next/navigation";
 
 interface props {
   items: { product: DataItem; qty: number }[];
@@ -56,6 +57,7 @@ const CheckoutDetails = ({ items, type, name, phone }: props) => {
   const [isPending, startTransition] = useTransition();
   const [isCard, setIsCard] = useState(false);
   const cart = useCart();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof orderFormSchema>>({
     resolver: zodResolver(orderFormSchema),
@@ -74,7 +76,7 @@ const CheckoutDetails = ({ items, type, name, phone }: props) => {
       startTransition(() => {
         placeProductCashOrder({ items, values }).then((result) => {
           if (result?.error) {
-            toast.error("Something went wrong! try again later.");
+            router.push(`/checkout/failed?order_id=${result.orderID}`);
           }
           if (result?.success) {
             toast.success(result.success);
@@ -86,7 +88,7 @@ const CheckoutDetails = ({ items, type, name, phone }: props) => {
                 cart.removeFromCart(item.id);
               });
             }
-            setOrderSuccess(true);
+            router.push(`/checkout/success?order_id=${result.orderID}`);
           }
         });
       });

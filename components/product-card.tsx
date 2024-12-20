@@ -49,9 +49,15 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             <CardTitle className="w-full text-base font-bold text-zinc-700 overflow-hidden whitespace-nowrap text-ellipsis">
               {name}
             </CardTitle>
-            <CardDescription className="text-sm text-zinc-600 font-semibold">
-              {qty}
-            </CardDescription>
+            {qty === 0 ? (
+              <CardDescription className="text-sm text-zinc-600 font-semibold">
+                <p className="text-red-500">out of stock</p>
+              </CardDescription>
+            ) : (
+              <CardDescription className="text-sm text-zinc-600 font-semibold">
+                {qty}
+              </CardDescription>
+            )}
           </div>
           <p className="text-lg font-bold text-primary">{`${price}/=`}</p>
         </div>
@@ -61,13 +67,20 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           productid={id}
           productSlug={slug}
           name={name}
+          productqty={qty}
           image={image}
           price={price}
           asChild>
-          <Button className="w-3/4 rounded-xl text-white">Buy Now</Button>
+          <Button className="w-3/4 rounded-xl text-white" disabled={qty === 0}>
+            Buy Now
+          </Button>
         </BuyNowModal>
         <CartModal product={product}>
-          <Button variant={"secondary"} size={"icon"} className="rounded-lg">
+          <Button
+            variant={"secondary"}
+            size={"icon"}
+            className="rounded-lg"
+            disabled={qty === 0}>
             <ShoppingCart size={20} />
           </Button>
         </CartModal>

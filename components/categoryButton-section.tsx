@@ -38,7 +38,7 @@ const CategoryButtonSection: React.FC<CategoryButtonSectionProps> = ({
               <Link
                 key={category.id}
                 className="flex flex-col items-center"
-                href={`/${category.slug}`}>
+                href={`/category/${category.slug}`}>
                 <div
                   className="w-36 h-36 bg-cover bg-center rounded-full cursor-pointer"
                   style={{ backgroundImage: `url(${category.img_url})` }}>

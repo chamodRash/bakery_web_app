@@ -4,10 +4,6 @@ import { createClient } from "@/utils/supabase/server";
 import { assert } from "console";
 import { CategoryItem, DataItem } from "./types";
 
-
-
-const supabase=createClient();
-
 export const getAllProducts = async (): Promise<DataItem[]> => {
   const supabase = createClient();
   let { data: products, error } = await supabase.from("product").select("*");
@@ -100,43 +96,77 @@ export const getProductsBySearch = async (search: string | undefined) => {
   return data;
 };
 
+export const getProductMadeOf = async (id: number) => {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("productmadeof")
+    .select("*")
+    .eq("productid", id);
 
+  return data;
+};
 
 export const addProduct = async (item: {
-  name:string,
-  price:number,
-  description:string,
-  slug:string,
-  image:string,
-  status:string,
-  categoryslug:string,
-  qty:number;
- 
+  name: string;
+  price: number;
+  description: string;
+  slug: string;
+  image: string;
+  status: string;
+  categoryslug: string;
+  qty: number;
 }) => {
+  const supabase = createClient();
+
   try {
-    const { data, error } = await supabase.from("product").insert([item]);
-    console.log("Supabase response:", data, error);
+    const { data: product, error } = await supabase
+      .from("product")
+      .insert([item])
+      .select("*");
     if (error) throw error;
-    return data;
+
+    const madeof = await getProductMadeOf(product[0].id);
+
+    if (madeof) {
+      for (const stock of madeof) {
+        const { data: dbStock, error: dbStockError } = await supabase
+          .from("stock")
+          .select("qty")
+          .eq("stockid", stock.stockid)
+          .single();
+
+        const reduction = stock.qty * item.qty;
+        const newQty =
+          dbStock?.qty - reduction < 0 ? 0 : dbStock?.qty - reduction;
+        const { data: updateStockQty, error: updateStockQtyError } =
+          await supabase
+            .from("stock")
+            .update({ qty: newQty })
+            .eq("stockid", stock.stockid);
+      }
+    }
+
+    return product;
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unknown error occurred";
     throw new Error(`Failed to add Product item: ${message}`);
   }
 };
-export const updateProduct= async (
-  id:number,
-  name:string,
-  price:number,
-  description:string,
-  slug:string,
-  categoryslug:string,
+export const updateProduct = async (
+  id: number,
+  name: string,
+  price: number,
+  description: string,
+  slug: string,
+  categoryslug: string
+) => {
+  const supabase = createClient();
 
-) => {console.log('Updating product:', { id, name, price, description, categoryslug,slug });
   try {
     const { data, error } = await supabase
       .from("product")
-      .update({ name,price,description,slug,categoryslug})
+      .update({ name, price, description, slug, categoryslug })
       .match({ id });
     if (error) throw error;
     return data;
@@ -147,14 +177,13 @@ export const updateProduct= async (
   }
 };
 
-export const updateProductQuantity = async (
-  id: number,
-  qty: number,
-) => {
+export const updateProductQuantity = async (id: number, qty: number) => {
+  const supabase = createClient();
+
   try {
     const { data, error } = await supabase
       .from("product")
-      .update({ qty})
+      .update({ qty })
       .match({ id });
     if (error) throw error;
     return data;
@@ -165,10 +194,14 @@ export const updateProductQuantity = async (
   }
 };
 
-
 export const deleteProduct = async (id: number) => {
+  const supabase = createClient();
+
   try {
-    const { data, error } = await supabase.from("product").delete().match({ id });
+    const { data, error } = await supabase
+      .from("product")
+      .delete()
+      .match({ id });
     if (error) throw error;
     return data;
   } catch (error) {
@@ -179,12 +212,13 @@ export const deleteProduct = async (id: number) => {
 };
 
 export const addCategory = async (item: {
-  name:string,
-  description:string,
-  slug:string,
-  img_url:string,
- 
+  name: string;
+  description: string;
+  slug: string;
+  img_url: string;
 }) => {
+  const supabase = createClient();
+
   try {
     const { data, error } = await supabase.from("category").insert([item]);
     console.log("Supabase response:", data, error);
@@ -197,7 +231,8 @@ export const addCategory = async (item: {
   }
 };
 
-export const getImageURL = async (id:number)=> {
+export const getImageURL = async (id: number) => {
+  const supabase = createClient();
 
   try {
     // Query the database for a specific category's img_url
@@ -209,30 +244,28 @@ export const getImageURL = async (id:number)=> {
 
     if (error) {
       console.error("Error fetching image URL:", error.message);
-    
     }
 
     return data?.img_url || null; // Return the img_url or null if not found
   } catch (error) {
     console.error("Unexpected error fetching image URL:", error);
-    
   }
 };
 
-  
-
 export const updateCategory = async (
   id: number,
-  name:string,
-  description:string,
-  slug:string,
-  img_url:string,
+  name: string,
+  description: string,
+  slug: string,
+  img_url: string
 ) => {
+  const supabase = createClient();
+
   try {
     const { data, error } = await supabase
       .from("category")
-      .update({ name,description,slug,img_url})
-      .eq( "id",id );
+      .update({ name, description, slug, img_url })
+      .eq("id", id);
     if (error) throw error;
     return data;
   } catch (error) {
@@ -242,10 +275,14 @@ export const updateCategory = async (
   }
 };
 
-
 export const deleteCategory = async (id: number) => {
+  const supabase = createClient();
+
   try {
-    const { data, error } = await supabase.from("category").delete().match({ id });
+    const { data, error } = await supabase
+      .from("category")
+      .delete()
+      .match({ id });
     if (error) throw error;
     return data;
   } catch (error) {
@@ -254,4 +291,3 @@ export const deleteCategory = async (id: number) => {
     throw new Error(`Failed to delete category items: ${message}`);
   }
 };
-

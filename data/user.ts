@@ -127,3 +127,17 @@ export const getUserByid = async (
 
   return user as UserProps[];
 };
+
+export const getUserByidSingleRocord = async (
+  id: string | undefined
+): Promise<UserProps> => {
+  const supabase = createClient();
+
+  let { data: user, error: retrieveUserError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  return user as UserProps;
+};
