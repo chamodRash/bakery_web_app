@@ -211,7 +211,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
 import { productSchema } from "@/schemas";
-import { supabase } from "@/lib/supabaseClient";  // Import Supabase client
+import { supabase } from "@/lib/supabaseClient"; // Import Supabase client
 
 import {
   Dialog,
@@ -243,7 +243,7 @@ import { Textarea } from "../ui/textarea";
 import { CategoryItem } from "@/data/types";
 import { addProduct } from "@/data/product";
 import toast from "react-hot-toast";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface AddCategoryProps {
   children: React.ReactNode;
@@ -281,7 +281,6 @@ const AddProduct = ({ children, categories }: AddCategoryProps) => {
       categorySlug: "",
       img: undefined,
     },
-    
   });
 
   // Upload file to Supabase Storage
@@ -332,7 +331,7 @@ const AddProduct = ({ children, categories }: AddCategoryProps) => {
         description: values.description,
         qty: Number(values.qty),
         slug: values.slug,
-        status:values.status,
+        status: values.status,
         categoryslug: values.categorySlug,
         image: imageUrl, // Pass uploaded image URL
       });
@@ -370,11 +369,7 @@ const AddProduct = ({ children, categories }: AddCategoryProps) => {
                   <FormItem>
                     <FormLabel>Product Name:</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Cake"
-                        
-                      />
+                      <Input {...field} placeholder="Cake" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -387,12 +382,7 @@ const AddProduct = ({ children, categories }: AddCategoryProps) => {
                   <FormItem>
                     <FormLabel>Product Slug</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="cake"
-                        
-                        
-                      />
+                      <Input {...field} placeholder="cake" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -409,7 +399,9 @@ const AddProduct = ({ children, categories }: AddCategoryProps) => {
                         {...field}
                         type="number"
                         placeholder="Enter quantity"
-                        onChange={(e) => field.onChange(parseInt(e.target.value))}
+                        onChange={(e) =>
+                          field.onChange(parseInt(e.target.value))
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -422,7 +414,9 @@ const AddProduct = ({ children, categories }: AddCategoryProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Status</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Status" />
                       </SelectTrigger>
@@ -438,16 +432,20 @@ const AddProduct = ({ children, categories }: AddCategoryProps) => {
                 )}
               />
 
-             <FormField
+              <FormField
                 control={form.control}
                 name="price"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Price</FormLabel>
                     <FormControl>
-                      <Input {...field} 
-                      type="number" // Ensure it's a number input
-                      onChange={(e) => field.onChange(parseFloat(e.target.value))}/>
+                      <Input
+                        {...field}
+                        type="number" // Ensure it's a number input
+                        onChange={(e) =>
+                          field.onChange(parseFloat(e.target.value))
+                        }
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -462,9 +460,12 @@ const AddProduct = ({ children, categories }: AddCategoryProps) => {
                     <FormControl>
                       <input
                         type="file"
+                        title="Upload Image"
                         className="cursor-pointer block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-secondary file:text-primary hover:file:bg-primary/80"
                         onChange={(e) => {
-                          const file = e.target.files ? e.target.files[0] : null;
+                          const file = e.target.files
+                            ? e.target.files[0]
+                            : null;
                           if (file) {
                             field.onChange(file); // Manually update react-hook-form with the selected file
                           }
@@ -478,13 +479,15 @@ const AddProduct = ({ children, categories }: AddCategoryProps) => {
                   </FormItem>
                 )}
               />
-             <FormField
+              <FormField
                 control={form.control}
                 name="categorySlug"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Category</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Category" />
                       </SelectTrigger>
@@ -517,7 +520,6 @@ const AddProduct = ({ children, categories }: AddCategoryProps) => {
                 )}
               />
               <Button type="submit">Create</Button>
-              
             </form>
           </Form>
         </div>

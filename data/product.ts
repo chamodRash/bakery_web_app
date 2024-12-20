@@ -96,6 +96,16 @@ export const getProductsBySearch = async (search: string | undefined) => {
   return data;
 };
 
+export const getProductMadeOf = async (id: number) => {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("productmadeof")
+    .select("*")
+    .eq("productid", id);
+
+  return data;
+};
+
 export const addProduct = async (item: {
   name: string;
   price: number;
@@ -109,9 +119,34 @@ export const addProduct = async (item: {
   const supabase = createClient();
 
   try {
-    const { data, error } = await supabase.from("product").insert([item]);
+    const { data: product, error } = await supabase
+      .from("product")
+      .insert([item])
+      .select("*");
     if (error) throw error;
-    return data;
+
+    const madeof = await getProductMadeOf(product[0].id);
+
+    if (madeof) {
+      for (const stock of madeof) {
+        const { data: dbStock, error: dbStockError } = await supabase
+          .from("stock")
+          .select("qty")
+          .eq("stockid", stock.stockid)
+          .single();
+
+        const reduction = stock.qty * item.qty;
+        const newQty =
+          dbStock?.qty - reduction < 0 ? 0 : dbStock?.qty - reduction;
+        const { data: updateStockQty, error: updateStockQtyError } =
+          await supabase
+            .from("stock")
+            .update({ qty: newQty })
+            .eq("stockid", stock.stockid);
+      }
+    }
+
+    return product;
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unknown error occurred";
