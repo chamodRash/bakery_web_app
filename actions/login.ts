@@ -105,6 +105,7 @@ export async function login(values: z.infer<typeof LoginSchema>) {
   if (trySignIn?.error) {
     return { error: trySignIn.error };
   }
+  const session = await supabase.auth.getUser();
 
   console.log(`${trySignIn.success} Logged In!`);
 

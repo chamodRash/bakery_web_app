@@ -1,9 +1,20 @@
+import { getOrderById } from "@/data/order";
+import { getUserByid, getUserByidSingleRocord } from "@/data/user";
+import { sendOrderSuccessMsg } from "@/lib/sendMsgs";
+import { generateOrderConfirmationCode } from "@/lib/tokens";
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 import { parse } from "querystring"; // Node.js module to parse form data
 
 export async function POST(req: Request) {
   const supabase = createClient();
+  // const {
+  //   data: { user },
+  //   error,
+  // } = await supabase.auth.getUser();
+  // const phone = user?.phone!;
+  const otp = generateOrderConfirmationCode();
+
   try {
     // Read the body as text and parse it as x-www-form-urlencoded
     const textBody = await req.text();
@@ -19,7 +30,9 @@ export async function POST(req: Request) {
       amount,
     } = body;
 
-    console.log("Notification received:", body);
+    const order = await getOrderById(Number(order_id));
+    const user = await getUserByidSingleRocord(order?.userid);
+    const phone = user?.phone;
 
     if (status_code === "2") {
       // Payment Success - Update order status in your database
@@ -38,6 +51,8 @@ export async function POST(req: Request) {
         );
       }
 
+      // send a order confirmation msg to the user
+      await sendOrderSuccessMsg(phone, otp);
       const items = data.orderitem;
 
       // Update product quantities

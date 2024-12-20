@@ -111,7 +111,10 @@ export const placeProductCashOrder = async ({
   const phone = "94" + values.phone.slice(1);
 
   await sendOrderSuccessMsg(phone, otp);
-  return { success: "Order has been placed successfully!" };
+  return {
+    success: "Order has been placed successfully!",
+    orderID: data[0].id,
+  };
 };
 
 export const placeProductCardOrder = async ({

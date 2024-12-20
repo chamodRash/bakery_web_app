@@ -30,6 +30,11 @@ export const CartModal = ({ children, product }: CartModalProps) => {
   const [qty, setQty] = useState(1);
   const cart = useCart();
 
+  if (qty < 1 || qty > product.qty) {
+    qty < 1 && setQty(qty + 1);
+    qty > 1 && setQty(qty - 1);
+  }
+
   const onsubmit = async () => {
     cart.addToCart(product, qty);
   };
@@ -63,8 +68,10 @@ export const CartModal = ({ children, product }: CartModalProps) => {
                   type="number"
                   id="name"
                   placeholder="Quantity"
-                  className="w-1/2"
+                  className={`w-1/2`}
                   value={qty}
+                  min={1}
+                  max={product.qty}
                   onChange={(e) => setQty(parseInt(e.target.value, 10))}
                 />
                 <Button

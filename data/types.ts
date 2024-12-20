@@ -81,4 +81,5 @@ export interface stockProps {
   name: string;
   qty: number;
   qty_unit: string;
+  unit_price:number;
 }

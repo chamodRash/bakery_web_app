@@ -3,19 +3,30 @@
 import * as z from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import bcryptjs from "bcryptjs";
-import otpGenerator from "otp-generator";
 
 import { createClient } from "@/utils/supabase/server";
 import { RegisterSchema } from "@/schemas";
-import {sendRegisterOTP} from "@/lib/sendMsgs";
+import { sendRegisterOTP } from "@/lib/sendMsgs";
 import { generateRegisterOTP } from "@/lib/tokens";
-import { getUserByPhone } from "@/data/user";
 import { getVerificationTokenByToken } from "@/data/token";
 
-const supabase = createClient();
+export async function resendOTP(phone: string) {
+  const supabase = createClient();
+  // Generate a new OTP
+  const otp = await generateRegisterOTP(phone);
+
+  // Send the OTP
+  const isOTPsent = await sendRegisterOTP(phone, otp);
+
+  if (!isOTPsent.sent) {
+    return { error: "Failed to resend OTP. Try again later." };
+  }
+
+  return { success: "OTP Resent!" };
+}
 
 const signUpSupabase = async (values: z.infer<typeof RegisterSchema>) => {
+  const supabase = createClient();
   const data = {
     phone: values.phone.startsWith("0")
       ? "+94" + values.phone.slice(1)
@@ -38,6 +49,7 @@ const signUpSupabase = async (values: z.infer<typeof RegisterSchema>) => {
 };
 
 export async function register(values: z.infer<typeof RegisterSchema>) {
+  const supabase = createClient();
   const validateFields = RegisterSchema.safeParse(values);
   if (!validateFields.success) return { error: "Inavalid Fields!" };
 

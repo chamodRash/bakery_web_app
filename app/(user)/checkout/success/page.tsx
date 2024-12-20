@@ -36,7 +36,7 @@ export default function CheckoutSuccessPage() {
       </p>
       <div className="space-y-4">
         <p className="font-semibold">Order Number: {orderId}</p>
-        <p>An email confirmation has been sent to your email address.</p>
+        <p>An order confirmation has been sent to your phone number.</p>
       </div>
       <div className="mt-12">
         <Button asChild>
