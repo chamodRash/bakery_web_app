@@ -1,18 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DataTable } from "./data-table";
-import { columns } from "./columns";
-import { Printer } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { getAllCategory } from "@/data/product";
 import { createClient } from "@/utils/supabase/client";
-import { Input } from "@/components/ui/input";
-import Image from "next/image";
-import { Separator } from "@/components/ui/separator";
 import { OnlineOrdersDataTable } from "./online-orders-data-table";
-import { OnlineOrdersColumns } from "./online-orders-columns";
 
 interface Order {
   id: any;
@@ -77,7 +68,7 @@ const POS = () => {
         "id, userid, deliverydatetime, status, paymentmethod, createdat, confirmationcode, order_type, orderitem(id, productid, orderid, quantity, product(id, name, price, image))"
       )
       .eq("order_type", "online")
-      .order("deliverydatetime", { ascending: true });
+      .order("deliverydatetime", { ascending: false });
 
     // Get all user IDs from the orders
     let userIDs = order?.map((order) => order.userid) || [];
@@ -120,12 +111,12 @@ const POS = () => {
 
   return (
     <div className="w-full h-full bg-white">
-      <Tabs defaultValue="pos" className="w-full h-screen">
+      <Tabs defaultValue="online" className="w-full h-screen">
         <TabsList className="pl-16 h-14 max-h-14 rounded-none">
-          <TabsTrigger value="pos">POS (F11)</TabsTrigger>
+          {/* <TabsTrigger value="pos">POS (F11)</TabsTrigger> */}
           <TabsTrigger value="online">Online Orders (F12)</TabsTrigger>
         </TabsList>
-        <TabsContent value="pos" className="max-h-[90vh] focus:outline-none">
+        {/* <TabsContent value="pos" className="max-h-[90vh] focus:outline-none">
           <div className="w-full h-full grid grid-cols-2">
             <div className="w-full h-full px-2 grid grid-rows-[10%_80%_10%] border-r-2 border-input">
               <div className="w-full flex items-center justify-end gap-x-5 mb-2">
@@ -178,12 +169,12 @@ const POS = () => {
               </div>
             </div>
           </div>
-        </TabsContent>
-        <TabsContent value="online">
+        </TabsContent> */}
+        <TabsContent value="online" className="w-full">
           {/* <h2 className="text-xl font-semibold tracking-wide my-5 text-center">
             Online Orders
           </h2> */}
-          <div className="container mx-auto">
+          <div className="w-11/12 mx-auto">
             <OnlineOrdersDataTable data={orderItems} />
           </div>
         </TabsContent>

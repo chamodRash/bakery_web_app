@@ -47,29 +47,34 @@ const EditStock = ({ children, stock }: EditStockProps) => {
       name: stock.name,
       qty: stock.qty,
       qty_unit: stock.qty_unit,
+      unit_price:stock.unit_price,
     },
   });
 
   const onSubmit = async (values: z.infer<typeof stockSchema>) => {
     try {
+      console.log("Form values:", values);
       const data = await updateStock(
         stock.id,
         values.name,
         values.qty,
-        values.qty_unit
+        values.qty_unit,
+        values.unit_price,
       );
       if (data?.error) {
         toast.error(data?.error);
         console.log(data?.error);
       }
+      location.reload();
       toast.success("Stock updated successfully!");
+      console.log(values);
     } catch (error) {
       console.error(error);
       toast.error("Failed to update stock.");
     }
-    setTimeout(() => {
+    
       router.refresh();
-    }, 1000);
+    
   };
 
   return (
@@ -96,6 +101,7 @@ const EditStock = ({ children, stock }: EditStockProps) => {
                 )}
               />
 
+              
               <FormField
                 control={form.control}
                 name="qty"
@@ -103,7 +109,11 @@ const EditStock = ({ children, stock }: EditStockProps) => {
                   <FormItem>
                     <FormLabel>Stock Quantity:</FormLabel>
                     <FormControl>
-                      <Input {...field} type="number" placeholder="100" />
+                      <Input {...field} type="number" placeholder="100" 
+                       onChange={(e) => {
+                        const inputValue = parseInt(e.target.value, 10) || 0;
+                        field.onChange(Math.max(0, inputValue)); // Prevent negatives
+                      }}/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

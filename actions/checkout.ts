@@ -9,8 +9,6 @@ import { sendOrderSuccessMsg } from "@/lib/sendMsgs";
 import md5 from "crypto-js/md5";
 import { getOrderById } from "@/data/order";
 
-const supabase = createClient();
-
 const generateHash = (
   merchantId: string,
   orderId: string,
@@ -39,6 +37,7 @@ export const placeProductCashOrder = async ({
   items,
   values,
 }: placeOrderProps) => {
+  const supabase = createClient();
   const {
     data: { user },
     error: sessionError,
@@ -112,13 +111,17 @@ export const placeProductCashOrder = async ({
   const phone = "94" + values.phone.slice(1);
 
   await sendOrderSuccessMsg(phone, otp);
-  return { success: "Order has been placed successfully!" };
+  return {
+    success: "Order has been placed successfully!",
+    orderID: data[0].id,
+  };
 };
 
 export const placeProductCardOrder = async ({
   items,
   values,
 }: placeOrderProps) => {
+  const supabase = createClient();
   const {
     data: { user },
     error: sessionError,
@@ -186,9 +189,9 @@ export const placeProductCardOrder = async ({
     redirectUrl: "https://sandbox.payhere.lk/pay/checkout",
     params: {
       merchant_id: merchantId,
-      return_url: "https://ea74-103-21-166-216.ngrok-free.app/checkout/success",
-      cancel_url: "https://ea74-103-21-166-216.ngrok-free.app/checkout/failed",
-      notify_url: "https://ea74-103-21-166-216.ngrok-free.app/api/payhere",
+      return_url: "https://bakery-web-app.vercel.app/checkout/success",
+      cancel_url: "https://bakery-web-app.vercel.app/checkout/failed",
+      notify_url: "https://bakery-web-app.vercel.app/api/payhere",
       order_id: orderId,
       items: "cart items",
       currency: currency,
@@ -206,6 +209,7 @@ export const placeProductCardOrder = async ({
 };
 
 export const payOrderAgain = async (orderRecord: ordersProps) => {
+  const supabase = createClient();
   const {
     data: { user },
     error: sessionError,
@@ -229,9 +233,9 @@ export const payOrderAgain = async (orderRecord: ordersProps) => {
     redirectUrl: "https://sandbox.payhere.lk/pay/checkout",
     params: {
       merchant_id: merchantId,
-      return_url: "https://ea74-103-21-166-216.ngrok-free.app/checkout/success",
-      cancel_url: "https://ea74-103-21-166-216.ngrok-free.app/checkout/failed",
-      notify_url: "https://ea74-103-21-166-216.ngrok-free.app/api/payhere",
+      return_url: "https://bakery-web-app.vercel.app/checkout/success",
+      cancel_url: "https://bakery-web-app.vercel.app/checkout/failed",
+      notify_url: "https://bakery-web-app.vercel.app/api/payhere",
       order_id: orderId,
       items: "cart items",
       currency: currency,

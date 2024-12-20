@@ -2,11 +2,12 @@
 
 import React from "react";
 import { createClient } from "@/utils/supabase/server";
-import { getSlides } from "@/data/carousel";
-import { getAllCategory, getAllProducts } from "@/data/product";
 
 import Navbar from "@/components/navbar";
 import CarouselSection from "@/components/carousel-section";
+import ProductsWithPagination from "@/components/ui/productPagination";
+import { getAllCategory, getAllProducts } from "@/data/product";
+import { getSlides } from "@/data/carousel";
 import ProductsSection from "@/components/products-section";
 import CategoryButtonSection from "@/components/categoryButton-section";
 import { Toaster } from "react-hot-toast";
@@ -23,6 +24,7 @@ export default async function Home() {
   if (user?.is_anonymous === true || user === null || error) {
     loggedUser = false;
   }
+
   const categories = await getAllCategory();
   const products = await getAllProducts();
   const carousel = await getSlides();
@@ -35,7 +37,7 @@ export default async function Home() {
 
       <CategoryButtonSection categoryItems={categories} />
 
-      <ProductsSection items={products} />
+      <ProductsWithPagination products={products} />
 
       <Footer />
     </div>

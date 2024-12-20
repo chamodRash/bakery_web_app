@@ -20,6 +20,7 @@ import React, { useEffect, useState } from "react";
 
 interface StockChartProps {
   chartData: any;
+  place: string;
 }
 
 const chartConfig = {
@@ -29,7 +30,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function StockLevelsChart({ chartData }: StockChartProps) {
+export function StockLevelsChart({ chartData, place }: StockChartProps) {
   const [isMount, setIsMount] = useState(false);
 
   useEffect(() => {
@@ -38,23 +39,28 @@ export function StockLevelsChart({ chartData }: StockChartProps) {
 
   return (
     <div className="w-full h-[90vh] px-10 py-5 bg-white rounded-l-xl">
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/admin">Dashboard</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/admin/charts">Charts</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Stock Levels Chart</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+      {place !== "dashboard" && (
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/admin">Dashboard</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/admin/charts">Charts</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Stock Levels Chart</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      )}
 
-      <div className="w-2/3 mt-10 mx-auto max-h-96">
+      <div
+        className={`${
+          place !== "dashboard" ? "w-2/3" : "w-full"
+        } mt-10 mx-auto max-h-96`}>
         <ChartContainer config={chartConfig} className="">
           <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />

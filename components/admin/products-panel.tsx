@@ -28,6 +28,10 @@ import { PenLine, Plus, Trash2 } from "lucide-react";
 import EditProduct from "./edit-product";
 import { UpdateProductQty } from "./update-product-qty";
 import AddProduct from "./add-product";
+import { deleteProduct } from "@/data/product";
+import React,{useState,useEffect} from "react";
+import toast from "react-hot-toast";
+import {useRouter} from "next/navigation"
 
 interface productsPanelProps {
   products: DataItem[];
@@ -35,9 +39,25 @@ interface productsPanelProps {
 }
 
 const ProductsPanel = ({ products, categories }: productsPanelProps) => {
-  const deleteCheckedCategories = (productID: number) => {
-    // Delete categories
-    console.log("Delete categories");
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const deleteCheckedCategories = async (productID: number) => {
+   
+      try {
+        setIsLoading(true);
+        const deletedProduct = await deleteProduct(productID);
+        
+        toast.success("Product deleted successfully!");
+        router.refresh(); 
+      } catch (error) {
+        toast.error(
+          error instanceof Error ? error.message : "Failed to delete product."
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    
   };
 
   return (

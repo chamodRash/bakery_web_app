@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -41,6 +40,7 @@ const LoginForm = () => {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [isOTP, setIsOTP] = useState(false);
+  const [showResendOTP, setShowResendOTP] = useState(false);
   const router = useRouter();
 
   const form = useForm({
@@ -63,6 +63,9 @@ const LoginForm = () => {
         }
         if (data?.success == "OTP Sent!") {
           setIsOTP(true);
+          setTimeout(() => {
+            setShowResendOTP(true);
+          }, 60000);
         }
       });
     });
@@ -95,6 +98,38 @@ const LoginForm = () => {
           router.push("/");
         }, 1000);
       });
+    });
+  };
+
+  const resendCode = () => {
+    setErrors("");
+    setSuccess("");
+
+    startTransition(() => {
+      const phone = form.getValues("phone"); // Get the phone number from the form values
+      if (!phone) {
+        toast.error("Phone number is required to resend OTP.");
+        return;
+      }
+
+      fetch("/api/resend-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.error) {
+            setErrors(data.error);
+          }
+          if (data?.success) {
+            setSuccess(data.success);
+            toast.success(data.success);
+          }
+        })
+        .catch(() => {
+          setErrors("Failed to resend OTP. Please try again.");
+        });
     });
   };
 
@@ -188,6 +223,13 @@ const LoginForm = () => {
                       </FormControl>
                     </FormItem>
                     <FormMessage className={"text-xs ml-5"} />
+                    {showResendOTP && (
+                      <p
+                        onClick={() => resendCode}
+                        className="text-sm text-primary text-center underline">
+                        Resend OTP
+                      </p>
+                    )}
                   </div>
                 )}
               />
@@ -208,7 +250,7 @@ const LoginForm = () => {
             </Button>
             <Button
               onClick={() => {
-                guestLogin();
+                router.push("/");
               }}
               className={"rounded-full"}
               variant={"secondary"}
