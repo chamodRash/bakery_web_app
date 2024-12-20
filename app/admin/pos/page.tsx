@@ -1,18 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DataTable } from "./data-table";
-import { columns } from "./columns";
-import { Printer } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { getAllCategory } from "@/data/product";
 import { createClient } from "@/utils/supabase/client";
-import { Input } from "@/components/ui/input";
-import Image from "next/image";
-import { Separator } from "@/components/ui/separator";
 import { OnlineOrdersDataTable } from "./online-orders-data-table";
-import { OnlineOrdersColumns } from "./online-orders-columns";
 
 interface Order {
   id: any;
@@ -179,11 +170,11 @@ const POS = () => {
             </div>
           </div>
         </TabsContent> */}
-        <TabsContent value="online">
+        <TabsContent value="online" className="w-full">
           {/* <h2 className="text-xl font-semibold tracking-wide my-5 text-center">
             Online Orders
           </h2> */}
-          <div className="container mx-auto">
+          <div className="w-11/12 mx-auto">
             <OnlineOrdersDataTable data={orderItems} />
           </div>
         </TabsContent>
