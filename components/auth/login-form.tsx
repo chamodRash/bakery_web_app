@@ -250,7 +250,7 @@ const LoginForm = () => {
             </Button>
             <Button
               onClick={() => {
-                guestLogin();
+                router.push("/");
               }}
               className={"rounded-full"}
               variant={"secondary"}

@@ -6,9 +6,13 @@ import Link from "next/link";
 import { XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
+import { payOrderAgain } from "@/actions/checkout";
+import { ordersProps } from "@/data/types";
+import { getOrderById } from "@/data/order";
 
 export default function CheckoutFailedPage() {
   const [orderId, setOrderId] = useState<any>("");
+  const [order, setOrder] = useState<ordersProps | null>(null);
 
   useEffect(() => {
     // Extract the query parameter from the URL
@@ -17,7 +21,39 @@ export default function CheckoutFailedPage() {
 
     // Update the state
     setOrderId(orderIdFromUrl);
+
+    // Fetch the order details
+    const fetchOrder = async () => {
+      const order = await getOrderById(Number(orderIdFromUrl));
+      setOrder(order);
+    };
+
+    fetchOrder();
   }, []);
+
+  const handlePayNow = async (order: ordersProps) => {
+    try {
+      const result = await payOrderAgain(order);
+      if (result?.redirectUrl) {
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = result.redirectUrl;
+
+        Object.keys(result.params).forEach((key) => {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = key;
+          input.value = result.params[key as keyof typeof result.params];
+          form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+      }
+    } catch (error) {
+      console.error("Error processing payment:", error);
+    }
+  };
 
   return (
     <div className="container mx-auto max-w-2xl py-16 text-center">
@@ -31,8 +67,11 @@ export default function CheckoutFailedPage() {
         <p>If the problem persists, please contact our customer support.</p>
       </div>
       <div className="mt-12 space-x-4">
-        <Button asChild variant="outline">
-          <Link href={`/checkout?order=${orderId}`}>Try Again</Link>
+        <Button
+          asChild
+          variant="outline"
+          onClick={() => order && handlePayNow(order)}>
+          Try Again
         </Button>
         <Button asChild>
           <Link href="/">Return to Home</Link>
