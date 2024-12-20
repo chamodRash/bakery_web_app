@@ -77,7 +77,7 @@ const POS = () => {
         "id, userid, deliverydatetime, status, paymentmethod, createdat, confirmationcode, order_type, orderitem(id, productid, orderid, quantity, product(id, name, price, image))"
       )
       .eq("order_type", "online")
-      .order("deliverydatetime", { ascending: true });
+      .order("deliverydatetime", { ascending: false });
 
     // Get all user IDs from the orders
     let userIDs = order?.map((order) => order.userid) || [];
@@ -120,12 +120,12 @@ const POS = () => {
 
   return (
     <div className="w-full h-full bg-white">
-      <Tabs defaultValue="pos" className="w-full h-screen">
+      <Tabs defaultValue="online" className="w-full h-screen">
         <TabsList className="pl-16 h-14 max-h-14 rounded-none">
-          <TabsTrigger value="pos">POS (F11)</TabsTrigger>
+          {/* <TabsTrigger value="pos">POS (F11)</TabsTrigger> */}
           <TabsTrigger value="online">Online Orders (F12)</TabsTrigger>
         </TabsList>
-        <TabsContent value="pos" className="max-h-[90vh] focus:outline-none">
+        {/* <TabsContent value="pos" className="max-h-[90vh] focus:outline-none">
           <div className="w-full h-full grid grid-cols-2">
             <div className="w-full h-full px-2 grid grid-rows-[10%_80%_10%] border-r-2 border-input">
               <div className="w-full flex items-center justify-end gap-x-5 mb-2">
@@ -178,7 +178,7 @@ const POS = () => {
               </div>
             </div>
           </div>
-        </TabsContent>
+        </TabsContent> */}
         <TabsContent value="online">
           {/* <h2 className="text-xl font-semibold tracking-wide my-5 text-center">
             Online Orders
